@@ -1,0 +1,43 @@
+{
+	"metadata": {
+		"generated_at": "2022-08-14T20:06:39.411Z"
+	},
+	"runtimeData": [
+		{
+			"runtime": "lambda-perf-nodejs16x",
+			"initDurations": [
+				129.95,
+				133.65,
+				176.57,
+				134.02,
+				134.78,
+				138.79,
+				149.29,
+				136.42,
+				134.43,
+				130.98
+			],
+			"memorySize": 128,
+			"meanMaxMemoryUsed": 56,
+			"meanDuration": 10.245
+		},
+		{
+			"runtime": "lambda-perf-python39",
+			"initDurations": [
+				111.62,
+				110.93,
+				105.55,
+				118.96,
+				115.42,
+				104.06,
+				114.94,
+				120.16,
+				101.74,
+				104.99
+			],
+			"memorySize": 128,
+			"meanMaxMemoryUsed": 36,
+			"meanDuration": 1.269
+		}
+	]
+}
