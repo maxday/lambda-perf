@@ -14,7 +14,7 @@ const animate = async () => {
 			promiseArray.push(drawLang(i, runtime));
 			++i;
 		}
-		Promise.all(promiseArray).then(results => console.log(results))
+		await Promise.all(promiseArray);
 	} catch (e) {
 		console.error(e);
 	}
