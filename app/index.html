@@ -1,0 +1,53 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Lambda Cold Starts analysis">
+    <meta name="author" content="maxday">
+    <link rel="icon" href="./img/favicon.ico">
+    <title>Lambda Cold Starts analysis</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+    <script src="script.js"></script>
+  </head>
+
+  <body>
+    <main class="container">
+      <h1 class="mt-5">Lambda Cold Starts analysis</h1>
+      <p class="lead">Visualize 10 Cold Starts for each runtime, updated daily.<br /><a href="https://github.com/maxday/lambda-perf">[How does it work?]</a></p>
+      <p class="align-left">
+        <button type="button" id="replayAnimationBtn" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
+            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
+          </svg>
+        </button>
+      </p>
+      <p class="align-right">
+        <span class="badge bg-primary">us-east1</span> <span class="badge bg-primary">x86_64</span> <span class="badge bg-primary">128MB</span>
+        <br />
+        <span class="badge bg-success">Last update: <span id="lastUpdate">loading</span></span>
+      </p>
+      <hr />
+        <div id="sampleRuntimeElement" class="runtime">
+            <span class="runtimeName">runtime name</span>
+            <div class="coldstarts" class="fixedHeight"></div>
+            <span class="badge bg-success">avg cold start duration: <span class="averageColdStartDuration">x ms</span></span>
+            <span class="badge bg-success">memory used: <span class="averageMemoryUsed">x MB</span></span>
+            <span class="badge bg-success">avg duration: <span class="averageDuration">x ms</span></span>
+            <hr />
+        </div>
+        <div id="runtimes"></div>
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">Made with ♥ in Montreal 🇨🇦 by <a href="https://github.com/maxday">maxday</a>
+        </span>
+      </div>
+      <div class="disclaimer">This site is not associated, affiliated, endorsed, or sponsored by any companies nor have they been reviewed tested or certified by any company.
+      </div>
+    </footer>
+  </body>
+</html>
