@@ -29,14 +29,16 @@
         <span class="badge bg-primary">us-east1</span> <span class="badge bg-primary">x86_64</span> <span class="badge bg-primary">128MB</span>
         <br />
         <span class="badge bg-success">Last update: <span id="lastUpdate">loading</span></span>
+        <br />
+        ❄ = Avg Cold Start duration · 💾 = Avg Memory Used · ⚡ = Avg duration
       </p>
       <hr />
         <div id="sampleRuntimeElement" class="runtime">
             <span class="runtimeName">runtime name</span>
             <div class="coldstarts" class="fixedHeight"></div>
-            <span class="badge bg-success">avg cold start duration: <span class="averageColdStartDuration">x ms</span></span>
-            <span class="badge bg-success">memory used: <span class="averageMemoryUsed">x MB</span></span>
-            <span class="badge bg-success">avg duration: <span class="averageDuration">x ms</span></span>
+            ❄ <span class="badge bg-success"><span class="averageColdStartDuration"></span></span>
+            💾 <span class="badge bg-success"><span class="averageMemoryUsed"></span></span>
+            ⚡ <span class="badge bg-success"><span class="averageDuration"></span></span>
             <hr />
         </div>
         <div id="runtimes"></div>
