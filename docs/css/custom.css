@@ -54,7 +54,15 @@ hr {
 #runtimes {
     display: flex;
     flex-wrap: wrap;
+    font-family: 'Courier New', Courier, monospace;
+}
+.badge {
+    font-family: 'Courier New', Courier, monospace;
 }
 .runtime {
     flex: 50%;
+}
+.legend {
+    text-align: right;
+    font-size: 9px;
 }
