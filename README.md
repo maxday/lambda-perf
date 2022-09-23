@@ -4,7 +4,7 @@
 
 to see the benchmark result: 
 
-![screenshot](https://github.com/maxday/lambda-perf/blob/main/docs/screenshot.png?raw=true)
+![screenshot](https://github.com/maxday/lambda-perf/blob/main/docs/screenshot.png?raw=true | width=100)
 
 ## Why?
 
