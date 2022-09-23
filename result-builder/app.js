@@ -3,7 +3,7 @@ const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 
 const TABLE = 'report-log';
 const OWNER = 'maxday';
-const REPO = 'lambad-perf';
+const REPO = 'lambda-perf';
 const REGION = process.env.AWS_REGION;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
 
