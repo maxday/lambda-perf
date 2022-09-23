@@ -1,0 +1,110 @@
+service: lambda-perf
+
+provider:
+  name: aws
+  memorySize: 512
+  region: us-east-1
+  iam:
+    role:
+      name: lambda-perf-${sls:stage}-role
+  timeout: 900
+  iamRoleStatements:
+    - Effect: Allow
+      Action: "logs:CreateLogGroup"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*:log-stream:"
+    - Effect: Allow
+      Action: "logs:DeleteLogGroup"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*:log-stream:"
+    - Effect: Allow
+      Action: "lambda:CreateFunction"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "lambda:DeleteFunction"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "lambda:InvokeFunction"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "lambda:AddPermission"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "logs:PutSubscriptionFilter"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:*:*"
+    - Effect: Allow
+      Action: "lambda:UpdateFunctionConfiguration"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "iam:PassRole"
+      Resource: "arn:aws:iam::${env:ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role"
+    - Effect: Allow
+      Action: "s3:GetObject"
+      Resource: "arn:aws:s3:::lambda-perf/*"
+    - Effect: Allow
+      Action: "dynamodb:DeleteTable"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:ACCOUNT_ID}:table/report-log"
+    - Effect: Allow
+      Action: "dynamodb:CreateTable"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:ACCOUNT_ID}:table/report-log"
+    - Effect: Allow
+      Action: "dynamodb:Scan"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:ACCOUNT_ID}:table/report-log"
+
+package:
+  patterns:
+    - "!app"
+    - "!s3-uploader"
+    - "!docs"
+    - "!readme.MD"
+
+functions:
+  reportLogProcessor:
+    package:
+      individually: true
+      patterns:
+        - report-log-processor
+        - "!function-invoker"
+        - "!function-deployer"
+        - "!result-builder"
+    handler: report-log-processor/app.handler
+
+  functionDeployer:
+    environment:
+      ROLE_ARN: arn:aws:iam::251861306739:role/lambda-perf-${sls:stage}-role
+      LOG_PROCESSOR_ARN: 
+        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+    package:
+      individually: true
+      patterns:
+        - function-deployer
+        - "!function-invoker"
+        - "!report-log-processor"
+        - "!result-builder"
+    handler: function-deployer/app.handler
+    events:
+      - schedule: cron(40 13 * * ? *)
+
+  functionInvoker:
+    package:
+      individually: true
+      patterns:
+        - function-invoker
+        - "!function-deployer"
+        - "!report-log-processor"
+        - "!result-builder"
+    handler: function-invoker/app.handler
+    events:
+      - schedule: cron(45 13 * * ? *)
+
+  resultBuilder:
+    environment:
+      AUTH_TOKEN: ${env:AUTH_TOKEN}
+    package:
+      individually: true
+      patterns:
+        - result-builder
+        - "!function-invoker"
+        - "!function-deployer"
+        - "!report-log-processor"
+    handler: result-builder/app.handler
+    events:
+      - schedule: cron(0 14 * * ? *)

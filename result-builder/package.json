@@ -1,0 +1,16 @@
+{
+  "name": "git-commiter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.145.0",
+    "@octokit/rest": "^19.0.3"
+  }
+}
