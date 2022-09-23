@@ -41,7 +41,7 @@ Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
 ### Step 2
 
-Every day, each function is freshly grabed for S3, deployed and invoked 10 times as cold starts.
+Every day, each function is freshly grabbed from S3, deployed and invoked 10 times as cold starts.
 
 Then the REPORT log line containing the init duration, max memory used and other useful information is saved to a DynamoDB table.
 
@@ -51,7 +51,7 @@ After all these invocations, all information stored in Dynabo DB is aggregated a
 
 ### Step 4
 
-A static website, hosted on GitHub pages here: https://maxday.github.io/lambda-perf/ fetches this JSON file and display the result in a (nice?) UI
+A static website, hosted on GitHub pages here: https://maxday.github.io/lambda-perf/ fetches this JSON file and displays the result in a (nice?) UI
 
 ### Step 5
 
