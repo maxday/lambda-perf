@@ -5,7 +5,6 @@ const dynamoDb = new DocumentClient();
 const TABLE = 'report-log';
 
 exports.handler = async (input, context) => {
-    console.log(input);
     var payload = Buffer.from(input.awslogs.data, 'base64');
     var result = zlib.gunzipSync(payload);
     result = JSON.parse(result.toString());

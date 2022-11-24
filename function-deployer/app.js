@@ -21,6 +21,10 @@ const functionsToDeploy = [
         handler:    'index.handler',
     },
     {
+        runtime:    'nodejs18.x',
+        handler:    'index.handler',
+    },
+    {
         runtime:    'python3.7',
         handler:    'index.handler',
     },
