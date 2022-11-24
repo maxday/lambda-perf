@@ -7,6 +7,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
         'nodejs12x', 
         'nodejs14x', 
         'nodejs16x', 
+        'nodejs18x', 
         'python37',
         'python38',
         'python39',

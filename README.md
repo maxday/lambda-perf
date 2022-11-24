@@ -23,6 +23,7 @@ A ultra simple hello-world function has been written in each AWS supported runti
 - `nodejs12x` 
 - `nodejs14x` 
 - `nodejs16x` 
+- `nodejs18x`
 - `python37`
 - `python38`
 - `python39`

@@ -71,6 +71,7 @@ functions:
       individually: true
       patterns:
         - report-log-processor
+        - "!function-trigger-invoker"
         - "!function-invoker"
         - "!function-deployer"
         - "!result-builder"
@@ -78,13 +79,14 @@ functions:
 
   functionDeployer:
     environment:
-      ROLE_ARN: arn:aws:iam:${env:ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role
+      ROLE_ARN: arn:aws:iam::${env:ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
     package:
       individually: true
       patterns:
         - function-deployer
+        - "!function-trigger-invoker"
         - "!function-invoker"
         - "!report-log-processor"
         - "!result-builder"
@@ -97,10 +99,25 @@ functions:
       individually: true
       patterns:
         - function-invoker
+        - "!function-trigger-invoker"
         - "!function-deployer"
         - "!report-log-processor"
         - "!result-builder"
     handler: function-invoker/app.handler
+
+  functionTriggerInvoker:
+    package:
+      individually: true
+      patterns:
+        - function-triger-invoker
+        - "!function-invoker"
+        - "!function-deployer"
+        - "!report-log-processor"
+        - "!result-builder"
+    handler: function-trigger-invoker/app.handler
+    environment:
+      INVOKER: 
+        "Fn::GetAtt": [ FunctionInvokerLambdaFunction, Arn ]
     events:
       - schedule: cron(45 13 * * ? *)
 
@@ -111,6 +128,7 @@ functions:
       individually: true
       patterns:
         - result-builder
+        - "!function-trigger-invoker"
         - "!function-invoker"
         - "!function-deployer"
         - "!report-log-processor"
