@@ -1,0 +1,292 @@
+{
+	"metadata": {
+		"generatedAt": "2023-01-12T14:00:07.301Z"
+	},
+	"runtimeData": [
+		{
+			"runtime": "lambda-perf-go1x",
+			"initDurations": [
+				82.86,
+				96.77,
+				84.92,
+				80.76,
+				100.04,
+				85.51,
+				81.9,
+				81.78,
+				80.19,
+				93.56
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 29,
+			"averageDuration": 6.942,
+			"averageColdStartDuration": 86.829
+		},
+		{
+			"runtime": "lambda-perf-nodejs14x",
+			"initDurations": [
+				163.78,
+				168.79,
+				181.19,
+				189.16,
+				174.71,
+				184.58,
+				204.63,
+				185.5,
+				170.79,
+				163.34
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 56.2,
+			"averageDuration": 12.173,
+			"averageColdStartDuration": 178.647
+		},
+		{
+			"runtime": "lambda-perf-nodejs18x",
+			"initDurations": [
+				236.05,
+				218.72,
+				200.68,
+				214.27,
+				211.61,
+				214.85,
+				224.38,
+				259.63,
+				219.76,
+				212.64
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 64.4,
+			"averageDuration": 12.719,
+			"averageColdStartDuration": 221.259
+		},
+		{
+			"runtime": "lambda-perf-java8",
+			"initDurations": [
+				585.42,
+				545.75,
+				541.13,
+				532.17,
+				518.23,
+				524.6,
+				524.32,
+				532.89,
+				540.03,
+				673.39
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 71.9,
+			"averageDuration": 332.922,
+			"averageColdStartDuration": 551.793
+		},
+		{
+			"runtime": "lambda-perf-java11",
+			"initDurations": [
+				419.78,
+				425.01,
+				426.06,
+				468.73,
+				410.63,
+				429.97,
+				433.67,
+				461.34,
+				441.75,
+				429.77
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 81,
+			"averageDuration": 99.94,
+			"averageColdStartDuration": 434.671
+		},
+		{
+			"runtime": "lambda-perf-dotnetcore31",
+			"initDurations": [
+				215.02,
+				152.17,
+				156.24,
+				159.34,
+				174.79,
+				154.91,
+				148.75,
+				148.09,
+				176.5,
+				161.38
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 50.1,
+			"averageDuration": 201.252,
+			"averageColdStartDuration": 164.719
+		},
+		{
+			"runtime": "lambda-perf-rust_on_provided_al2",
+			"initDurations": [
+				15.11,
+				14.72,
+				16.64,
+				17.11,
+				16.56,
+				16.41,
+				15.64,
+				14.23,
+				15.02,
+				13.98
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 14,
+			"averageDuration": 1.083,
+			"averageColdStartDuration": 15.542
+		},
+		{
+			"runtime": "lambda-perf-python37",
+			"initDurations": [
+				112.12,
+				125.4,
+				124.29,
+				152.72,
+				139.44,
+				118.49,
+				114.06,
+				142.37,
+				146.15,
+				102.14
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 36,
+			"averageDuration": 1.832,
+			"averageColdStartDuration": 127.718
+		},
+		{
+			"runtime": "lambda-perf-python39",
+			"initDurations": [
+				94.66,
+				101.81,
+				112.7,
+				115.79,
+				116.53,
+				115.06,
+				114.94,
+				107.01,
+				107.68,
+				111.59
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 36,
+			"averageDuration": 1.326,
+			"averageColdStartDuration": 109.777
+		},
+		{
+			"runtime": "lambda-perf-ruby27",
+			"initDurations": [
+				127.81,
+				135.72,
+				177.41,
+				134.83,
+				125.86,
+				135.47,
+				115.52,
+				137.46,
+				131.59,
+				154.05
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 30.1,
+			"averageDuration": 10.538,
+			"averageColdStartDuration": 137.572
+		},
+		{
+			"runtime": "lambda-perf-go_on_provided",
+			"initDurations": [
+				69.49,
+				64.55,
+				55.6,
+				63.92,
+				73.15,
+				64.8,
+				64.07,
+				63.82,
+				55.1,
+				63.54
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 21,
+			"averageDuration": 1.466,
+			"averageColdStartDuration": 63.804
+		},
+		{
+			"runtime": "lambda-perf-nodejs12x",
+			"initDurations": [
+				169.65,
+				160.45,
+				138.93,
+				152.29,
+				130.25,
+				208.25,
+				167.9,
+				158.03,
+				160.61,
+				163.95
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 55,
+			"averageDuration": 10.772,
+			"averageColdStartDuration": 161.031
+		},
+		{
+			"runtime": "lambda-perf-python38",
+			"initDurations": [
+				118.07,
+				121.31,
+				150.31,
+				124.47,
+				117.04,
+				137.11,
+				115.72,
+				112.82,
+				137.52,
+				119.88
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 38,
+			"averageDuration": 1.821,
+			"averageColdStartDuration": 125.425
+		},
+		{
+			"runtime": "lambda-perf-dotnet6",
+			"initDurations": [
+				220.86,
+				213.27,
+				216.85,
+				220.56,
+				206.41,
+				211.98,
+				275.63,
+				226.14,
+				356.36,
+				205.61
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 59.2,
+			"averageDuration": 590.276,
+			"averageColdStartDuration": 235.367
+		},
+		{
+			"runtime": "lambda-perf-nodejs16x",
+			"initDurations": [
+				160.09,
+				150.57,
+				154.81,
+				138.52,
+				139.8,
+				170.4,
+				125.73,
+				156.03,
+				150.53,
+				153.67
+			],
+			"memorySize": 128,
+			"averageMemoryUsed": 57,
+			"averageDuration": 10.639,
+			"averageColdStartDuration": 150.015
+		}
+	]
+}
