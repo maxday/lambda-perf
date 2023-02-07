@@ -11,17 +11,20 @@ exports.handler = async (input, context) => {
     const fromLambda = result.logGroup.replace("/aws/lambda/", "");
     for (const singleEvent of result.logEvents) {
         try {
-            const reportLogRegex = /REPORT RequestId: ([a-z0-9\-]+)\s*Duration: ([0-9\.]+) ms\s*Billed Duration: ([0-9\.]+) ms\s*Memory Size: ([0-9\.]+) MB\s*Max Memory Used: ([0-9\.]+) MB\s*(Init Duration: ([0-9\.]+) ms\s*)?\s*/g
+            const reportLogRegex = /REPORT RequestId: (?<requestId>[a-z0-9\-]+)\s*Duration: (?<durationTime>[0-9\.]+) ms\s*Billed Duration: (?<billedDurationTime>[0-9\.]+) ms\s*Memory Size: (?<memorySize>[0-9\.]+) MB\s*Max Memory Used: (?<maxMemoryUsed>[0-9\.]+) MB\s*(Init Duration: (?<initDuration>[0-9\.]+) ms\s*)?\s*(Restore Duration: (?<restoreDuration>[0-9\.]+) ms\s*Billed Restore Duration: (?<billedRestoreDuration>[0-9\.]+) ms\s*)?/g;
             const match = reportLogRegex.exec(singleEvent.message);
             if (match) {
+                const {requestId, durationTime, billedDurationTime, memorySize, maxMemoryUsed,initDuration,restoreDuration,billedRestoreDuration } = match.groups
                 const item = {
-                    requestId: match[1],
+                    requestId: requestId,
                     lambda: fromLambda,
-                    duration: match[2],
-                    billedDuratation: match[3],
-                    memorySize: match[4],
-                    maxMemoryUsed: match[5],
-                    initDuration: match[7]
+                    duration: durationTime,
+                    billedDuratation: billedDurationTime,
+                    memorySize: memorySize,
+                    maxMemoryUsed: maxMemoryUsed,
+                    initDuration: initDuration ?? restoreDuration,
+                    restoreDuration: restoreDuration,
+                    billedRestoreDuration: billedRestoreDuration
                 }
                 await dynamoDb
                     .put({

@@ -40,6 +40,18 @@ provider:
       Action: "lambda:UpdateFunctionConfiguration"
       Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
+      Action: "lambda:GetFunction"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "lambda:GetFunctionConfiguration"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "lambda:ListVersionsByFunction"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
+      Action: "lambda:PublishVersion"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+    - Effect: Allow
       Action: "iam:PassRole"
       Resource: "arn:aws:iam::${env:ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role"
     - Effect: Allow

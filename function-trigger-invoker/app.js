@@ -1,26 +1,27 @@
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
-const { DynamoDBClient, DeleteTableCommand, CreateTableCommand } = require("@aws-sdk/client-dynamodb"); 
+const { DynamoDBClient, DeleteTableCommand, CreateTableCommand } = require("@aws-sdk/client-dynamodb");
 
 const REGION = process.env.AWS_REGION;
 const INVOKER = process.env.INVOKER;
 const TABLE = 'report-log';
 const DELAY = 5000;
 const RUNTIMES = [
-    'dotnet6', 
-    'dotnetcore31', 
+    'dotnet6',
+    'dotnetcore31',
     'go_on_provided',
     'go1x',
-    'java8', 
+    'java8',
     'java11',
-    'nodejs12x', 
-    'nodejs14x', 
+    'nodejs12x',
+    'nodejs14x',
     'nodejs16x',
     'nodejs18x',
     'python37',
-    'python38', 
+    'python38',
     'python39',
     'ruby27',
-    'rust_on_provided_al2'
+    'rust_on_provided_al2',
+    'java11_snapstart'
 ];
 
 const deleteTable = async (client, table) => {
@@ -95,7 +96,7 @@ exports.handler = async () => {
         for(runtime of RUNTIMES) {
             allPromises.push(invokeFunction(lambdaClient, runtime));
         }
-        await Promise.all(allPromises); 
+        await Promise.all(allPromises);
         return {
             statusCode:200,
             body: JSON.stringify('success'),
