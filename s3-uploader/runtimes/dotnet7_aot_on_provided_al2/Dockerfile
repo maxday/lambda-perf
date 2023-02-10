@@ -1,6 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 as builder
-RUN apt-get update
-RUN apt-get install -y zip
+FROM public.ecr.aws/sam/build-dotnet7:latest-x86_64 as builder
 RUN dotnet tool install -g Amazon.Lambda.Tools
 WORKDIR /tmp
 COPY src .
