@@ -61,8 +61,38 @@ hr {
 .runtime {
     flex: 50%;
     max-width: 50%;
+    padding-right: 10px;
 }
 .legend {
     text-align: right;
     font-size: 9px;
+}
+.comparison-line {
+  height: 4px;
+  width: 100%;
+  overflow: hidden;
+  margin: 10px;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#coldStart, #memory, #duration {
+    display: contents;
+}
+#coldStart .comparison-line {
+    background-color: #00e7ff;
+}
+#memory .comparison-line {
+    background-color: #ff0c0c;
+}
+#duration .comparison-line {
+    background-color: #c5e008;
 }
