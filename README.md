@@ -34,9 +34,10 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `java8`
 - `ruby27`
 
-in addition to two custom runtimes:
+in addition to three custom runtimes:
 - `go` on `provided`
 - `rust` on `provided.al2`
+- `dotnet7 aot` on `provided.al2`
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
