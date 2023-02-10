@@ -19,7 +19,8 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
         'ruby27',
         'go_on_provided',
         'rust_on_provided_al2',
-        'quarkus_native_on_provided_al2'
+        'quarkus_native_on_provided_al2',
+        'dotnet7_aot_on_provided_al2',
     ];
 
     const s3Client = new S3Client();

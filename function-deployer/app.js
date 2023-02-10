@@ -45,6 +45,11 @@ const functionsToDeploy = [
         handler:    'LambdaPerf::LambdaPerf.Function::Handler',
     },
     {
+        runtime:    'provided.al2',
+        handler:    'bootstrap',
+        path:       'dotnet7_aot_on_provided_al2',
+    },
+    {
         runtime:    'go1.x',
         handler:    'main',
     },
