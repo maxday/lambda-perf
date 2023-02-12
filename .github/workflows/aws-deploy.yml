@@ -1,6 +1,7 @@
-name: deploy
+name: deploy to aws
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       mfaCode:
