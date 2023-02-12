@@ -6,7 +6,7 @@ provider:
   region: ${env:AWS_REGION}
   iam:
     role:
-      name: lambda-perf-${sls:stage}-role
+      name: lambda-perf-${sls:stage}-role-${env:AWS_REGION}
   timeout: 900
   iamRoleStatements:
     - Effect: Allow
@@ -123,7 +123,7 @@ functions:
 
   resultBuilder:
     environment:
-      AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
+      GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
     package:
       individually: true
       patterns:
