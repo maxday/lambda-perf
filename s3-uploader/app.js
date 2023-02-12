@@ -14,6 +14,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
         'dotnetcore31',
         'dotnet6',
         'go1x',
+        'graalvm_java17_on_provided_al2',
         'java11',
         'java8',
         'ruby27',
