@@ -7,7 +7,13 @@ on:
       mfaCode:
         type: string
         description: MFA Code
-        required: false
+        required: true
+      region:
+        description: 'region on which you want to deploy'
+        type: choice
+        options:
+          - eu-west-1
+          - us-east-1
 
 jobs:
   deploy:
