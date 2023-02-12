@@ -3,7 +3,7 @@ service: lambda-perf
 provider:
   name: aws
   memorySize: 512
-  region: us-east-1
+  region: ${env:AWS_REGION}
   iam:
     role:
       name: lambda-perf-${sls:stage}-role
@@ -11,52 +11,52 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action: "logs:CreateLogGroup"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
     - Effect: Allow
       Action: "logs:CreateLogStream"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
     - Effect: Allow
       Action: "logs:DeleteLogGroup"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
     - Effect: Allow
       Action: "logs:PutLogEvents"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*:*"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*:*"
     - Effect: Allow
       Action: "lambda:CreateFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:DeleteFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:InvokeFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:AddPermission"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
       Action: "logs:PutSubscriptionFilter"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:ACCOUNT_ID}:*:*"
+      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:*:*"
     - Effect: Allow
       Action: "lambda:UpdateFunctionConfiguration"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
       Action: "iam:PassRole"
-      Resource: "arn:aws:iam::${env:ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role"
+      Resource: "arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role"
     - Effect: Allow
       Action: "s3:GetObject"
       Resource: "arn:aws:s3:::lambda-perf/*"
     - Effect: Allow
       Action: "dynamodb:DeleteTable"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
     - Effect: Allow
       Action: "dynamodb:CreateTable"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
     - Effect: Allow
       Action: "dynamodb:Scan"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
     - Effect: Allow
       Action: "dynamodb:PutItem"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
 
 package:
   patterns:
@@ -79,7 +79,7 @@ functions:
 
   functionDeployer:
     environment:
-      ROLE_ARN: arn:aws:iam::${env:ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role
+      ROLE_ARN: arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
     package:
