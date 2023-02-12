@@ -2,6 +2,12 @@ name: deploy to aws
 
 on:
   push:
+  workflow_dispatch:
+    inputs:
+      mfaCode:
+        type: string
+        description: MFA Code
+        required: false
 
 jobs:
   deploy:
