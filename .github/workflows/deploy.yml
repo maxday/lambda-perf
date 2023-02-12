@@ -1,7 +1,6 @@
 name: deploy
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       mfaCode:
@@ -9,6 +8,7 @@ on:
         description: MFA Code
         required: true
       region:
+        description: 'region on which you want to deploy'
         type: choice
         options:
           - eu-west-1
