@@ -5,7 +5,7 @@ const TABLE = 'report-log';
 const OWNER = 'maxday';
 const REPO = 'lambda-perf';
 const REGION = process.env.AWS_REGION;
-const AUTH_TOKEN = process.env.AUTH_TOKEN;
+const GH_AUTH_TOKEN = process.env.GH_AUTH_TOKEN;
 
 const commitFile = async (content, filename, authToken) => {
     try {
@@ -83,8 +83,8 @@ exports.handler = async (input, context) => {
         const data = await fetchData(dynamoDbClient, TABLE);
         const json = buildJsonFromData(data);
         const today = new Date().toISOString().split('T')[0];
-        await commitFile(JSON.stringify(json, null, '\t'), today, AUTH_TOKEN);
-        await commitFile(JSON.stringify(json, null, '\t'), 'last', AUTH_TOKEN);
+        await commitFile(JSON.stringify(json, null, '\t'), today, GH_AUTH_TOKEN);
+        await commitFile(JSON.stringify(json, null, '\t'), 'last', GH_AUTH_TOKEN);
     } catch (_) {
         throw 'failure';
     }
