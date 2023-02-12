@@ -1,11 +1,10 @@
 const { LambdaClient, AddPermissionCommand, CreateFunctionCommand, DeleteFunctionCommand } = require("@aws-sdk/client-lambda");
 const { CloudWatchLogsClient, CreateLogGroupCommand, DeleteLogGroupCommand, PutSubscriptionFilterCommand } = require("@aws-sdk/client-cloudwatch-logs");
 
-const PROJECT = 'lambda-perf';
-
 const REGION = process.env.AWS_REGION;
 const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
+const PROJECT = `lambda-perf-${REGION}`;
 
 const functionsToDeploy = [
     {
