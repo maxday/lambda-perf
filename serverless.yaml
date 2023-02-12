@@ -3,7 +3,7 @@ service: lambda-perf
 provider:
   name: aws
   memorySize: 512
-  region: us-east-1
+  region: ${env:AWS_REGION}
   iam:
     role:
       name: lambda-perf-${sls:stage}-role
