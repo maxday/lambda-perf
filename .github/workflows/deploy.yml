@@ -1,6 +1,7 @@
 name: deploy
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       mfaCode:
