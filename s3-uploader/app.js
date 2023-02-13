@@ -2,6 +2,8 @@ const fs = require('fs');
 const childProcess = require('child_process');
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
+const REGION = process.env.AWS_REGION;
+
 (async () => {
     const runtimes = [
         'nodejs12x', 
@@ -28,7 +30,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
         childProcess.execSync(`./runtimes/${runtime}/build.sh`);
         const fileStream = fs.createReadStream(`./runtimes/${runtime}/code.zip`);
         const putObjectParams = {
-            Bucket: 'lambda-perf',
+            Bucket: `lambda-perf-${REGION}`,
             Key: `${runtime}/code.zip`,
             Body: fileStream,
           };
