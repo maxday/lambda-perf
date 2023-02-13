@@ -99,9 +99,9 @@ const functionsToDeploy = [
     path: "quarkus_native_on_provided_al2",
   },
   {
-    runtime:    "provided.al2",
-    handler:    "bootstrap",
-    path:       "graalvm_java17_on_provided_al2",
+    runtime: "provided.al2",
+    handler: "com.xavierbouclet.OkHandler",
+    path: "graalvm_java17_on_provided_al2",
   },
 ];
 
