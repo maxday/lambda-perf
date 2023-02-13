@@ -65,8 +65,8 @@ exports.handler = async (event, context) => {
       } else {
         await invokeFunction(lambdaClient, functionName);
         await updateFunction(lambdaClient, functionName);
-        await delay(DELAY);
       }
+      await delay(DELAY);
     }
     return {
       statusCode: 200,
