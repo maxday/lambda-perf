@@ -18,8 +18,8 @@ RUN apt-get update
 RUN apt-get install -y zip
 RUN mkdir /package
 WORKDIR /package
-COPY --from=stripper /tmp/graalvm-java17 /package/graalvm-java17
-RUN zip -j code.zip /package/graalvm-java17
+COPY --from=stripper /tmp/graalvm-java17 /package/bootstrap
+RUN zip -j code.zip /package/bootstrap
 
 FROM scratch
 COPY --from=compresser /package/code.zip /
