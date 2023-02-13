@@ -41,7 +41,7 @@ provider:
       Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
       Action: "iam:PassRole"
-      Resource: "arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role"
+      Resource: "arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role-${env:AWS_REGION}"
     - Effect: Allow
       Action: "s3:GetObject"
       Resource: "arn:aws:s3:::lambda-perf-${env:AWS_REGION}/*"
