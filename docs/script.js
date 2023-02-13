@@ -53,7 +53,7 @@ const drawLang = async (idx, data) => {
 		.replaceAll('native', ' ')
 		.replaceAll('on provided al2', '(prov.al2)')
 		.replaceAll('provided', '(provided)');
-    runtimeName.innerHTML = sanitizedRuntimeName;
+	runtimeName.innerHTML = sanitizedRuntimeName;
 
 	for(let i = 0; i < data.initDurations.length; ++i) {
         await sleep(data.initDurations[i]);
