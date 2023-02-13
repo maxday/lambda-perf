@@ -1,9 +1,13 @@
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
-const { DynamoDBClient, DeleteTableCommand, CreateTableCommand } = require("@aws-sdk/client-dynamodb"); 
+const {
+  DynamoDBClient,
+  DeleteTableCommand,
+  CreateTableCommand,
+} = require("@aws-sdk/client-dynamodb");
 
 const REGION = process.env.AWS_REGION;
 const INVOKER = process.env.INVOKER;
-const TABLE = 'report-log';
+const TABLE = "report-log";
 const DELAY = 5000;
 const RUNTIMES = [
   "dotnet6",
