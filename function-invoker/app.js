@@ -52,6 +52,7 @@ exports.handler = async (event, context) => {
         const runtime = context.clientContext.runtime;
         const functionName = `${PREFIX}${runtime}`;
         const lambdaClient = new LambdaClient({ region: REGION });
+
         let versions = [];
         if (isSnapStart(runtime)) {
             versions = await getFunctionVersions(lambdaClient, functionName);
@@ -93,3 +94,4 @@ const getFunctionVersions = async (client, functionName) => {
         throw e;
     }
 };
+
