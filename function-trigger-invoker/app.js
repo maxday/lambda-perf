@@ -21,7 +21,8 @@ const RUNTIMES = [
     'python39',
     'ruby27',
     'rust_on_provided_al2',
-    'dotnet7_aot_on_provided_al2'
+    'dotnet7_aot_on_provided_al2',
+    'quarkus_native_on_provided_al2',
 ];
 
 const deleteTable = async (client, table) => {

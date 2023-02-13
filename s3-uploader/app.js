@@ -21,6 +21,7 @@ const REGION = process.env.AWS_REGION;
         'ruby27',
         'go_on_provided',
         'rust_on_provided_al2',
+        'quarkus_native_on_provided_al2',
         'dotnet7_aot_on_provided_al2',
     ];
 
