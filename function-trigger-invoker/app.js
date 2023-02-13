@@ -27,6 +27,7 @@ const RUNTIMES = [
     "rust_on_provided_al2",
     "dotnet7_aot_on_provided_al2",
     "quarkus_native_on_provided_al2",
+    "java11_snapstart",
 ];
 
 const deleteTable = async (client, table) => {
