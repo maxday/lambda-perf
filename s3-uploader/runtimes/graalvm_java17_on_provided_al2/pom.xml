@@ -54,6 +54,23 @@
             <version>1.2.2</version>
         </dependency>
         <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>url-connection-client</artifactId>
+            <version>2.13.31</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>apache-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.formkiq</groupId>
             <artifactId>lambda-runtime-graalvm</artifactId>
             <version>2.0</version>
@@ -90,7 +107,7 @@
                         </executions>
                         <configuration>
                             <imageName>graalvm-java17</imageName>
-                            <mainClass>com.xavierbouclet.Lambda</mainClass>
+                            <mainClass>com.formkiq.lambda.runtime.graalvm.LambdaRuntime</mainClass>
                             <buildArgs combine.children="append">
                                 <!-- BouncyCastleAlpn issue tracked in https://github.com/netty/netty/issues/11369 -->
                                 <buildArgs>
@@ -98,6 +115,7 @@
                                     --no-fallback
                                     --initialize-at-build-time=org.slf4j
                                     --initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils
+                                    --enable-url-protocols=http
                                 </buildArgs>
                             </buildArgs>
                         </configuration>
