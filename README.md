@@ -31,14 +31,15 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `dotnet6`
 - `go1x`
 - `java11`
+- `java11 + snapstart`
 - `java8`
 - `ruby27`
 
-in addition to three custom runtimes:
+in addition to 4 custom runtimes:
 - `go` on `provided`
 - `rust` on `provided.al2`
 - `dotnet7 aot` on `provided.al2`
-
+- `quarkus native` on `provided.al2`
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
 ### Step 2
