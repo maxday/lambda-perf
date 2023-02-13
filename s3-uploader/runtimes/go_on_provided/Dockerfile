@@ -6,7 +6,7 @@ WORKDIR /tmpBuild
 COPY main.go .
 COPY go.mod .
 COPY go.sum .
-RUN go build -ldflags="-w -s" -o /tmp/bootstrap
+RUN go build -ldflags="-w -s" -tags lambda.norpc -o /tmp/bootstrap
 RUN zip -j /tmp/code.zip /tmp/bootstrap
 
 FROM scratch

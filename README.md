@@ -19,7 +19,7 @@ That's why I decided to create this project: data is always up to date as the be
 ![architecture](https://github.com/maxday/lambda-perf/blob/main/docs/architecture.png?raw=true)
 
 ### Step 1
-A ultra simple hello-world function has been written in each AWS supported runtime:
+An ultra simple hello-world function has been written in each AWS supported runtime:
 - `nodejs12x` 
 - `nodejs14x` 
 - `nodejs16x` 
@@ -34,9 +34,10 @@ A ultra simple hello-world function has been written in each AWS supported runti
 - `java8`
 - `ruby27`
 
-in addition to two custom runtimes:
+in addition to three custom runtimes:
 - `go` on `provided`
 - `rust` on `provided.al2`
+- `dotnet7 aot` on `provided.al2`
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
@@ -48,11 +49,11 @@ Then the REPORT log line containing the init duration, max memory used and other
 
 ### Step 3
 
-After all these invocations, all information stored in Dynabo DB is aggregated and a new JSON file is created, then commited to this repo. ie: https://github.com/maxday/lambda-perf/blob/main/data/2022-09-05.json
+After all these invocations, all information stored in DynamoDB is aggregated and a new JSON file is created, then commited to this repo. ie: https://github.com/maxday/lambda-perf/blob/main/data/2022-09-05.json
 
 ### Step 4
 
-A static website, hosted on GitHub pages here: https://maxday.github.io/lambda-perf/ fetches this JSON file and displays the result in a (nice?) UI
+A static website, hosted on GitHub pages here: https://maxday.github.io/lambda-perf/ fetches this JSON file and displays the result in a (nice?) UI.
 
 ### Step 5
 
@@ -60,4 +61,4 @@ Hack/Fork/Send PR and create your own benchmarks!
 
 ## Disclaimer
 
-⚠️ this project is not associated, affiliated, endorsed, or sponsored by any companies nor have they been reviewed tested or certified by any company.
+⚠️ This project is not associated, affiliated, endorsed, or sponsored by any companies nor have they been reviewed tested or certified by any company.
