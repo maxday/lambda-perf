@@ -13,12 +13,14 @@ on:
         options:
           - eu-west-1
           - us-east-1
+        required: true
       lambdaPerfEnv:
         description: 'environment on which you want to deploy'
         type: choice
         options:
           - staging
           - production
+        required: true
 
 jobs:
   deploy:
