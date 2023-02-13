@@ -44,7 +44,7 @@ provider:
       Resource: "arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role"
     - Effect: Allow
       Action: "s3:GetObject"
-      Resource: "arn:aws:s3:::lambda-perf/*"
+      Resource: "arn:aws:s3:::lambda-perf-${env:AWS_REGION}/*"
     - Effect: Allow
       Action: "dynamodb:DeleteTable"
       Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
