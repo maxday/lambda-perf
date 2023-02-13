@@ -98,6 +98,11 @@ const functionsToDeploy = [
     handler: "bootstrap",
     path: "quarkus_native_on_provided_al2",
   },
+  {
+    runtime: "provided.al2",
+    handler: "com.xavierbouclet.OkHandler",
+    path: "graalvm_java17_on_provided_al2",
+  },
 ];
 
 const deleteFunction = async (client, functionName) => {

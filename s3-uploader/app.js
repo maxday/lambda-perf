@@ -24,6 +24,7 @@ const REGION = process.env.AWS_REGION;
     "quarkus_native_on_provided_al2",
     "dotnet7_aot_on_provided_al2",
     "java11_snapstart",
+    "graalvm_java17_on_provided_al2"
   ];
 
   const s3Client = new S3Client();
