@@ -88,66 +88,10 @@ const functionsToDeploy = [
     path: "rust_on_provided_al2",
   },
   {
-    runtime: "nodejs18.x",
-    handler: "index.handler",
-  },
-  {
-    runtime: "python3.7",
-    handler: "index.handler",
-  },
-  {
-    runtime: "python3.8",
-    handler: "index.handler",
-  },
-  {
-    runtime: "python3.9",
-    handler: "index.handler",
-  },
-  {
-    runtime: "dotnetcore3.1",
-    handler: "LambdaPerf::LambdaPerf.Function::Handler",
-  },
-  {
-    runtime: "dotnet6",
-    handler: "LambdaPerf::LambdaPerf.Function::Handler",
-  },
-  {
-    runtime: "provided.al2",
-    handler: "bootstrap",
-    path: "dotnet7_aot_on_provided_al2",
-  },
-  {
-    runtime: "go1.x",
-    handler: "main",
-  },
-  {
-    runtime: "java11",
-    handler: "io.github.maxday.Handler",
-  },
-  {
-    runtime: "java8",
-    handler: "io.github.maxday.Handler",
-  },
-  {
-    runtime: "ruby2.7",
-    handler: "index.handler",
-  },
-  {
-    runtime: "provided",
-    handler: "bootstrap",
-    path: "go_on_provided",
-  },
-  {
-    runtime: "provided.al2",
-    handler: "bootstrap",
-    path: "quarkus_native_on_provided_al2",
-  },
-  {
     runtime: "java11",
     handler: "io.github.maxday.Handler",
     path: "java11_snapstart",
     snapStart: { SnapStart: { ApplyOn: "PublishedVersions" } },
-    path: "rust_on_provided_al2",
   },
   {
     runtime: "provided.al2",

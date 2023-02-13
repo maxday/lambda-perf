@@ -26,12 +26,12 @@ exports.handler = async (input, context) => {
           billedRestoreDuration,
         } = match.groups;
         const item = {
-          requestId: requestId,
+          requestId,
           lambda: fromLambda,
           duration: durationTime,
           billedDuratation: billedDurationTime,
-          memorySize: memorySize,
-          maxMemoryUsed: maxMemoryUsed,
+          memorySize,
+          maxMemoryUsed,
           initDuration: initDuration ?? restoreDuration,
           restoreDuration: restoreDuration,
           billedRestoreDuration: billedRestoreDuration,
