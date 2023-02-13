@@ -27,7 +27,7 @@ const REGION = process.env.AWS_REGION;
     const s3Client = new S3Client();
 
     for(const runtime of runtimes) {
-        childProcess.execSync(`./runtimes/${runtime}/build.sh`);
+        childProcess.execSync(`./runtimes/${runtime}/build.sh ${runtime}`);
         const fileStream = fs.createReadStream(`./runtimes/${runtime}/code.zip`);
         const putObjectParams = {
             Bucket: `lambda-perf-${REGION}`,
