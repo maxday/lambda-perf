@@ -75,6 +75,11 @@ const functionsToDeploy = [
         handler:    'bootstrap',
         path:       'rust_on_provided_al2',
     },
+    {
+        runtime:    'provided.al2',
+        handler:    'bootstrap',
+        path:       'graalvm_java17_on_provided_al2',
+    },
 ];
 
 const deleteFunction = async (client, functionName) => {
