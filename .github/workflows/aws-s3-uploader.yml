@@ -1,7 +1,6 @@
 name: build and upload artifacts in S3
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       mfaCode:
@@ -32,7 +31,7 @@ jobs:
           export AWS_ACCESS_KEY_ID=$(echo "$creds_json" | jq .Credentials.AccessKeyId |tr -d '"')
           export AWS_SECRET_ACCESS_KEY=$(echo "$creds_json" | jq .Credentials.SecretAccessKey| tr -d '"')
           export AWS_SESSION_TOKEN=$(echo "$creds_json" | jq .Credentials.SessionToken|tr -d '"')
-          
+
           cd s3-uploader
           yarn install
           node app.js
