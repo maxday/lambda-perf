@@ -79,7 +79,7 @@ functions:
 
   functionDeployer:
     environment:
-      ROLE_ARN: arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role
+      ROLE_ARN: arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role-${env:AWS_REGION}
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
     package:
