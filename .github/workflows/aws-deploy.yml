@@ -13,6 +13,12 @@ on:
         options:
           - eu-west-1
           - us-east-1
+      lambdaPerfEnv:
+        description: 'environment on which you want to deploy'
+        type: choice
+        options:
+          - staging
+          - production
 
 jobs:
   deploy:
@@ -35,6 +41,7 @@ jobs:
           AWS_MFA_ARN: ${{ secrets.AWS_MFA_ARN }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           GH_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
+          LAMBDA_PERF_ENV: ${{ inputs.lambdaPerfEnv }}
         run: |
           creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }})
           export AWS_ACCESS_KEY_ID=$(echo "$creds_json" | jq .Credentials.AccessKeyId |tr -d '"')
