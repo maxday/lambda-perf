@@ -40,6 +40,7 @@ in addition to 4 custom runtimes:
 - `rust` on `provided.al2`
 - `dotnet7 aot` on `provided.al2`
 - `quarkus native` on `provided.al2`
+
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
 ### Step 2
