@@ -116,6 +116,7 @@
                                     --initialize-at-build-time=org.slf4j
                                     --initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils
                                     --enable-url-protocols=http
+                                    -H:ReflectionConfigurationFiles=${project.basedir}/src/main/resources/reflect.json
                                 </buildArgs>
                             </buildArgs>
                         </configuration>
