@@ -4,7 +4,7 @@ const { CloudWatchLogsClient, CreateLogGroupCommand, DeleteLogGroupCommand, PutS
 const REGION = process.env.AWS_REGION;
 const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
-const PROJECT = `lambda-perf-${REGION}`;
+const PROJECT = `lambda-perf`;
 
 const functionsToDeploy = [
     {
@@ -101,7 +101,7 @@ const createFunction = async (client, functionName, singleFunction) => {
         Handler: singleFunction.handler,
         Runtime: singleFunction.runtime,
         Code: {
-            S3Bucket: PROJECT,
+            S3Bucket: `${PROJECT}-${REGION}`,
             S3Key: `${sanitizedRuntime}/code.zip`
         },
         Role: ROLE_ARN
