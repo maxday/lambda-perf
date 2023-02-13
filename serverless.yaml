@@ -6,7 +6,7 @@ provider:
   region: ${env:AWS_REGION}
   iam:
     role:
-      name: lambda-perf-${sls:stage}-role
+      name: lambda-perf-${sls:stage}-role-${env:AWS_REGION}
   timeout: 900
   iamRoleStatements:
     - Effect: Allow
@@ -41,10 +41,10 @@ provider:
       Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
     - Effect: Allow
       Action: "iam:PassRole"
-      Resource: "arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role"
+      Resource: "arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role-${env:AWS_REGION}"
     - Effect: Allow
       Action: "s3:GetObject"
-      Resource: "arn:aws:s3:::lambda-perf/*"
+      Resource: "arn:aws:s3:::lambda-perf-${env:AWS_REGION}/*"
     - Effect: Allow
       Action: "dynamodb:DeleteTable"
       Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
@@ -79,7 +79,7 @@ functions:
 
   functionDeployer:
     environment:
-      ROLE_ARN: arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role
+      ROLE_ARN: arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role-${env:AWS_REGION}
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
     package:
@@ -123,7 +123,8 @@ functions:
 
   resultBuilder:
     environment:
-      AUTH_TOKEN: ${env:AUTH_TOKEN}
+      GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
+      LAMBDA_PERF_ENV: ${env:LAMBDA_PERF_ENV}
     package:
       individually: true
       patterns:
