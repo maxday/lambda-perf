@@ -18,8 +18,8 @@ RUN apt-get update
 RUN apt-get install -y zip
 RUN mkdir /package
 WORKDIR /package
-COPY --from=stripper /tmp/lambda-1.0-SNAPSHOT-runner /package/lambda-1.0-SNAPSHOT-runner
-RUN zip -j code.zip /package/lambda-1.0-SNAPSHOT-runner
+COPY --from=stripper /tmp/lambda-1.0-SNAPSHOT-runner /package/bootstrap
+RUN zip -j code.zip /package/bootstrap
 
 FROM scratch
 COPY --from=compresser /package/code.zip /
