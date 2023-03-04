@@ -24,46 +24,46 @@ updates:
 
   # runtimes
   - package-ecosystem: "nuget"
-    directory: "dotnet6/src"
+    directory: "s3-uploader/runtimes/dotnet6/src"
     schedule:
       interval: "daily"
   - package-ecosystem: "nuget"
-    directory: "dotnet7_aot_on_provided_al2/src"
+    directory: "s3-uploader/runtimes/dotnet7_aot_on_provided_al2/src"
     schedule:
       interval: "daily"
   - package-ecosystem: "nuget"
-    directory: "dotnetcore31/src"
+    directory: "s3-uploader/runtimes/dotnetcore31/src"
     schedule:
       interval: "daily"
   - package-ecosystem: "gomod"
-    directory: "go_on_provided"
+    directory: "s3-uploader/runtimes/go_on_provided"
     schedule:
       interval: "daily"
   - package-ecosystem: "gomod"
-    directory: "go1x"
+    directory: "s3-uploader/runtimes/go1x"
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
-    directory: "graalvm_java17_on_provided_al2"
+    directory: "s3-uploader/runtimes/graalvm_java17_on_provided_al2"
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "java8"
+    directory: "s3-uploader/runtimes/java8"
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "java11"
+    directory: "s3-uploader/runtimes/java11"
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "java11_snapstart"
+    directory: "s3-uploader/runtimes/java11_snapstart"
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
-    directory: "quarkus_native_on_provided_al2"
+    directory: "s3-uploader/runtimes/quarkus_native_on_provided_al2"
     schedule:
       interval: "daily"
   - package-ecosystem: "cargo"
-    directory: "rust_on_provided_al2"
+    directory: "s3-uploader/runtimes/rust_on_provided_al2"
     schedule:
       interval: "daily"
