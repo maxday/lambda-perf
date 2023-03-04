@@ -4,11 +4,24 @@ const dynamoDb = new DocumentClient();
 
 const TABLE = "report-log";
 
+const runtimes = require('../manifest.json');
+
 exports.handler = async (input, context) => {
+
   var payload = Buffer.from(input.awslogs.data, "base64");
   var result = zlib.gunzipSync(payload);
   result = JSON.parse(result.toString());
   const fromLambda = result.logGroup.replace("/aws/lambda/", "");
+  const originalPath = fromLambda.replace("lambda-perf-", "");
+  console.log('originl path = ', originalPath);
+  const filter = runtimes.filter(e => e.path === originalPath);
+  console.log(filter);
+  if (filter.length !== 1) {
+    // could not find the display name
+    context.fail();
+  }
+  const displayName = filter[0].displayName;
+  console.log('display name = ', displayName);
   for (const singleEvent of result.logEvents) {
     try {
       const reportLogRegex =
@@ -28,6 +41,7 @@ exports.handler = async (input, context) => {
         const item = {
           requestId,
           lambda: fromLambda,
+          displayName,
           duration: durationTime,
           billedDuratation: billedDurationTime,
           memorySize,

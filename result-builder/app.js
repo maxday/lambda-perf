@@ -104,8 +104,10 @@ const buildJsonFromData = (data) => {
     const averageColdStartDuration = formatMaxThreeDigits(
       computeMean(initDurations)
     );
+    const displayName = filteredData[0].displayName.S;
     runtimeData.push({
       runtime,
+      displayName,
       initDurations,
       memorySize,
       averageMemoryUsed,
