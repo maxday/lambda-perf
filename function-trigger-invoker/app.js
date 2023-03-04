@@ -9,27 +9,6 @@ const REGION = process.env.AWS_REGION;
 const INVOKER = process.env.INVOKER;
 const TABLE = "report-log";
 const DELAY = 5000;
-const RUNTIMES = [
-  "dotnet6",
-  "dotnetcore31",
-  "go_on_provided",
-  "go1x",
-  "java8",
-  "java11",
-  "nodejs12x",
-  "nodejs14x",
-  "nodejs16x",
-  "nodejs18x",
-  "python37",
-  "python38",
-  "python39",
-  "ruby27",
-  "rust_on_provided_al2",
-  "dotnet7_aot_on_provided_al2",
-  "quarkus_native_on_provided_al2",
-  "java11_snapstart",
-  "graalvm_java17_on_provided_al2",
-];
 
 const deleteTable = async (client, table) => {
   const params = {
@@ -96,6 +75,7 @@ const invokeFunction = async (client, runtime) => {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 exports.handler = async () => {
+  const runtimes = require('../manifest.json');
   try {
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     await deleteTable(dynamoDbClient, TABLE);
@@ -104,7 +84,7 @@ exports.handler = async () => {
     await delay(DELAY);
     const lambdaClient = new LambdaClient({ region: REGION });
     const allPromises = [];
-    for (runtime of RUNTIMES) {
+    for (runtime of runtimes) {
       allPromises.push(invokeFunction(lambdaClient, runtime));
     }
     await Promise.all(allPromises);
