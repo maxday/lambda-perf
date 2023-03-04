@@ -9,7 +9,7 @@ targetCompatibility = 1.8
 
 dependencies {
     implementation (
-        'com.amazonaws:aws-lambda-java-core:1.2.1',
+        'com.amazonaws:aws-lambda-java-core:1.2.2',
     )
 }
 
