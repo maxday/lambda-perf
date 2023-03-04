@@ -56,7 +56,7 @@ const createTable = async (client, table) => {
 };
 
 const invokeFunction = async (client, runtime) => {
-  console.log(runtinme);
+  console.log(runtime);
   console.log(JSON.stringify({ ...runtime }));
   const params = {
     FunctionName: INVOKER,
