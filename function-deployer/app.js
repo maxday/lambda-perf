@@ -19,92 +19,6 @@ const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = `lambda-perf`;
 
-const functionsToDeploy = [
-  {
-    runtime: "nodejs12.x",
-    handler: "index.handler",
-  },
-  {
-    runtime: "nodejs14.x",
-    handler: "index.handler",
-  },
-  {
-    runtime: "nodejs16.x",
-    handler: "index.handler",
-  },
-  {
-    runtime: "nodejs18.x",
-    handler: "index.handler",
-  },
-  {
-    runtime: "python3.7",
-    handler: "index.handler",
-  },
-  {
-    runtime: "python3.8",
-    handler: "index.handler",
-  },
-  {
-    runtime: "python3.9",
-    handler: "index.handler",
-  },
-  {
-    runtime: "dotnetcore3.1",
-    handler: "LambdaPerf::LambdaPerf.Function::Handler",
-  },
-  {
-    runtime: "dotnet6",
-    handler: "LambdaPerf::LambdaPerf.Function::Handler",
-  },
-  {
-    runtime: "provided.al2",
-    handler: "bootstrap",
-    path: "dotnet7_aot_on_provided_al2",
-  },
-  {
-    runtime: "go1.x",
-    handler: "main",
-  },
-  {
-    runtime: "java11",
-    handler: "io.github.maxday.Handler",
-  },
-  {
-    runtime: "java8",
-    handler: "io.github.maxday.Handler",
-  },
-  {
-    runtime: "ruby2.7",
-    handler: "index.handler",
-  },
-  {
-    runtime: "provided",
-    handler: "bootstrap",
-    path: "go_on_provided",
-  },
-  {
-    runtime: "provided.al2",
-    handler: "bootstrap",
-    path: "rust_on_provided_al2",
-  },
-  {
-    runtime: "java11",
-    handler: "io.github.maxday.Handler",
-    path: "java11_snapstart",
-    snapStart: { SnapStart: { ApplyOn: "PublishedVersions" } },
-  },
-  {
-    runtime: "provided.al2",
-    handler: "bootstrap",
-    path: "quarkus_native_on_provided_al2",
-  },
-  {
-    runtime: "provided.al2",
-    handler: "com.xavierbouclet.OkHandler",
-    path: "graalvm_java17_on_provided_al2",
-  },
-];
-
 const deleteFunction = async (client, functionName) => {
   const params = {
     FunctionName: functionName,
@@ -285,13 +199,14 @@ const addPermission = async (client, functionName) => {
 };
 
 exports.handler = async () => {
+  const runtimes = require('../manifest.json');
   try {
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
     });
     await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
-    for (const singleFunction of functionsToDeploy) {
+    for (const singleFunction of runtimes) {
       const functionSufix = singleFunction.path
         ? singleFunction.path
         : singleFunction.runtime.replace(".", "");

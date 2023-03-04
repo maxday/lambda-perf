@@ -43,22 +43,22 @@ const updateFunction = async (client, functionName) => {
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function isSnapStart(runtime) {
-  return runtime.toLowerCase().includes("snapstart");
+function isSnapStart(path) {
+  return path.toLowerCase().includes("snapstart");
 }
 
 exports.handler = async (event, context) => {
   try {
-    const runtime = context.clientContext.runtime;
-    const functionName = `${PREFIX}${runtime}`;
+    const path = context.clientContext.path;
+    const functionName = `${PREFIX}${path}`;
     const lambdaClient = new LambdaClient({ region: REGION });
 
     let versions = [];
-    if (isSnapStart(runtime)) {
+    if (isSnapStart(path)) {
       versions = await getFunctionVersions(lambdaClient, functionName);
     }
     for (let i = 0; i < NB_INVOKE; ++i) {
-      if (isSnapStart(runtime)) {
+      if (isSnapStart(path)) {
         let functionNameWithVersion = `${functionName}:${versions[i]}`;
         console.log(`invoking function ${functionNameWithVersion}`);
         await invokeFunction(lambdaClient, functionNameWithVersion);

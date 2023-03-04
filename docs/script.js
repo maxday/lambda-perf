@@ -47,13 +47,7 @@ const drawLang = async (idx, data) => {
     averageDuration.innerHTML = `${runtime.averageDuration}ms`
 
 	const runtimeName = newElement.getElementsByClassName('runtimeName')[0];
-	const sanitizedRuntimeName = runtime.runtime
-		.replace('lambda-perf-','')
-		.replaceAll('_', ' ')
-		.replaceAll('native', ' ')
-		.replaceAll('on provided al2', '(prov.al2)')
-		.replaceAll('provided', '(provided)');
-	runtimeName.innerHTML = sanitizedRuntimeName;
+	runtimeName.innerHTML = `${runtime.displayName}`;;
 
 	for(let i = 0; i < data.initDurations.length; ++i) {
         await sleep(data.initDurations[i]);
