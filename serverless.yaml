@@ -75,7 +75,7 @@ package:
     - "!app"
     - "!s3-uploader"
     - "!docs"
-    - "!readme.MD"
+    - "!README.md"
 
 functions:
   reportLogProcessor:
