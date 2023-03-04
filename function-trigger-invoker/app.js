@@ -56,9 +56,11 @@ const createTable = async (client, table) => {
 };
 
 const invokeFunction = async (client, runtime) => {
+  console.log(runtinme);
+  console.log(JSON.stringify({ ...runtime }));
   const params = {
     FunctionName: INVOKER,
-    ClientContext: Buffer.from(JSON.stringify({ runtime: runtime })).toString(
+    ClientContext: Buffer.from(JSON.stringify({ ...runtime })).toString(
       "base64"
     ),
   };
