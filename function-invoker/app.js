@@ -11,13 +11,11 @@ const NB_INVOKE = 10;
 const DELAY = 10000;
 
 const invokeFunction = async (client, functionName) => {
-  console.log(`invoke function: ${functionName}`);
   const params = {
     FunctionName: functionName,
   };
   try {
     const command = new InvokeCommand(params);
-    console.log(`invoking function with params = ${params}`);
     await client.send(command);
     console.log(`function ${functionName} invoked`);
   } catch (e) {
@@ -51,11 +49,8 @@ function isSnapStart(path) {
 
 exports.handler = async (event, context) => {
   try {
-    console.log(`incoming context: ${JSON.stringify(context)}`);
     const path = context.clientContext.path;
-    console.log(`path = ${path}`);
     const functionName = `${PREFIX}${path}`;
-    console.log(`functionName = ${functionName}`);
     const lambdaClient = new LambdaClient({ region: REGION });
 
     let versions = [];
