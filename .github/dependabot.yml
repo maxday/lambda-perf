@@ -1,0 +1,69 @@
+version: 2
+updates:
+  # app
+  - package-ecosystem: "npm"
+    directory: "function-deployer"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "function-invoker"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "function-trigger-invoker"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "result-builder"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "s3-uploader"
+    schedule:
+      interval: "daily"
+
+  # runtimes
+  - package-ecosystem: "nuget"
+    directory: "dotnet6/src"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "dotnet7_aot_on_provided_al2/src"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "dotnetcore31/src"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gomod"
+    directory: "go_on_provided"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gomod"
+    directory: "go1x"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "maven"
+    directory: "graalvm_java17_on_provided_al2"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "java8"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "java11"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "java11_snapstart"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "maven"
+    directory: "quarkus_native_on_provided_al2"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "rust_on_provided_al2"
+    schedule:
+      interval: "daily"
