@@ -1,6 +1,6 @@
 const zlib = require("zlib");
-const DocumentClient = require("aws-sdk/clients/dynamodb").DocumentClient;
-const dynamoDb = new DocumentClient();
+const DynamoDB = require("aws-sdk/clients/dynamodb");
+const dynamoDb = new DynamoDB.DocumentClient();
 
 const TABLE = "report-log";
 
