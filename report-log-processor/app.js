@@ -1,6 +1,11 @@
 const zlib = require("zlib");
-const DynamoDB = require("aws-sdk/clients/dynamodb");
-const dynamoDb = new DynamoDB.DocumentClient();
+const {
+        DynamoDBDocument
+      } = require("@aws-sdk/lib-dynamodb"),
+      {
+        DynamoDB
+      } = require("@aws-sdk/client-dynamodb");
+const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 
 const TABLE = "report-log";
 
@@ -52,8 +57,7 @@ exports.handler = async (input, context) => {
           .put({
             TableName: TABLE,
             Item: item,
-          })
-          .promise();
+          });
         console.log("item inserted");
       }
     } catch (e) {
