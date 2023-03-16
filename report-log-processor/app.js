@@ -1,10 +1,6 @@
 const zlib = require("zlib");
-const {
-        DynamoDBDocument
-      } = require("@aws-sdk/lib-dynamodb"),
-      {
-        DynamoDB
-      } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDB } = require("@aws-sdk/client-dynamodb");
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 
 const TABLE = "report-log";
