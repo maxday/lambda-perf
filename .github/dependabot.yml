@@ -10,6 +10,10 @@ updates:
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
+    directory: "report-log-processor"
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "npm"
     directory: "function-trigger-invoker"
     schedule:
       interval: "monthly"
@@ -26,44 +30,44 @@ updates:
   - package-ecosystem: "nuget"
     directory: "s3-uploader/runtimes/dotnet6/src"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "nuget"
     directory: "s3-uploader/runtimes/dotnet7_aot_on_provided_al2/src"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "nuget"
     directory: "s3-uploader/runtimes/dotnetcore31/src"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "gomod"
     directory: "s3-uploader/runtimes/go_on_provided"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "gomod"
     directory: "s3-uploader/runtimes/go1x"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "maven"
     directory: "s3-uploader/runtimes/graalvm_java17_on_provided_al2"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "gradle"
     directory: "s3-uploader/runtimes/java8"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "gradle"
     directory: "s3-uploader/runtimes/java11"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "gradle"
     directory: "s3-uploader/runtimes/java11_snapstart"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "maven"
     directory: "s3-uploader/runtimes/quarkus_native_on_provided_al2"
     schedule:
-      interval: "monthly"
+      interval: "daily"
   - package-ecosystem: "cargo"
     directory: "s3-uploader/runtimes/rust_on_provided_al2"
     schedule:
-      interval: "monthly"
+      interval: "daily"
