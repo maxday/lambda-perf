@@ -53,7 +53,7 @@ async function updateFunction(client, functionName) {
   }
 }
 
-const createFunction = async (client, functionName, singleFunction) => {
+const createFunction = async (client, functionName, singleFunction, memorySize, architecture) => {
   const sanitizedRuntime = singleFunction.path
     ? singleFunction.path
     : singleFunction.runtime.replace(".", "");
@@ -67,6 +67,8 @@ const createFunction = async (client, functionName, singleFunction) => {
     },
     Role: ROLE_ARN,
     ...(singleFunction.snapStart && singleFunction.snapStart),
+    MemorySize: memorySize,
+    Architectures: [architecture],
   };
   try {
     const command = new CreateFunctionCommand(params);
@@ -198,25 +200,49 @@ const addPermission = async (client, functionName) => {
   }
 };
 
-exports.handler = async () => {
+const deploy = async (lambdaClient, cloudWatchLogsClient, memorySize, architecture) => {
   const runtimes = require('../manifest.json');
+  for (const singleFunction of runtimes) {
+    const functionSufix = singleFunction.path
+      ? singleFunction.path
+      : singleFunction.runtime.replace(".", "");
+    const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
+    try {
+      await deleteFunction(lambdaClient, functionName);
+      await createFunction(lambdaClient, functionName, singleFunction, memorySize, architecture);
+      await deleteLogGroup(cloudWatchLogsClient, functionName);
+      await createLogGroup(cloudWatchLogsClient, functionName);
+      await createSubscriptionFilter(cloudWatchLogsClient, functionName);
+    } catch (e) {
+      if (e.name === "InvalidParameterValueException") {
+        // that's fine, we just need to skip this runtime
+        console.log(`skipping runtime = ${singleFunction.path}, memorysize = ${memorySize}, archi = ${architecture}`)
+      } else {
+        throw e;
+      }
+    }
+  }
+  
+}
+
+exports.handler = async () => {
   try {
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
     });
     await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
-    for (const singleFunction of runtimes) {
-      const functionSufix = singleFunction.path
-        ? singleFunction.path
-        : singleFunction.runtime.replace(".", "");
-      const functionName = `${PROJECT}-${functionSufix}`;
-      await deleteFunction(lambdaClient, functionName);
-      await createFunction(lambdaClient, functionName, singleFunction);
-      await deleteLogGroup(cloudWatchLogsClient, functionName);
-      await createLogGroup(cloudWatchLogsClient, functionName);
-      await createSubscriptionFilter(cloudWatchLogsClient, functionName);
-    }
+
+    await deploy(lambdaClient, cloudWatchLogsClient, 128, "x86_64");
+    await deploy(lambdaClient, cloudWatchLogsClient, 256, "x86_64");
+    await deploy(lambdaClient, cloudWatchLogsClient, 512, "x86_64");
+    await deploy(lambdaClient, cloudWatchLogsClient, 1024, "x86_64");
+
+    await deploy(lambdaClient, cloudWatchLogsClient, 128, "arm64");
+    await deploy(lambdaClient, cloudWatchLogsClient, 256, "arm64");
+    await deploy(lambdaClient, cloudWatchLogsClient, 512, "arm64");
+    await deploy(lambdaClient, cloudWatchLogsClient, 1024, "arm64");
+
     return {
       statusCode: 200,
       body: JSON.stringify("success"),
