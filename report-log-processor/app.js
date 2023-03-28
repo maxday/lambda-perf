@@ -5,22 +5,21 @@ const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 
 const TABLE = "report-log";
 
-const runtimes = require('../manifest.json');
+const runtimes = require("../manifest.json");
 
 exports.handler = async (input, context) => {
-
   let payload = Buffer.from(input.awslogs.data, "base64");
   let result = zlib.gunzipSync(payload);
   result = JSON.parse(result.toString());
   const fromLambda = result.logGroup.replace("/aws/lambda/", "");
   const originalPath = fromLambda.replace("lambda-perf-", "");
-  const filter = runtimes.filter(e => e.path === originalPath);
+  const filter = runtimes.filter((e) => e.path === originalPath);
   if (filter.length !== 1) {
     // could not find the display name
     context.fail();
   }
   const displayName = filter[0].displayName;
-  console.log('display name = ', displayName);
+  console.log("display name = ", displayName);
   for (const singleEvent of result.logEvents) {
     try {
       const reportLogRegex =
@@ -46,15 +45,13 @@ exports.handler = async (input, context) => {
           memorySize,
           maxMemoryUsed,
           initDuration: initDuration ?? restoreDuration,
-          restoreDuration: restoreDuration,
-          billedRestoreDuration: billedRestoreDuration,
+          restoreDuration: restoreDuration ?? 0,
+          billedRestoreDuration: billedRestoreDuration ?? 0,
         };
-        await dynamoDb
-          .put({
-            TableName: TABLE,
-            Item: item,
-          });
-        console.log("item inserted");
+        await dynamoDb.put({
+          TableName: TABLE,
+          Item: item,
+        });
       }
     } catch (e) {
       console.error(e);
