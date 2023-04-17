@@ -42,6 +42,12 @@
       "path": "python39"
     },
     {
+      "displayName": "python3.10",
+      "runtime": "python3.10",
+      "handler": "index.handler",
+      "path": "python10"
+    },
+    {
       "displayName": "dotnetcore3.1",
       "runtime": "dotnetcore3.1",
       "handler": "LambdaPerf::LambdaPerf.Function::Handler",
