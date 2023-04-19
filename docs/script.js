@@ -1,5 +1,5 @@
 const load = async () => {
-	const request = await fetch('https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.5989182325709588')
+	const request = await fetch('https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.6364339785884603')
 	const json = await request.json();
 	return json
 }
