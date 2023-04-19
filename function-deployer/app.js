@@ -53,7 +53,13 @@ async function updateFunction(client, functionName) {
   }
 }
 
-const createFunction = async (client, functionName, singleFunction, memorySize, architecture) => {
+const createFunction = async (
+  client,
+  functionName,
+  singleFunction,
+  memorySize,
+  architecture
+) => {
   const sanitizedRuntime = singleFunction.path
     ? singleFunction.path
     : singleFunction.runtime.replace(".", "");
@@ -200,8 +206,13 @@ const addPermission = async (client, functionName) => {
   }
 };
 
-const deploy = async (lambdaClient, cloudWatchLogsClient, memorySize, architecture) => {
-  const runtimes = require('../manifest.json');
+const deploy = async (
+  lambdaClient,
+  cloudWatchLogsClient,
+  memorySize,
+  architecture
+) => {
+  const runtimes = require("../manifest.json");
   for (const singleFunction of runtimes) {
     const functionSufix = singleFunction.path
       ? singleFunction.path
@@ -209,23 +220,31 @@ const deploy = async (lambdaClient, cloudWatchLogsClient, memorySize, architectu
     const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
     try {
       await deleteFunction(lambdaClient, functionName);
-      await createFunction(lambdaClient, functionName, singleFunction, memorySize, architecture);
+      await createFunction(
+        lambdaClient,
+        functionName,
+        singleFunction,
+        memorySize,
+        architecture
+      );
       await deleteLogGroup(cloudWatchLogsClient, functionName);
       await createLogGroup(cloudWatchLogsClient, functionName);
       await createSubscriptionFilter(cloudWatchLogsClient, functionName);
     } catch (e) {
       if (e.name === "InvalidParameterValueException") {
         // that's fine, we just need to skip this runtime
-        console.log(`skipping runtime = ${singleFunction.path}, memorysize = ${memorySize}, archi = ${architecture}`)
+        console.log(
+          `skipping runtime = ${singleFunction.path}, memorysize = ${memorySize}, archi = ${architecture}`
+        );
       } else {
         throw e;
       }
     }
   }
-  
-}
+};
 
 exports.handler = async () => {
+  const runtimes = require("../manifest.json");
   try {
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
@@ -237,11 +256,6 @@ exports.handler = async () => {
     await deploy(lambdaClient, cloudWatchLogsClient, 256, "x86_64");
     await deploy(lambdaClient, cloudWatchLogsClient, 512, "x86_64");
     await deploy(lambdaClient, cloudWatchLogsClient, 1024, "x86_64");
-
-    await deploy(lambdaClient, cloudWatchLogsClient, 128, "arm64");
-    await deploy(lambdaClient, cloudWatchLogsClient, 256, "arm64");
-    await deploy(lambdaClient, cloudWatchLogsClient, 512, "arm64");
-    await deploy(lambdaClient, cloudWatchLogsClient, 1024, "arm64");
 
     return {
       statusCode: 200,

@@ -4,23 +4,27 @@ updates:
   - package-ecosystem: "npm"
     directory: "function-deployer"
     schedule:
-      interval: "daily"
+      interval: "monthly"
   - package-ecosystem: "npm"
     directory: "function-invoker"
     schedule:
-      interval: "daily"
+      interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "report-log-processor"
+    schedule:
+      interval: "monthly"
   - package-ecosystem: "npm"
     directory: "function-trigger-invoker"
     schedule:
-      interval: "daily"
+      interval: "monthly"
   - package-ecosystem: "npm"
     directory: "result-builder"
     schedule:
-      interval: "daily"
+      interval: "monthly"
   - package-ecosystem: "npm"
     directory: "s3-uploader"
     schedule:
-      interval: "daily"
+      interval: "monthly"
 
   # runtimes
   - package-ecosystem: "nuget"

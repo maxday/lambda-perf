@@ -33,6 +33,7 @@ jobs:
           cd ../function-invoker && yarn install
           cd ../function-trigger-invoker && yarn install
           cd ../result-builder && yarn install
+          cd ../report-log-processor && yarn install
       - name: install Serverless Framework
         run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
       - name: deploy
