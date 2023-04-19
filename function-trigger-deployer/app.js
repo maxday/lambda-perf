@@ -2,7 +2,7 @@ const { InvokeCommand } = require("@aws-sdk/client-lambda");
 
 const DEPLOYER = process.env.DEPLOYER;
 
-const invokeFunction = async (client, runtime, memorySize, architecture) => {
+const invokeFunction = async (client, memorySize, architecture) => {
   const params = {
     FunctionName: DEPLOYER,
     ClientContext: Buffer.from(
@@ -26,7 +26,9 @@ exports.handler = async () => {
     const allPromises = [];
     for (memorySize of memorySizes) {
       for (architecture of architectures) {
-        allPromises.push(invokeFunction(lambdaClient, runtime));
+        allPromises.push(
+          invokeFunction(lambdaClient, memorySize, architecture)
+        );
       }
     }
     await Promise.all(allPromises);
