@@ -5,8 +5,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const REGION = process.env.AWS_REGION;
 
 (async () => {
-
-  const runtimes = require('../manifest.json');
+  const runtimes = require("../manifest.json");
 
   const s3Client = new S3Client();
 
