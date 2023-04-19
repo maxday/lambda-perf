@@ -75,7 +75,7 @@ const invokeFunction = async (client, runtime) => {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 exports.handler = async () => {
-  const runtimes = require('../manifest.json');
+  const runtimes = require("../manifest.json");
   try {
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     await deleteTable(dynamoDbClient, TABLE);

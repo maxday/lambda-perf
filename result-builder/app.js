@@ -51,10 +51,10 @@ const updateFileToPreventCaching = async (authToken) => {
     });
     let base64Content = resultGet.data.content;
     const sha = resultGet.data.sha;
-    const textContent = Buffer.from(base64Content, 'base64').toString('utf8'); 
+    const textContent = Buffer.from(base64Content, "base64").toString("utf8");
     const replace = `data/last.json?${Math.random()}'`;
     const newScriptJs = textContent.replace(/data\/last\.json.*'/, replace);
-    base64Content = Buffer.from(newScriptJs, 'utf8').toString('base64');
+    base64Content = Buffer.from(newScriptJs, "utf8").toString("base64");
     await octokit.rest.repos.createOrUpdateFileContents({
       owner: OWNER,
       repo: REPO,
@@ -63,11 +63,10 @@ const updateFileToPreventCaching = async (authToken) => {
       content: base64Content,
       sha,
     });
-
   } catch (e) {
     console.log(e);
   }
-}
+};
 
 const fetchData = async (client, table) => {
   const params = {

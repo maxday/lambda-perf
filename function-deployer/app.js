@@ -199,7 +199,7 @@ const addPermission = async (client, functionName) => {
 };
 
 exports.handler = async () => {
-  const runtimes = require('../manifest.json');
+  const runtimes = require("../manifest.json");
   try {
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
