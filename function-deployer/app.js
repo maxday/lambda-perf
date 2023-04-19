@@ -244,19 +244,15 @@ const deploy = async (
 };
 
 exports.handler = async () => {
-  const runtimes = require("../manifest.json");
   try {
+    console.log("in handler, clientContext = ", clientContext);
+    const { memorySize, architecture } = context.clientContext;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
     });
     await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
-
-    await deploy(lambdaClient, cloudWatchLogsClient, 128, "x86_64");
-    await deploy(lambdaClient, cloudWatchLogsClient, 256, "x86_64");
-    await deploy(lambdaClient, cloudWatchLogsClient, 512, "x86_64");
-    await deploy(lambdaClient, cloudWatchLogsClient, 1024, "x86_64");
-
+    await deploy(lambdaClient, cloudWatchLogsClient, memorySize, architecture);
     return {
       statusCode: 200,
       body: JSON.stringify("success"),

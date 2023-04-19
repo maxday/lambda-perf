@@ -1,5 +1,5 @@
 {
-  "name": "result-builder",
+  "name": "function-trigger-deployer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.145.0",
-    "@octokit/rest": "^19.0.3"
+    "@aws-sdk/client-lambda": "^3.303.0"
   }
 }
