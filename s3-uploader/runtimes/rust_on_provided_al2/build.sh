@@ -1,6 +1,9 @@
 DIR_NAME="./runtimes/$1"
-rm ${DIR_NAME}/code.zip 2> /dev/null
+ARCH=$2
+ARCH="${ARCH/_/-}"
 
-docker build ${DIR_NAME} -t maxday/rust
-dockerId=$(docker create maxday/rust)
-docker cp $dockerId:/code.zip ${DIR_NAME}/code.zip
+rm ${DIR_NAME}/code_${ARCH}.zip 2> /dev/null
+cd ${DIR_NAME}
+cargo lambda build --release --${ARCH}
+
+zip -j code_${ARCH}.zip target/lambda/lambda-perf/bootstrap
