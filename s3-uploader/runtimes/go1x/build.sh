@@ -1,3 +1,5 @@
+#!/bin/bash
+
 DIR_NAME="./runtimes/$1"
 ARCH=$2
 ARCH="${ARCH/x86_/amd}"
