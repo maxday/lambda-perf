@@ -11,7 +11,7 @@ const ARCHITECTURE = process.env.ARCHITECTURE;
   const s3Client = new S3Client();
 
   for (const runtime of manifest.runtimes) {
-    for (const architecture of manifest.architectures) {
+    for (const architecture of runtime.architectures) {
       if (architecture === ARCHITECTURE) {
         const path = runtime.path;
         console.log(
