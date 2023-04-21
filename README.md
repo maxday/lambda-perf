@@ -20,26 +20,28 @@ That's why I decided to create this project: data is always up to date as the be
 
 ### Step 1
 An ultra simple hello-world function has been written in each AWS supported runtime:
-- `nodejs12x` 
-- `nodejs14x` 
-- `nodejs16x` 
-- `nodejs18x`
-- `python37`
-- `python38`
-- `python39`
-- `dotnetcore31`
+- `nodejs12.x`
+- `nodejs14.x`
+- `nodejs16.x`
+- `nodejs18.x`
+- `python3.7`
+- `python3.8`
+- `python3.9`
+- `python3.10`
+- `dotnetcore3.1`
 - `dotnet6`
-- `go1x`
+- `go1.x`
 - `java11`
 - `java11 + snapstart`
 - `java8`
-- `ruby27`
+- `ruby2.7`
 
-in addition to 4 custom runtimes:
+in addition to 5 custom runtimes:
 - `go` on `provided`
 - `rust` on `provided.al2`
 - `dotnet7 aot` on `provided.al2`
 - `quarkus native` on `provided.al2`
+- `graalvm java17` on `provided.al2`
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
