@@ -5,6 +5,7 @@ RUN yum -y update
 RUN yum -y install openssl openssl-devel
 RUN yum -y install gcc
 RUN yum -y install zip
+RUN yum -y install python3-pip
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN source $HOME/.cargo/env
 COPY Cargo.toml .
@@ -13,9 +14,7 @@ RUN /root/.cargo/bin/cargo build --release
 RUN rm -rf ./src
 COPY src ./src
 RUN touch -a -m ./src/lib.rs
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-RUN brew tap cargo-lambda/cargo-lambda
-RUN brew install cargo-lambda
+RUN pip3 install cargo-lambda
 RUN /root/.cargo/bin/cargo lambda build --release --${ARCH}
 RUN zip -j /tmp/code.zip target/lambda/lambda-perf/bootstrap
 
