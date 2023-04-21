@@ -1,5 +1,6 @@
 DIR_NAME="./runtimes/$1"
 ARCH=$2
+ARCH="${ARCH/x86_/amd}"
 
 rm ${DIR_NAME}/code_${ARCH}.zip 2> /dev/null
 
