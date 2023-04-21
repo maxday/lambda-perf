@@ -10,4 +10,4 @@ docker build ${DIR_NAME} --build-arg ARCH=${ARCH} -t maxday/rust
 dockerId=$(docker create maxday/rust)
 
 ARCH=$2
-docker cp $dockerId:/code.zip ${DIR_NAME}/code.zip
+docker cp $dockerId:/code.zip ${DIR_NAME}/code_${ARCH}.zip
