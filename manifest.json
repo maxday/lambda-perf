@@ -1,123 +1,150 @@
-[
-    {
+{
+  "memorySizes": [128],
+  "architectures": ["x86_64", "arm64"],
+  "runtimes": [{
       "displayName": "nodejs12.x",
       "runtime": "nodejs12.x",
       "handler": "index.handler",
-      "path": "nodejs12x"
+      "path": "nodejs12x",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "nodejs14.x",
       "runtime": "nodejs14.x",
       "handler": "index.handler",
-      "path": "nodejs14x"
+      "path": "nodejs14x",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "nodejs16.x",
       "runtime": "nodejs16.x",
       "handler": "index.handler",
-      "path": "nodejs16x"
+      "path": "nodejs16x",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "nodejs18.x",
       "runtime": "nodejs18.x",
       "handler": "index.handler",
-      "path": "nodejs18x"
+      "path": "nodejs18x",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "python3.7",
       "runtime": "python3.7",
       "handler": "index.handler",
-      "path": "python37"
+      "path": "python37",
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "python3.8",
       "runtime": "python3.8",
       "handler": "index.handler",
-      "path": "python38"
+      "path": "python38",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "python3.9",
       "runtime": "python3.9",
       "handler": "index.handler",
-      "path": "python39"
+      "path": "python39",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "python3.10",
       "runtime": "python3.10",
       "handler": "index.handler",
-      "path": "python310"
+      "path": "python310",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "dotnetcore3.1",
       "runtime": "dotnetcore3.1",
       "handler": "LambdaPerf::LambdaPerf.Function::Handler",
-      "path": "dotnetcore31"
+      "path": "dotnetcore31",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "dotnet6",
       "runtime": "dotnet6",
       "handler": "LambdaPerf::LambdaPerf.Function::Handler",
-      "path": "dotnet6"
+      "path": "dotnet6",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "dotnet7 aot (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
-      "path": "dotnet7_aot_on_provided_al2"
+      "path": "dotnet7_aot_on_provided_al2",
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "go1.x",
       "runtime": "go1.x",
       "handler": "main",
-      "path": "go1x"
+      "path": "go1x",
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "java11",
       "runtime": "java11",
       "handler": "io.github.maxday.Handler",
-      "path": "java11"
+      "path": "java11",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "java8",
       "runtime": "java8",
       "handler": "io.github.maxday.Handler",
-      "path": "java8"
+      "path": "java8",
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "ruby2.7",
       "runtime": "ruby2.7",
       "handler": "index.handler",
-      "path": "ruby27"
+      "path": "ruby27",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "go (provided)",
       "runtime": "provided",
       "handler": "bootstrap",
-      "path": "go_on_provided"
+      "path": "go_on_provided",
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "rust (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
-      "path": "rust_on_provided_al2"
+      "path": "rust_on_provided_al2",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "java11 snapstart",
       "runtime": "java11",
       "handler": "io.github.maxday.Handler",
       "path": "java11_snapstart",
-      "snapStart": { "SnapStart": { "ApplyOn": "PublishedVersions" } }
+      "snapStart": {
+        "SnapStart": {
+          "ApplyOn": "PublishedVersions"
+        }
+      },
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "quarkus (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
-      "path": "quarkus_native_on_provided_al2"
+      "path": "quarkus_native_on_provided_al2",
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "graalvm java17 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "com.xavierbouclet.OkHandler",
-      "path": "graalvm_java17_on_provided_al2"
+      "path": "graalvm_java17_on_provided_al2",
+      "architectures": ["x86_64", "arm64"]
     }
   ]
+}
