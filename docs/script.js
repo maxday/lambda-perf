@@ -1,42 +1,22 @@
-const dataManager = {
-  fetchData: null,
-};
-
-const load = async (dataManager) => {
+const load = async () => {
   const request = await fetch(
     "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.6364339785884603"
   );
   const json = await request.json();
-  dataManager.fetchData = json;
+  return json;
 };
-
-const animate = async (dataManager) => {
+const animate = async () => {
   try {
-    const memorySize = getCurrentMemorySize();
-    const architecture = getCurrentArchitecture();
-    if (!dataManager.fetchData) {
-      await load(dataManager);
-    }
-    const data = dataManager.fetchData;
-    console.log(data);
+    const data = await load();
     document.getElementById("lastUpdate").innerHTML = data.metadata.generatedAt;
     const promiseArray = [];
     let i = 0;
     data.runtimeData.sort(
       (a, b) => a.averageColdStartDuration - b.averageColdStartDuration
     );
-    for (runtime of data.runtimeData.filter(
-      (r) => r.memorySize == memorySize && r.architecture === architecture
-    )) {
+    for (runtime of data.runtimeData) {
       promiseArray.push(drawLang(i, runtime));
       ++i;
-    }
-    // todo remove after backward compatibility
-    if (promiseArray.length === 0) {
-      for (runtime of data.runtimeData) {
-        promiseArray.push(drawLang(i, runtime));
-        ++i;
-      }
     }
     await Promise.all(promiseArray);
   } catch (e) {
@@ -44,52 +24,16 @@ const animate = async (dataManager) => {
   }
 };
 
-const updateFilter = async (e, className, dataManager) => {
-  const newValue = e.target.id;
-  const btns = document.querySelectorAll(className);
-  btns.forEach((el) => el.classList.remove("bg-success"));
-  document.getElementById(newValue).classList.add("bg-success");
-  await replayAnimation(dataManager);
-};
-
-const getCurrentMemorySize = () => {
-  const buttons = document.getElementsByClassName("memorySizeBtn");
-  for (btn of buttons) {
-    if (btn.classList.contains("bg-success")) {
-      return btn.id;
-    }
-  }
-  return 128;
-};
-
-const getCurrentArchitecture = () => {
-  const buttons = document.getElementsByClassName("architectureBtn");
-  for (btn of buttons) {
-    if (btn.classList.contains("bg-success")) {
-      return btn.id;
-    }
-  }
-  return "x86_64";
-};
-
-const replayAnimation = async (dataManager) => {
+const replayAnimation = async () => {
   document.getElementById("runtimes").innerHTML = "";
-  await animate(dataManager);
+  await animate();
 };
 
-const setupFilterEvent = (className, dataManager) => {
-  const btnMemorySize = document.querySelectorAll(className);
-  btnMemorySize.forEach((el) =>
-    el.addEventListener("click", (e) => updateFilter(e, className, dataManager))
-  );
-};
-const loaded = async (dataManager) => {
-  setupFilterEvent(".memorySizeBtn", dataManager);
-  setupFilterEvent(".architectureBtn", dataManager);
+const loaded = async () => {
   document
     .getElementById("replayAnimationBtn")
-    .addEventListener("click", (dataManager) => replayAnimation(dataManager));
-  await animate(dataManager);
+    .addEventListener("click", replayAnimation);
+  await animate();
 };
 
 const drawLang = async (idx, data) => {
@@ -135,8 +79,4 @@ const formatData = (data) =>
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-document.addEventListener(
-  "DOMContentLoaded",
-  (dataManager) => loaded(dataManager),
-  false
-);
+document.addEventListener("DOMContentLoaded", loaded, false);
