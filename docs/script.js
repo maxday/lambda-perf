@@ -14,8 +14,6 @@ const animate = async (dataManager) => {
   try {
     const memorySize = getCurrentMemorySize();
     const architecture = getCurrentArchitecture();
-    console.log(memorySize);
-    console.log(architecture);
     if (!dataManager.fetchData) {
       await load(dataManager);
     }
