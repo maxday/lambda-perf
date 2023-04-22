@@ -5,15 +5,21 @@ const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 
 const TABLE = "report-log";
 
-const runtimes = require("../manifest.json");
+const runtimes = require("../manifest.json").runtimes;
 
 exports.handler = async (input, context) => {
   let payload = Buffer.from(input.awslogs.data, "base64");
   let result = zlib.gunzipSync(payload);
   result = JSON.parse(result.toString());
   const fromLambda = result.logGroup.replace("/aws/lambda/", "");
-  const originalPath = fromLambda.replace("lambda-perf-", "");
-  const filter = runtimes.filter((e) => e.path === originalPath);
+  const functionName = fromLambda.replace("lambda-perf-", "");
+  const tokens = functionName.split("-");
+  if (tokens.length !== 3) {
+    context.fail();
+  }
+  const name = tokens[0];
+  const architecture = tokens[2];
+  const filter = runtimes.filter((e) => e.path === name);
   if (filter.length !== 1) {
     // could not find the display name
     context.fail();
@@ -47,6 +53,7 @@ exports.handler = async (input, context) => {
           initDuration: initDuration ?? restoreDuration,
           restoreDuration: restoreDuration ?? 0,
           billedRestoreDuration: billedRestoreDuration ?? 0,
+          architecture,
         };
         await dynamoDb.put({
           TableName: TABLE,

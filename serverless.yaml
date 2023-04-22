@@ -2,8 +2,9 @@ service: lambda-perf
 
 provider:
   name: aws
-  memorySize: 512
+  memorySize: 128
   region: ${env:AWS_REGION}
+  runtime: nodejs18.x
   iam:
     role:
       name: lambda-perf-${sls:stage}-role-${env:AWS_REGION}
@@ -84,11 +85,29 @@ functions:
       individually: true
       patterns:
         - report-log-processor
+        - "!function-trigger-deployer"
         - "!function-trigger-invoker"
         - "!function-invoker"
         - "!function-deployer"
         - "!result-builder"
     handler: report-log-processor/app.handler
+
+  functionTriggerDeployer:
+    package:
+      individually: true
+      patterns:
+        - "function-trigger-deployer"
+        - "!function-trigger-invoker"
+        - "!function-invoker"
+        - "!function-deployer"
+        - "!report-log-processor"
+        - "!result-builder"
+    handler: function-trigger-deployer/app.handler
+    environment:
+      DEPLOYER: 
+        "Fn::GetAtt": [ FunctionDeployerLambdaFunction, Arn ]
+    events:
+      - schedule: cron(30 13 * * ? *)
 
   functionDeployer:
     environment:
@@ -99,19 +118,19 @@ functions:
       individually: true
       patterns:
         - function-deployer
+        - "!function-trigger-deployer"
         - "!function-trigger-invoker"
         - "!function-invoker"
         - "!report-log-processor"
         - "!result-builder"
     handler: function-deployer/app.handler
-    events:
-      - schedule: cron(40 13 * * ? *)
 
   functionInvoker:
     package:
       individually: true
       patterns:
         - function-invoker
+        - "!function-trigger-deployer"
         - "!function-trigger-invoker"
         - "!function-deployer"
         - "!report-log-processor"
@@ -122,7 +141,8 @@ functions:
     package:
       individually: true
       patterns:
-        - function-triger-invoker
+        - function-trigger-invoker
+        - "!function-trigger-deployer"
         - "!function-invoker"
         - "!function-deployer"
         - "!report-log-processor"
@@ -142,6 +162,7 @@ functions:
       individually: true
       patterns:
         - result-builder
+        - "!function-trigger-deployer"
         - "!function-trigger-invoker"
         - "!function-invoker"
         - "!function-deployer"

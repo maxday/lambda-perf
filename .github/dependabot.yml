@@ -18,6 +18,10 @@ updates:
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
+    directory: "function-trigger-deployer"
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "npm"
     directory: "result-builder"
     schedule:
       interval: "monthly"

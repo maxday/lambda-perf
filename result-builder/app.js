@@ -64,7 +64,7 @@ const updateFileToPreventCaching = async (authToken) => {
       sha,
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -88,12 +88,12 @@ const buildJsonFromData = (data) => {
   };
   const runtimeData = [];
   const runtimes = [...new Set(data.map((item) => item.lambda.S))];
+
   for (const runtime of runtimes) {
-    const filteredData = data.filter((e) => e.lambda.S === runtime);
+    const filteredData = data.filter((e) => e.lambda.S === runtime) || [];
     const initDurations = filteredData.map((e) =>
       parseFloat(e.initDuration.S, 10)
     );
-    const memorySize = parseInt(filteredData[0].memorySize.S, 10);
     const averageMemoryUsed = formatMaxThreeDigits(
       computeMean(filteredData.map((e) => parseFloat(e.maxMemoryUsed.S, 10)))
     );
@@ -103,12 +103,17 @@ const buildJsonFromData = (data) => {
     const averageColdStartDuration = formatMaxThreeDigits(
       computeMean(initDurations)
     );
+
     const displayName = filteredData[0].displayName.S;
+    const memorySize = parseInt(filteredData[0].memorySize.S, 10);
+    const architecture = filteredData[0].architecture.S;
+
     runtimeData.push({
       runtime,
       displayName,
       initDurations,
       memorySize,
+      architecture,
       averageMemoryUsed,
       averageDuration,
       averageColdStartDuration,
@@ -121,7 +126,7 @@ const formatMaxThreeDigits = (number) => Math.round(number * 1e3) / 1e3;
 
 const computeMean = (array) => array.reduce((a, b) => a + b, 0) / array.length;
 
-exports.handler = async (input, context) => {
+exports.handler = async (_, context) => {
   try {
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     const data = await fetchData(dynamoDbClient, TABLE);
@@ -137,7 +142,8 @@ exports.handler = async (input, context) => {
       console.log("non-production env detected, output the content:");
       console.log(content);
     }
-  } catch (_) {
-    throw "failure";
+  } catch (e) {
+    console.error(e);
+    context.fail();
   }
 };
