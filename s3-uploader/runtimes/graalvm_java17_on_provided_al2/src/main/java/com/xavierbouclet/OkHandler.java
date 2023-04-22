@@ -3,7 +3,7 @@ package com.xavierbouclet;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-public class OkHandler implements RequestHandler<String ,String>{
+public class OkHandler implements RequestHandler<Object, String>{
 
     static {
         System.setProperty("software.amazon.awssdk.http.service.impl",
@@ -11,7 +11,7 @@ public class OkHandler implements RequestHandler<String ,String>{
     }
 
     @Override
-    public String handleRequest(String s, Context context) {
+    public String handleRequest(Object s, Context context) {
         return "ok";
     }
 }
