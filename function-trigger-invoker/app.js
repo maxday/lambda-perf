@@ -55,17 +55,22 @@ const createTable = async (client, table) => {
   }
 };
 
-const invokeFunction = async (client, runtime) => {
+const invokeFunction = async (client, runtime, architecture, memorySize) => {
+  const clientContext = JSON.stringify({
+    ...runtime,
+    architecture,
+    memorySize,
+  });
   const params = {
     FunctionName: INVOKER,
-    ClientContext: Buffer.from(JSON.stringify({ ...runtime })).toString(
-      "base64"
-    ),
+    ClientContext: Buffer.from(clientContext).toString("base64"),
   };
   try {
     const command = new InvokeCommand(params);
     await client.send(command);
-    console.log(`function ${params.FunctionName} invoked`);
+    console.log(
+      `function ${params.FunctionName} invoked with clientContext = ${clientContext}`
+    );
   } catch (e) {
     console.error(e);
     throw e;
@@ -75,7 +80,7 @@ const invokeFunction = async (client, runtime) => {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 exports.handler = async () => {
-  const runtimes = require("../manifest.json");
+  const manifest = require("../manifest.json");
   try {
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     await deleteTable(dynamoDbClient, TABLE);
@@ -84,8 +89,14 @@ exports.handler = async () => {
     await delay(DELAY);
     const lambdaClient = new LambdaClient({ region: REGION });
     const allPromises = [];
-    for (runtime of runtimes) {
-      allPromises.push(invokeFunction(lambdaClient, runtime));
+    for (runtime of manifest.runtimes) {
+      for (architecture of runtime.architectures) {
+        for (memorySize of manifest.memorySizes) {
+          allPromises.push(
+            invokeFunction(lambdaClient, runtime, architecture, memorySize)
+          );
+        }
+      }
     }
     await Promise.all(allPromises);
     return {

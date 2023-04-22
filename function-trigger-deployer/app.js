@@ -1,6 +1,7 @@
-const { InvokeCommand } = require("@aws-sdk/client-lambda");
+const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 
 const DEPLOYER = process.env.DEPLOYER;
+const REGION = process.env.AWS_REGION;
 
 const invokeFunction = async (client, memorySize, architecture) => {
   const params = {
@@ -21,11 +22,12 @@ const invokeFunction = async (client, memorySize, architecture) => {
 
 exports.handler = async () => {
   try {
-    const memorySizes = [128, 256, 512, 1024];
-    const architectures = ["x86_64"];
+    const manifest = require("../manifest.json");
     const allPromises = [];
-    for (memorySize of memorySizes) {
-      for (architecture of architectures) {
+    const lambdaClient = new LambdaClient({ region: REGION });
+
+    for (memorySize of manifest.memorySizes) {
+      for (architecture of manifest.architectures) {
         allPromises.push(
           invokeFunction(lambdaClient, memorySize, architecture)
         );
@@ -36,7 +38,8 @@ exports.handler = async () => {
       statusCode: 200,
       body: JSON.stringify("success"),
     };
-  } catch (_) {
+  } catch (e) {
+    console.log(e);
     throw "failure";
   }
 };

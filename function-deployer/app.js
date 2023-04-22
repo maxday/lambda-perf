@@ -19,6 +19,8 @@ const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = `lambda-perf`;
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const deleteFunction = async (client, functionName) => {
   const params = {
     FunctionName: functionName,
@@ -69,7 +71,7 @@ const createFunction = async (
     Runtime: singleFunction.runtime,
     Code: {
       S3Bucket: `${PROJECT}-${REGION}`,
-      S3Key: `${sanitizedRuntime}/code.zip`,
+      S3Key: `${sanitizedRuntime}/code_${architecture}.zip`,
     },
     Role: ROLE_ARN,
     ...(singleFunction.snapStart && singleFunction.snapStart),
@@ -77,6 +79,9 @@ const createFunction = async (
     Architectures: [architecture],
   };
   try {
+    console.log(
+      `Creation function ${functionName} for ${architecture} (${memorySize})`
+    );
     const command = new CreateFunctionCommand(params);
     await client.send(command);
 
@@ -88,10 +93,7 @@ const createFunction = async (
         //update variables for publishing new version
         await updateFunction(client, functionName);
         await delay(10000);
-        const resp = await publishVersion(client, functionName);
-        console.log(
-          `published version ${resp.Version} for function ${functionName}`
-        );
+        const resp = await publishVersion(client, functionName, 0);
       }
     }
   } catch (e) {
@@ -106,12 +108,10 @@ const waitForActive = async (client, functionName) => {
   console.log(`waiting for function ${functionName} to be active`, func);
   while (func.Configuration.State !== "Active") {
     console.log(`waiting for function ${functionName} to be active`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await delay(1000);
     func = await getFunction(client, functionName);
   }
 };
-
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getFunction = async (client, functionName) => {
   const params = {
@@ -125,17 +125,25 @@ const getFunction = async (client, functionName) => {
     throw e;
   }
 };
-const publishVersion = async (client, functionName) => {
+const publishVersion = async (client, functionName, nbRetry) => {
+  if (nbRetry > 5) {
+    throw "max retries exceeded";
+  }
   const params = {
     FunctionName: functionName,
   };
   try {
     const command = new PublishVersionCommand(params);
-    return await client.send(command);
-    console.log(`function ${functionName} published`);
+    const resp = await client.send(command);
+    console.log(
+      `published version ${resp.Version} for function ${functionName}`
+    );
   } catch (e) {
     console.error(e);
-    throw e;
+    console.log("retrying in 20sec");
+    await delay(20000);
+    console.log("retrying now");
+    await publishVersion(client, functionName, nbRetry + 1);
   }
 };
 
@@ -212,40 +220,41 @@ const deploy = async (
   memorySize,
   architecture
 ) => {
-  const runtimes = require("../manifest.json");
+  const runtimes = require("../manifest.json").runtimes;
   for (const singleFunction of runtimes) {
-    const functionSufix = singleFunction.path
-      ? singleFunction.path
-      : singleFunction.runtime.replace(".", "");
-    const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
-    try {
-      await deleteFunction(lambdaClient, functionName);
-      await createFunction(
-        lambdaClient,
-        functionName,
-        singleFunction,
-        memorySize,
-        architecture
-      );
-      await deleteLogGroup(cloudWatchLogsClient, functionName);
-      await createLogGroup(cloudWatchLogsClient, functionName);
-      await createSubscriptionFilter(cloudWatchLogsClient, functionName);
-    } catch (e) {
-      if (e.name === "InvalidParameterValueException") {
-        // that's fine, we just need to skip this runtime
-        console.log(
-          `skipping runtime = ${singleFunction.path}, memorysize = ${memorySize}, archi = ${architecture}`
+    if (singleFunction.architectures.includes(architecture)) {
+      const functionSufix = singleFunction.path
+        ? singleFunction.path
+        : singleFunction.runtime.replace(".", "");
+      const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
+      try {
+        await deleteFunction(lambdaClient, functionName);
+        await createFunction(
+          lambdaClient,
+          functionName,
+          singleFunction,
+          memorySize,
+          architecture
         );
-      } else {
+        await deleteLogGroup(cloudWatchLogsClient, functionName);
+        await createLogGroup(cloudWatchLogsClient, functionName);
+        await createSubscriptionFilter(cloudWatchLogsClient, functionName);
+      } catch (e) {
+        console.error(e);
         throw e;
       }
+      await delay(5000);
+    } else {
+      console.log(
+        `Skipping ${singleFunction.path} as it's not available for ${architecture}`
+      );
     }
   }
 };
 
-exports.handler = async () => {
+exports.handler = async (_, context) => {
   try {
-    console.log("in handler, clientContext = ", clientContext);
+    console.log("in handler, clientContext = ", context.clientContext);
     const { memorySize, architecture } = context.clientContext;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
@@ -257,7 +266,8 @@ exports.handler = async () => {
       statusCode: 200,
       body: JSON.stringify("success"),
     };
-  } catch (_) {
-    throw "failure";
+  } catch (e) {
+    console.error(e);
+    context.fail();
   }
 };
