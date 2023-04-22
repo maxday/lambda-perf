@@ -8,15 +8,11 @@ const TABLE = "report-log";
 const runtimes = require("../manifest.json").runtimes;
 
 exports.handler = async (input, context) => {
-  console.log("input", input);
-  console.log("context", context);
   let payload = Buffer.from(input.awslogs.data, "base64");
   let result = zlib.gunzipSync(payload);
   result = JSON.parse(result.toString());
   const fromLambda = result.logGroup.replace("/aws/lambda/", "");
-  console.log("from lambda = ", fromLambda);
   const functionName = fromLambda.replace("lambda-perf-", "");
-  console.log("functionName = ", functionName);
   const tokens = functionName.split("-");
   if (tokens.length !== 3) {
     context.fail();

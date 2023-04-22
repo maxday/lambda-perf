@@ -19,8 +19,8 @@ const invokeFunction = async (client, functionName, nbRetry) => {
   };
   try {
     const command = new InvokeCommand(params);
-    const resultCommand = await client.send(command);
-    console.log(`function ${functionName} invoked, result = ${resultCommand}`);
+    await client.send(command);
+    console.log(`function ${functionName} invoked`);
   } catch (e) {
     console.error(e);
     await delay(DELAY);

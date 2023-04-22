@@ -140,9 +140,7 @@ const publishVersion = async (client, functionName, nbRetry) => {
     );
   } catch (e) {
     console.error(e);
-    console.log("retrying in 20sec");
     await delay(20000);
-    console.log("retrying now");
     await publishVersion(client, functionName, nbRetry + 1);
   }
 };
@@ -254,7 +252,7 @@ const deploy = async (
 
 exports.handler = async (_, context) => {
   try {
-    console.log("in handler, clientContext = ", context.clientContext);
+    console.log("clientContext = ", context.clientContext);
     const { memorySize, architecture } = context.clientContext;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({

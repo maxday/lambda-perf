@@ -20,7 +20,7 @@ const invokeFunction = async (client, memorySize, architecture) => {
   }
 };
 
-exports.handler = async () => {
+exports.handler = async (_, context) => {
   try {
     const manifest = require("../manifest.json");
     const allPromises = [];
@@ -39,7 +39,7 @@ exports.handler = async () => {
       body: JSON.stringify("success"),
     };
   } catch (e) {
-    console.log(e);
-    throw "failure";
+    console.error(e);
+    context.fail();
   }
 };
