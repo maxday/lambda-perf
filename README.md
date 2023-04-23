@@ -1,4 +1,4 @@
-# 🔄 Continous Lambda Cold Starts Analysis 
+# 🔄 Continous Lambda Cold Starts Benchmark 
 
 **TL;DR:** 👀 to https://maxday.github.io/lambda-perf/
 
