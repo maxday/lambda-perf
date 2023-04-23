@@ -66,3 +66,6 @@ hr {
     text-align: right;
     font-size: 9px;
 }
+.badge:empty {
+    display: inline-block;
+}
