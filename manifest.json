@@ -84,7 +84,7 @@
       "runtime": "go1.x",
       "handler": "main",
       "path": "go1x",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "java11",
@@ -95,10 +95,10 @@
     },
     {
       "displayName": "java8",
-      "runtime": "java8",
+      "runtime": "java8.al2",
       "handler": "io.github.maxday.Handler",
       "path": "java8",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "ruby2.7",
@@ -112,7 +112,7 @@
       "runtime": "provided",
       "handler": "bootstrap",
       "path": "go_on_provided",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "rust (prov.al2)",
