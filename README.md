@@ -38,6 +38,7 @@ An ultra simple hello-world function has been written in each AWS supported runt
 
 in addition to 5 custom runtimes:
 - `go` on `provided`
+- `go` on `provided.al2`
 - `rust` on `provided.al2`
 - `dotnet7 aot` on `provided.al2`
 - `quarkus native` on `provided.al2`
