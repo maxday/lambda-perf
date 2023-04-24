@@ -7,8 +7,8 @@ WORKDIR /tmpBuild
 COPY main.go .
 COPY go.mod .
 COPY go.sum .
-RUN GOARCH=${ARCH} go build -ldflags="-w -s" -tags lambda.norpc -o /tmp/main
-RUN zip -j /tmp/code.zip /tmp/main
+RUN GOARCH=${ARCH} go build -ldflags="-w -s" -tags lambda.norpc -o /tmp/bootstrap
+RUN zip -j /tmp/code.zip /tmp/bootstrap
 
 FROM scratch
 COPY --from=builder /tmp/code.zip /
