@@ -112,6 +112,13 @@
       "runtime": "provided",
       "handler": "bootstrap",
       "path": "go_on_provided",
+      "architectures": ["x86_64"]
+    },
+    {
+      "displayName": "go (prov.al2)",
+      "runtime": "provided.al2",
+      "handler": "bootstrap",
+      "path": "go_on_provided_al2",
       "architectures": ["x86_64", "arm64"]
     },
     {
