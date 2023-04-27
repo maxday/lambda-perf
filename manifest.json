@@ -141,6 +141,25 @@
       "architectures": ["x86_64"]
     },
     {
+      "displayName": "java17",
+      "runtime": "java17",
+      "handler": "io.github.maxday.Handler",
+      "path": "java17",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "java17 snapstart",
+      "runtime": "java17",
+      "handler": "io.github.maxday.Handler",
+      "path": "java17_snapstart",
+      "snapStart": {
+        "SnapStart": {
+          "ApplyOn": "PublishedVersions"
+        }
+      },
+      "architectures": ["x86_64"]
+    },
+    {
       "displayName": "quarkus (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
