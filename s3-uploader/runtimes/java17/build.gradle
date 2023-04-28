@@ -1,0 +1,29 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    implementation (
+        'com.amazonaws:aws-lambda-java-core:1.2.2',
+    )
+}
+
+task buildZip(type: Zip) {
+    baseName = "code"
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtimeClasspath
+    }
+}
+
+build.dependsOn buildZip
+
+wrapper {
+    gradleVersion = '6.1'
+}

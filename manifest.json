@@ -59,13 +59,6 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
-      "displayName": "dotnetcore3.1",
-      "runtime": "dotnetcore3.1",
-      "handler": "LambdaPerf::LambdaPerf.Function::Handler",
-      "path": "dotnetcore31",
-      "architectures": ["x86_64", "arm64"]
-    },
-    {
       "displayName": "dotnet6",
       "runtime": "dotnet6",
       "handler": "LambdaPerf::LambdaPerf.Function::Handler",
@@ -133,6 +126,25 @@
       "runtime": "java11",
       "handler": "io.github.maxday.Handler",
       "path": "java11_snapstart",
+      "snapStart": {
+        "SnapStart": {
+          "ApplyOn": "PublishedVersions"
+        }
+      },
+      "architectures": ["x86_64"]
+    },
+    {
+      "displayName": "java17",
+      "runtime": "java17",
+      "handler": "io.github.maxday.Handler",
+      "path": "java17",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "java17 snapstart",
+      "runtime": "java17",
+      "handler": "io.github.maxday.Handler",
+      "path": "java17_snapstart",
       "snapStart": {
         "SnapStart": {
           "ApplyOn": "PublishedVersions"
