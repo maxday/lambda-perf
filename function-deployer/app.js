@@ -62,28 +62,27 @@ async function updateFunction(client, functionName) {
 const createFunction = async (
   client,
   functionName,
-  singleFunction,
+  runtime,
   memorySize,
   architecture,
   environment,
+  snapStart,
   nbRetry
 ) => {
   if (nbRetry > 5) {
     throw "max retries exceeded";
   }
-  const sanitizedRuntime = singleFunction.path
-    ? singleFunction.path
-    : singleFunction.runtime.replace(".", "");
+  const sanitizedRuntime = runtime.replace(".", "");
   const params = {
     FunctionName: functionName,
-    Handler: singleFunction.handler,
-    Runtime: singleFunction.runtime,
+    Handler: handler,
+    Runtime: runtime,
     Code: {
       S3Bucket: `${PROJECT}-${REGION}`,
       S3Key: `${sanitizedRuntime}/code_${architecture}.zip`,
     },
     Role: ROLE_ARN,
-    ...(singleFunction.snapStart && singleFunction.snapStart),
+    ...snapStart,
     MemorySize: memorySize,
     Architectures: [architecture],
     Environment: {
@@ -97,7 +96,7 @@ const createFunction = async (
     const command = new CreateFunctionCommand(params);
     await client.send(command);
 
-    if (singleFunction.snapStart) {
+    if (snapStart) {
       await waitForActive(client, functionName);
 
       //publish 10 versions
@@ -105,7 +104,7 @@ const createFunction = async (
         //update variables for publishing new version
         await updateFunction(client, functionName);
         await delay(10000);
-        const resp = await publishVersion(client, functionName, 0);
+        await publishVersion(client, functionName, 0);
       }
     }
   } catch (e) {
@@ -114,10 +113,11 @@ const createFunction = async (
     await createFunction(
       client,
       functionName,
-      singleFunction,
+      runtime,
       memorySize,
       architecture,
       environment,
+      snapStart,
       nbRetry + 1
     );
   }
@@ -243,20 +243,25 @@ const deploy = async (
   cloudWatchLogsClient,
   path,
   slug,
+  runtime,
   memorySize,
-  architecture
+  architecture,
+  environment,
+  snapStart
 ) => {
   const functionSufix = slug ? slug : path;
   const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
   try {
-    await deleteFunction(lambdaClient, functionName);
+    await deleteFunction(lambdaClient, functionName, 0);
     await createFunction(
       lambdaClient,
       functionName,
-      singleFunction,
+      runtime,
       memorySize,
       architecture,
-      singleFunction.environment
+      environment,
+      snapStart,
+      0
     );
     await deleteLogGroup(cloudWatchLogsClient, functionName);
     await createLogGroup(cloudWatchLogsClient, functionName);
@@ -269,7 +274,15 @@ const deploy = async (
 exports.handler = async (_, context) => {
   try {
     console.log("clientContext = ", context.clientContext);
-    const { memorySize, architecture, path, slug } = context.clientContext;
+    const {
+      memorySize,
+      architecture,
+      path,
+      slug,
+      runtime,
+      environment,
+      snapStart,
+    } = context.clientContext;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
@@ -280,8 +293,11 @@ exports.handler = async (_, context) => {
       cloudWatchLogsClient,
       path,
       slug,
+      runtime,
       memorySize,
-      architecture
+      architecture,
+      environment,
+      snapStart
     );
     return {
       statusCode: 200,

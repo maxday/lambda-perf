@@ -3,11 +3,28 @@ const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const DEPLOYER = process.env.DEPLOYER;
 const REGION = process.env.AWS_REGION;
 
-const invokeFunction = async (client, path, slug, memorySize, architecture) => {
+const invokeFunction = async (
+  client,
+  path,
+  slug,
+  memorySize,
+  architecture,
+  runtime,
+  environment,
+  snapStart
+) => {
   const params = {
     FunctionName: DEPLOYER,
     ClientContext: Buffer.from(
-      JSON.stringify({ path, slug, memorySize, architecture })
+      JSON.stringify({
+        path,
+        slug,
+        memorySize,
+        architecture,
+        runtime,
+        environment,
+        snapStart,
+      })
     ).toString("base64"),
   };
   try {
@@ -35,7 +52,10 @@ exports.handler = async (_, context) => {
               runtime.path,
               runtime.slug,
               memorySize,
-              architecture
+              architecture,
+              runtime.runtime,
+              runtime.environment,
+              runtime.snapStart
             )
           );
         }
