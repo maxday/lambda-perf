@@ -219,52 +219,50 @@ const addPermission = async (client, functionName) => {
 const deploy = async (
   lambdaClient,
   cloudWatchLogsClient,
+  path,
+  slug,
   memorySize,
   architecture
 ) => {
-  const runtimes = require("../manifest.json").runtimes;
-  for (const singleFunction of runtimes) {
-    if (singleFunction.architectures.includes(architecture)) {
-      const functionSufix = singleFunction.slug
-        ? singleFunction.slug
-        : singleFunction.path;
-      const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
-      try {
-        await deleteFunction(lambdaClient, functionName);
-        await createFunction(
-          lambdaClient,
-          functionName,
-          singleFunction,
-          memorySize,
-          architecture,
-          singleFunction.environment
-        );
-        await deleteLogGroup(cloudWatchLogsClient, functionName);
-        await createLogGroup(cloudWatchLogsClient, functionName);
-        await createSubscriptionFilter(cloudWatchLogsClient, functionName);
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-      await delay(5000);
-    } else {
-      console.log(
-        `Skipping ${singleFunction.path} as it's not available for ${architecture}`
-      );
-    }
+  const functionSufix = slug ? slug : path;
+  const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
+  try {
+    await deleteFunction(lambdaClient, functionName);
+    await createFunction(
+      lambdaClient,
+      functionName,
+      singleFunction,
+      memorySize,
+      architecture,
+      singleFunction.environment
+    );
+    await deleteLogGroup(cloudWatchLogsClient, functionName);
+    await createLogGroup(cloudWatchLogsClient, functionName);
+    await createSubscriptionFilter(cloudWatchLogsClient, functionName);
+  } catch (e) {
+    console.error(e);
+    throw e;
   }
+  await delay(5000);
 };
 
 exports.handler = async (_, context) => {
   try {
     console.log("clientContext = ", context.clientContext);
-    const { memorySize, architecture } = context.clientContext;
+    const { memorySize, architecture, path, slug } = context.clientContext;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
     });
     await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
-    await deploy(lambdaClient, cloudWatchLogsClient, memorySize, architecture);
+    await deploy(
+      lambdaClient,
+      cloudWatchLogsClient,
+      path,
+      slug,
+      memorySize,
+      architecture
+    );
     return {
       statusCode: 200,
       body: JSON.stringify("success"),

@@ -3,11 +3,11 @@ const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const DEPLOYER = process.env.DEPLOYER;
 const REGION = process.env.AWS_REGION;
 
-const invokeFunction = async (client, memorySize, architecture) => {
+const invokeFunction = async (client, path, slug, memorySize, architecture) => {
   const params = {
     FunctionName: DEPLOYER,
     ClientContext: Buffer.from(
-      JSON.stringify({ memorySize, architecture })
+      JSON.stringify({ path, slug, memorySize, architecture })
     ).toString("base64"),
   };
   try {
@@ -27,10 +27,18 @@ exports.handler = async (_, context) => {
     const lambdaClient = new LambdaClient({ region: REGION });
 
     for (memorySize of manifest.memorySizes) {
-      for (architecture of manifest.architectures) {
-        allPromises.push(
-          invokeFunction(lambdaClient, memorySize, architecture)
-        );
+      for (runtime of manifest.runtimes) {
+        for (architecture of runtime.architectures) {
+          allPromises.push(
+            invokeFunction(
+              lambdaClient,
+              runtime.path,
+              runtime.slug,
+              memorySize,
+              architecture
+            )
+          );
+        }
       }
     }
     await Promise.all(allPromises);
