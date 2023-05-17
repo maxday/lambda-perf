@@ -62,8 +62,8 @@ async function updateFunction(client, functionName) {
 const createFunction = async (
   client,
   functionName,
-  runtime,
   handler,
+  runtime,
   memorySize,
   architecture,
   environment,
