@@ -24,7 +24,7 @@ exports.handler = async (input, context) => {
   const architecture = tokens[2];
   console.log("name", name);
   console.log("architecture", architecture);
-  const filter = runtimes.filter((e) => e.path === name);
+  const filter = runtimes.filter((e) => (e.slug ? e.slug : e.path) === name);
   if (filter.length !== 1) {
     // could not find the display name
     console.error(`filter mismatch (${filter})`);

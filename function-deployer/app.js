@@ -18,11 +18,13 @@ const REGION = process.env.AWS_REGION;
 const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = "lambda-perf";
+const MAX_RETRY = 10;
+const RETRY_DELAY = 20000;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const deleteFunction = async (client, functionName, nbRetry) => {
-  if (nbRetry > 5) {
+  if (nbRetry > MAX_RETRY) {
     throw "max retries exceeded";
   }
   const params = {
@@ -38,7 +40,7 @@ const deleteFunction = async (client, functionName, nbRetry) => {
       console.log(`function ${functionName} does not exist, skipping deletion`);
     } else {
       console.error(e);
-      await delay(5000);
+      await delay(RETRY_DELAY);
       await deleteFunction(client, functionName, nbRetry + 1);
     }
   }
@@ -72,7 +74,7 @@ const createFunction = async (
   snapStart,
   nbRetry
 ) => {
-  if (nbRetry > 5) {
+  if (nbRetry > MAX_RETRY) {
     throw "max retries exceeded";
   }
   const params = {
@@ -105,13 +107,13 @@ const createFunction = async (
       for (let i = 0; i < 10; i++) {
         //update variables for publishing new version
         await updateFunction(client, functionName);
-        await delay(10000);
+        await delay(RETRY_DELAY);
         await publishVersion(client, functionName, 0);
       }
     }
   } catch (e) {
     console.error(e);
-    await delay(5000);
+    await delay(RETRY_DELAY);
     await createFunction(
       client,
       functionName,
@@ -133,7 +135,7 @@ const waitForActive = async (client, functionName) => {
   console.log(`waiting for function ${functionName} to be active`, func);
   while (func.Configuration.State !== "Active") {
     console.log(`waiting for function ${functionName} to be active`);
-    await delay(1000);
+    await delay(RETRY_DELAY);
     func = await getFunction(client, functionName);
   }
 };
@@ -151,7 +153,7 @@ const getFunction = async (client, functionName) => {
   }
 };
 const publishVersion = async (client, functionName, nbRetry) => {
-  if (nbRetry > 5) {
+  if (nbRetry > MAX_RETRY) {
     throw "max retries exceeded";
   }
   const params = {
@@ -165,12 +167,15 @@ const publishVersion = async (client, functionName, nbRetry) => {
     );
   } catch (e) {
     console.error(e);
-    await delay(20000);
+    await delay(RETRY_DELAY);
     await publishVersion(client, functionName, nbRetry + 1);
   }
 };
 
-const deleteLogGroup = async (client, functionName) => {
+const deleteLogGroup = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded";
+  }
   const params = {
     logGroupName: `/aws/lambda/${functionName}`,
   };
@@ -184,13 +189,16 @@ const deleteLogGroup = async (client, functionName) => {
         `loggroup ${params.logGroupName} does not exist, skipping deletion`
       );
     } else {
-      console.error(e);
-      throw e;
+      await delay(RETRY_DELAY);
+      await deleteLogGroup(client, functionName, nbRetry + 1);
     }
   }
 };
 
-const createLogGroup = async (client, functionName) => {
+const createLogGroup = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded";
+  }
   const params = {
     logGroupName: `/aws/lambda/${functionName}`,
   };
@@ -199,12 +207,15 @@ const createLogGroup = async (client, functionName) => {
     await client.send(command);
     console.log(`log group ${params.logGroupName} created`);
   } catch (e) {
-    console.error(e);
-    throw e;
+    await delay(RETRY_DELAY);
+    await createLogGroup(client, functionName, nbRetry + 1);
   }
 };
 
-const createSubscriptionFilter = async (client, functionName) => {
+const createSubscriptionFilter = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded";
+  }
   const params = {
     destinationArn: LOG_PROCESSOR_ARN,
     filterName: `report-log-from-${functionName}`,
@@ -216,13 +227,13 @@ const createSubscriptionFilter = async (client, functionName) => {
     await client.send(command);
     console.log(`subscription ${params.filterName} created`);
   } catch (e) {
-    console.error(e);
-    throw e;
+    await delay(RETRY_DELAY);
+    await createSubscriptionFilter(client, functionName, nbRetry + 1);
   }
 };
 
 const addPermission = async (client, functionName, nbRetry) => {
-  if (nbRetry > 5) {
+  if (nbRetry > MAX_RETRY) {
     throw "max retries exceeded";
   }
   const params = {
@@ -237,7 +248,7 @@ const addPermission = async (client, functionName, nbRetry) => {
     console.log(`permission added to ${functionName}`);
   } catch (e) {
     console.error(e);
-    await delay(2000);
+    await delay(RETRY_DELAY);
     await addPermission(client, functionName, nbRetry + 1);
   }
 };
@@ -270,9 +281,9 @@ const deploy = async (
       snapStart,
       0
     );
-    await deleteLogGroup(cloudWatchLogsClient, functionName);
-    await createLogGroup(cloudWatchLogsClient, functionName);
-    await createSubscriptionFilter(cloudWatchLogsClient, functionName);
+    await deleteLogGroup(cloudWatchLogsClient, functionName, 0);
+    await createLogGroup(cloudWatchLogsClient, functionName, 0);
+    await createSubscriptionFilter(cloudWatchLogsClient, functionName, 0);
   } catch (e) {
     throw e;
   }
