@@ -15,6 +15,7 @@ exports.handler = async (input, context) => {
   const functionName = fromLambda.replace("lambda-perf-", "");
   const tokens = functionName.split("-");
   if (tokens.length !== 3) {
+    console.error(`token error (${token})`);
     context.fail();
   }
   const name = tokens[0];
@@ -22,6 +23,7 @@ exports.handler = async (input, context) => {
   const filter = runtimes.filter((e) => e.path === name);
   if (filter.length !== 1) {
     // could not find the display name
+    console.error(`filter mismatch (${filter})`);
     context.fail();
   }
   const displayName = filter[0].displayName;
