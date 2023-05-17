@@ -259,7 +259,7 @@ exports.handler = async (_, context) => {
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
     });
-    await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
+    //await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
     await deploy(
       lambdaClient,
       cloudWatchLogsClient,
