@@ -57,12 +57,10 @@ function isSnapStart(path) {
 
 exports.handler = async (_, context) => {
   try {
-    const functionSufix = context.clientContext.slug
-      ? context.clientContext.slug
-      : context.clientContext.path;
+    const { path, slug, architecture, memorySize } = context.clientContext;
 
-    const architecture = context.clientContext.architecture;
-    const memorySize = context.clientContext.memorySize;
+    const functionSufix = slug ? slug : path;
+
     const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
     const lambdaClient = new LambdaClient({ region: REGION });
 
