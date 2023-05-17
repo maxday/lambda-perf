@@ -28,14 +28,14 @@ const invokeFunction = async (client, functionName, nbRetry) => {
   }
 };
 
-const updateFunction = async (client, functionName, nbRetry) => {
+const updateFunction = async (client, functionName, environment, nbRetry) => {
   if (nbRetry > 5) {
     throw "max retries exceeded in updateFunction";
   }
   const params = {
     FunctionName: functionName,
     Environment: {
-      Variables: { coldStart: `${Math.random()}` },
+      Variables: { coldStart: `${Math.random()}`, ...environment },
     },
   };
   try {
@@ -57,7 +57,8 @@ function isSnapStart(path) {
 
 exports.handler = async (_, context) => {
   try {
-    const { path, slug, architecture, memorySize } = context.clientContext;
+    const { path, slug, architecture, memorySize, environment } =
+      context.clientContext;
 
     const functionSufix = slug ? slug : path;
 
@@ -75,7 +76,7 @@ exports.handler = async (_, context) => {
         await invokeFunction(lambdaClient, functionNameWithVersion, 0);
       } else {
         await invokeFunction(lambdaClient, functionName, 0);
-        await updateFunction(lambdaClient, functionName, 0);
+        await updateFunction(lambdaClient, functionName, environment, 0);
       }
       await delay(DELAY);
     }
