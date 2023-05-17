@@ -227,8 +227,12 @@ const deploy = async (
   path,
   slug,
   memorySize,
-  architecture
+  architecture,
+  nbRetry
 ) => {
+  if (nbRetry > 5) {
+    throw "max retries exceeded";
+  }
   const functionSufix = slug ? slug : path;
   const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
   try {
@@ -245,10 +249,17 @@ const deploy = async (
     await createLogGroup(cloudWatchLogsClient, functionName);
     await createSubscriptionFilter(cloudWatchLogsClient, functionName);
   } catch (e) {
-    console.error(e);
-    throw e;
+    await delay(5000);
+    await deploy(
+      lambdaClient,
+      cloudWatchLogsClient,
+      path,
+      slug,
+      memorySize,
+      architecture,
+      nbRetry + 1
+    );
   }
-  await delay(5000);
 };
 
 exports.handler = async (_, context) => {
