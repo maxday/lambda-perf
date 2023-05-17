@@ -6,6 +6,7 @@ const REGION = process.env.AWS_REGION;
 const invokeFunction = async (
   client,
   path,
+  handler,
   slug,
   memorySize,
   architecture,
@@ -19,6 +20,7 @@ const invokeFunction = async (
       JSON.stringify({
         path,
         slug,
+        handler,
         memorySize,
         architecture,
         runtime,
@@ -50,6 +52,7 @@ exports.handler = async (_, context) => {
             invokeFunction(
               lambdaClient,
               runtime.path,
+              runtime.handler,
               runtime.slug,
               memorySize,
               architecture,
