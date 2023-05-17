@@ -124,7 +124,6 @@ functions:
         - "!report-log-processor"
         - "!result-builder"
     handler: function-deployer/app.handler
-    timeout: 120
 
   functionInvoker:
     package:
