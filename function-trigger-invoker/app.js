@@ -94,18 +94,25 @@ exports.handler = async () => {
     await createTable(dynamoDbClient, TABLE);
     await delay(DELAY);
     const lambdaClient = new LambdaClient({ region: REGION });
-    const allPromises = [];
+    let allPromises = [];
+
+    // we need to batch for 50 functions to avoid the invalid signature error
+    // see more details: https://repost.aws/knowledge-center/lambda-sdk-signature
     for (runtime of manifest.runtimes) {
       for (architecture of runtime.architectures) {
         for (memorySize of manifest.memorySizes) {
+          if (allPromises.length === 50) {
+            console.log("array is full, invoking the current batch");
+            await Promise.all(allPromises);
+            allPromises = [];
+          }
           allPromises.push(
             invokeFunction(lambdaClient, runtime, architecture, memorySize)
           );
         }
       }
     }
-    const r = await Promise.allSettled(allPromises);
-    console.log(r);
+    await Promise.all(allPromises);
     return {
       statusCode: 200,
       body: JSON.stringify("success"),
