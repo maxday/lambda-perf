@@ -14,25 +14,26 @@ const invokeFunction = async (
   environment,
   snapStart
 ) => {
+  const clientContext = JSON.stringify({
+    path,
+    slug,
+    handler,
+    memorySize,
+    architecture,
+    runtime,
+    environment,
+    snapStart,
+  });
   const params = {
     FunctionName: DEPLOYER,
-    ClientContext: Buffer.from(
-      JSON.stringify({
-        path,
-        slug,
-        handler,
-        memorySize,
-        architecture,
-        runtime,
-        environment,
-        snapStart,
-      })
-    ).toString("base64"),
+    ClientContext: Buffer.from(clientContext).toString("base64"),
   };
   try {
     const command = new InvokeCommand(params);
     await client.send(command);
-    console.log(`function ${params.FunctionName} invoked`);
+    console.log(
+      `function ${params.FunctionName} invoked, client context = ${clientContext}`
+    );
   } catch (e) {
     console.error(e);
     throw e;

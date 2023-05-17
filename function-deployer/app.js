@@ -29,6 +29,7 @@ const deleteFunction = async (client, functionName, nbRetry) => {
     FunctionName: functionName,
   };
   try {
+    console.log(`function ${functionName} is about to be deleted`);
     const command = new DeleteFunctionCommand(params);
     await client.send(command);
     console.log(`function ${functionName} deleted`);
