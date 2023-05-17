@@ -104,7 +104,8 @@ exports.handler = async () => {
         }
       }
     }
-    await Promise.all(allPromises);
+    const r = await Promise.allSettled(allPromises);
+    console.log(r);
     return {
       statusCode: 200,
       body: JSON.stringify("success"),
