@@ -21,7 +21,10 @@ const PROJECT = "lambda-perf";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const deleteFunction = async (client, functionName) => {
+const deleteFunction = async (client, functionName, nbRetry) => {
+  if (nbRetry > 5) {
+    throw "max retries exceeded";
+  }
   const params = {
     FunctionName: functionName,
   };
@@ -34,7 +37,8 @@ const deleteFunction = async (client, functionName) => {
       console.log(`function ${functionName} does not exist, skipping deletion`);
     } else {
       console.error(e);
-      throw e;
+      await delay(5000);
+      await deleteFunction(client, functionName, nbRetry + 1);
     }
   }
 };
@@ -61,8 +65,12 @@ const createFunction = async (
   singleFunction,
   memorySize,
   architecture,
-  environment
+  environment,
+  nbRetry
 ) => {
+  if (nbRetry > 5) {
+    throw "max retries exceeded";
+  }
   const sanitizedRuntime = singleFunction.path
     ? singleFunction.path
     : singleFunction.runtime.replace(".", "");
@@ -102,7 +110,16 @@ const createFunction = async (
     }
   } catch (e) {
     console.error(e);
-    throw e;
+    await delay(5000);
+    await createFunction(
+      client,
+      functionName,
+      singleFunction,
+      memorySize,
+      architecture,
+      environment,
+      nbRetry + 1
+    );
   }
 };
 
@@ -227,12 +244,8 @@ const deploy = async (
   path,
   slug,
   memorySize,
-  architecture,
-  nbRetry
+  architecture
 ) => {
-  if (nbRetry > 5) {
-    throw "max retries exceeded";
-  }
   const functionSufix = slug ? slug : path;
   const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
   try {
@@ -249,16 +262,7 @@ const deploy = async (
     await createLogGroup(cloudWatchLogsClient, functionName);
     await createSubscriptionFilter(cloudWatchLogsClient, functionName);
   } catch (e) {
-    await delay(5000);
-    await deploy(
-      lambdaClient,
-      cloudWatchLogsClient,
-      path,
-      slug,
-      memorySize,
-      architecture,
-      nbRetry + 1
-    );
+    throw e;
   }
 };
 
