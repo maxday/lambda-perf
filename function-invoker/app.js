@@ -6,7 +6,7 @@ const {
 } = require("@aws-sdk/client-lambda");
 
 const REGION = process.env.AWS_REGION;
-const PREFIX = "lambda-perf-";
+const PROJECT = "lambda-perf";
 const NB_INVOKE = 10;
 const DELAY = 10000;
 
@@ -57,10 +57,13 @@ function isSnapStart(path) {
 
 exports.handler = async (_, context) => {
   try {
-    const path = context.clientContext.path;
+    const functionSufix = context.clientContext.slug
+      ? context.clientContext.slug
+      : context.clientContext.path;
+
     const architecture = context.clientContext.architecture;
     const memorySize = context.clientContext.memorySize;
-    const functionName = `${PREFIX}${path}-${memorySize}-${architecture}`;
+    const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
     const lambdaClient = new LambdaClient({ region: REGION });
 
     let versions = [];

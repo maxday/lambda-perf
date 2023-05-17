@@ -17,7 +17,7 @@ const {
 const REGION = process.env.AWS_REGION;
 const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
-const PROJECT = `lambda-perf`;
+const PROJECT = "lambda-perf";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -225,9 +225,9 @@ const deploy = async (
   const runtimes = require("../manifest.json").runtimes;
   for (const singleFunction of runtimes) {
     if (singleFunction.architectures.includes(architecture)) {
-      const functionSufix = singleFunction.path
-        ? singleFunction.path
-        : singleFunction.runtime.replace(".", "");
+      const functionSufix = singleFunction.slug
+        ? singleFunction.slug
+        : singleFunction.path;
       const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
       try {
         await deleteFunction(lambdaClient, functionName);
