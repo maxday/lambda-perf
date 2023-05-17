@@ -62,6 +62,7 @@ async function updateFunction(client, functionName) {
 const createFunction = async (
   client,
   functionName,
+  path,
   handler,
   runtime,
   memorySize,
@@ -73,14 +74,13 @@ const createFunction = async (
   if (nbRetry > 5) {
     throw "max retries exceeded";
   }
-  const sanitizedRuntime = runtime.replace(".", "");
   const params = {
     FunctionName: functionName,
     Handler: handler,
     Runtime: runtime,
     Code: {
       S3Bucket: `${PROJECT}-${REGION}`,
-      S3Key: `${sanitizedRuntime}/code_${architecture}.zip`,
+      S3Key: `${path}/code_${architecture}.zip`,
     },
     Role: ROLE_ARN,
     ...snapStart,
@@ -114,6 +114,7 @@ const createFunction = async (
     await createFunction(
       client,
       functionName,
+      path,
       handler,
       runtime,
       memorySize,
@@ -259,6 +260,7 @@ const deploy = async (
     await createFunction(
       lambdaClient,
       functionName,
+      path,
       handler,
       runtime,
       memorySize,
