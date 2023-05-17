@@ -71,8 +71,13 @@ const invokeFunction = async (client, runtime, architecture, memorySize) => {
     );
     const command = new InvokeCommand(params);
     await client.send(command);
-    console.log(`function ${params.FunctionName} invoked succeeded`);
+    console.log(
+      `function ${params.FunctionName} invoked succeeded with clientContext = ${clientContext}`
+    );
   } catch (e) {
+    console.error(
+      `function ${params.FunctionName} invoked failure with clientContext = ${clientContext}`
+    );
     console.error(e);
     throw e;
   }
