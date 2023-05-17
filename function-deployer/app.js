@@ -200,7 +200,10 @@ const createSubscriptionFilter = async (client, functionName) => {
   }
 };
 
-const addPermission = async (client, functionName) => {
+const addPermission = async (client, functionName, nbRetry) => {
+  if (nbRetry > 5) {
+    throw "max retries exceeded";
+  }
   const params = {
     FunctionName: functionName,
     Action: "lambda:InvokeFunction",
@@ -213,6 +216,8 @@ const addPermission = async (client, functionName) => {
     console.log(`permission added to ${functionName}`);
   } catch (e) {
     console.error(e);
+    await delay(2000);
+    await addPermission(client, functionName, nbRetry + 1);
   }
 };
 
