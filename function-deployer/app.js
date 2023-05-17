@@ -19,7 +19,7 @@ const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = "lambda-perf";
 const MAX_RETRY = 10;
-const RETRY_DELAY = 20000;
+const RETRY_DELAY = 10000;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
