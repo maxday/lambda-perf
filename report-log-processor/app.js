@@ -14,12 +14,16 @@ exports.handler = async (input, context) => {
   const fromLambda = result.logGroup.replace("/aws/lambda/", "");
   const functionName = fromLambda.replace("lambda-perf-", "");
   const tokens = functionName.split("-");
+  console.log("functionName", functionName);
+  console.log("tokens", tokens);
   if (tokens.length !== 3) {
     console.error(`token error (${token})`);
     context.fail();
   }
   const name = tokens[0];
   const architecture = tokens[2];
+  console.log("name", name);
+  console.log("architecture", architecture);
   const filter = runtimes.filter((e) => e.path === name);
   if (filter.length !== 1) {
     // could not find the display name
