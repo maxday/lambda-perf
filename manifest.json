@@ -84,14 +84,20 @@
       "runtime": "java11",
       "handler": "io.github.maxday.Handler",
       "path": "java11",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
     },
     {
       "displayName": "java8",
       "runtime": "java8.al2",
       "handler": "io.github.maxday.Handler",
       "path": "java8",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
     },
     {
       "displayName": "ruby2.7",
@@ -131,14 +137,20 @@
           "ApplyOn": "PublishedVersions"
         }
       },
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
     },
     {
       "displayName": "java17",
       "runtime": "java17",
       "handler": "io.github.maxday.Handler",
       "path": "java17",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
     },
     {
       "displayName": "java17 snapstart",
@@ -150,7 +162,10 @@
           "ApplyOn": "PublishedVersions"
         }
       },
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
     },
     {
       "displayName": "quarkus (prov.al2)",

@@ -60,7 +60,8 @@ const createFunction = async (
   functionName,
   singleFunction,
   memorySize,
-  architecture
+  architecture,
+  environment
 ) => {
   const sanitizedRuntime = singleFunction.path
     ? singleFunction.path
@@ -77,6 +78,9 @@ const createFunction = async (
     ...(singleFunction.snapStart && singleFunction.snapStart),
     MemorySize: memorySize,
     Architectures: [architecture],
+    Environment: {
+      Variables: environment,
+    },
   };
   try {
     console.log(
@@ -232,7 +236,8 @@ const deploy = async (
           functionName,
           singleFunction,
           memorySize,
-          architecture
+          architecture,
+          singleFunction.environment
         );
         await deleteLogGroup(cloudWatchLogsClient, functionName);
         await createLogGroup(cloudWatchLogsClient, functionName);
