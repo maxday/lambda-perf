@@ -85,8 +85,9 @@ exports.handler = async (_, context) => {
       statusCode: 200,
       body: JSON.stringify("success"),
     };
-  } catch (_) {
-    throw "failure";
+  } catch (e) {
+    console.error(e);
+    context.fail();
   }
 };
 
