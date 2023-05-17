@@ -66,11 +66,12 @@ const invokeFunction = async (client, runtime, architecture, memorySize) => {
     ClientContext: Buffer.from(clientContext).toString("base64"),
   };
   try {
+    console.log(
+      `function ${params.FunctionName} invoking with clientContext = ${clientContext}`
+    );
     const command = new InvokeCommand(params);
     await client.send(command);
-    console.log(
-      `function ${params.FunctionName} invoked with clientContext = ${clientContext}`
-    );
+    console.log(`function ${params.FunctionName} invoked succeeded`);
   } catch (e) {
     console.error(e);
     throw e;
