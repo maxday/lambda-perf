@@ -19,7 +19,8 @@ const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = "lambda-perf";
 const MAX_RETRY = 10;
-const RETRY_DELAY = 10000;
+const SHORT_DELAY = 5000;
+const RETRY_DELAY = 15000;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -46,11 +47,11 @@ const deleteFunction = async (client, functionName, nbRetry) => {
   }
 };
 
-async function updateFunction(client, functionName) {
+async function updateFunction(client, functionName, environment) {
   const params = {
     FunctionName: functionName,
     Environment: {
-      Variables: { coldStart: `${Math.random()}` },
+      Variables: { coldStart: `${Math.random()}`, ...environment },
     },
   };
   try {
@@ -99,18 +100,6 @@ const createFunction = async (
     );
     const command = new CreateFunctionCommand(params);
     await client.send(command);
-
-    if (snapStart) {
-      await waitForActive(client, functionName);
-
-      //publish 10 versions
-      for (let i = 0; i < 10; i++) {
-        //update variables for publishing new version
-        await updateFunction(client, functionName);
-        await delay(RETRY_DELAY);
-        await publishVersion(client, functionName, 0);
-      }
-    }
   } catch (e) {
     console.error(e);
     await delay(RETRY_DELAY);
@@ -135,7 +124,7 @@ const waitForActive = async (client, functionName) => {
   console.log(`waiting for function ${functionName} to be active`, func);
   while (func.Configuration.State !== "Active") {
     console.log(`waiting for function ${functionName} to be active`);
-    await delay(RETRY_DELAY);
+    await delay(SHORT_DELAY);
     func = await getFunction(client, functionName);
   }
 };
@@ -153,7 +142,7 @@ const getFunction = async (client, functionName) => {
   }
 };
 const publishVersion = async (client, functionName, nbRetry) => {
-  if (nbRetry > MAX_RETRY) {
+  if (nbRetry > 2 * MAX_RETRY) {
     throw "max retries exceeded";
   }
   const params = {
@@ -281,6 +270,17 @@ const deploy = async (
       snapStart,
       0
     );
+    if (snapStart) {
+      await waitForActive(client, functionName);
+
+      //publish 10 versions
+      for (let i = 0; i < 10; i++) {
+        //update variables for publishing new version
+        await updateFunction(client, functionName, environment);
+        await delay(SHORT_DELAY);
+        await publishVersion(client, functionName, 0);
+      }
+    }
     await deleteLogGroup(cloudWatchLogsClient, functionName, 0);
     await createLogGroup(cloudWatchLogsClient, functionName, 0);
     await createSubscriptionFilter(cloudWatchLogsClient, functionName, 0);
