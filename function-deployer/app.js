@@ -18,9 +18,9 @@ const REGION = process.env.AWS_REGION;
 const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = "lambda-perf";
-const MAX_RETRY = 10;
+const MAX_RETRY = 20;
 const SHORT_DELAY = 5000;
-const RETRY_DELAY = 15000;
+const RETRY_DELAY = 30000;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
