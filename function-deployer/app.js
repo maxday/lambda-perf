@@ -19,8 +19,13 @@ const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = "lambda-perf";
 const MAX_RETRY = 20;
-const SHORT_DELAY = 5000;
-const RETRY_DELAY = 30000;
+
+const randomIntFromInterval = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+const SHORT_DELAY = randomIntFromInterval(3000, 5000);
+const RETRY_DELAY = randomIntFromInterval(20000, 30000);
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
