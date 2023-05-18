@@ -271,14 +271,14 @@ const deploy = async (
       0
     );
     if (snapStart) {
-      await waitForActive(client, functionName);
+      await waitForActive(lambdaClient, functionName);
 
       //publish 10 versions
       for (let i = 0; i < 10; i++) {
         //update variables for publishing new version
-        await updateFunction(client, functionName, environment);
+        await updateFunction(lambdaClient, functionName, environment);
         await delay(SHORT_DELAY);
-        await publishVersion(client, functionName, 0);
+        await publishVersion(lambdaClient, functionName, 0);
       }
     }
     await deleteLogGroup(cloudWatchLogsClient, functionName, 0);
