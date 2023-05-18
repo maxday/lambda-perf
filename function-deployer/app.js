@@ -18,7 +18,7 @@ const REGION = process.env.AWS_REGION;
 const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = "lambda-perf";
-const MAX_RETRY = 20;
+const MAX_RETRY = 5;
 
 const randomIntFromInterval = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -147,7 +147,7 @@ const getFunction = async (client, functionName) => {
   }
 };
 const publishVersion = async (client, functionName, nbRetry) => {
-  if (nbRetry > 2 * MAX_RETRY) {
+  if (nbRetry > MAX_RETRY) {
     throw "max retries exceeded";
   }
   const params = {
