@@ -18,14 +18,14 @@ const REGION = process.env.AWS_REGION;
 const ROLE_ARN = process.env.ROLE_ARN;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const PROJECT = "lambda-perf";
-const MAX_RETRY = 5;
+const MAX_RETRY = 20;
 
 const randomIntFromInterval = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 const SHORT_DELAY = randomIntFromInterval(3000, 5000);
-const RETRY_DELAY = randomIntFromInterval(20000, 30000);
+const RETRY_DELAY = randomIntFromInterval(25000, 30000);
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -296,7 +296,7 @@ const deploy = async (
 
 exports.handler = async (event, context) => {
   try {
-    console.log("clientContext = ", context.clientContext);
+    console.log("event = ", event);
     const {
       memorySize,
       architecture,
@@ -306,7 +306,7 @@ exports.handler = async (event, context) => {
       runtime,
       environment,
       snapStart,
-    } = context.clientContext;
+    } = event;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
