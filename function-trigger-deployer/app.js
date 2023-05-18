@@ -24,10 +24,12 @@ const invokeFunction = async (
     environment,
     snapStart,
   });
+  const buffer = Buffer.from(clientContext).toString("base64");
+  let enc = new TextEncoder(); // always utf-8
   const params = {
     FunctionName: DEPLOYER,
-    ClientContext: Buffer.from(clientContext).toString("base64"),
     InvocationType: "Event",
+    Payload: enc.encode(buffer),
   };
   try {
     const command = new InvokeCommand(params);
