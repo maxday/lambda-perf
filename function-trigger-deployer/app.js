@@ -27,7 +27,7 @@ const invokeFunction = async (
   const params = {
     FunctionName: DEPLOYER,
     InvocationType: "Event",
-    Payload: clientContext,
+    Payload: Buffer.from(clientContext),
   };
   try {
     const command = new InvokeCommand(params);
