@@ -305,7 +305,7 @@ exports.handler = async (event, context) => {
       runtime,
       environment,
       snapStart,
-    } = context.clientContext;
+    } = event;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
