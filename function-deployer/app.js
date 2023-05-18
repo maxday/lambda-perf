@@ -289,8 +289,10 @@ const deploy = async (
   }
 };
 
-exports.handler = async (_, context) => {
+exports.handler = async (event, context) => {
   try {
+    console.log("event = ", event);
+    console.log(JSON.stringify(event));
     console.log("clientContext = ", context.clientContext);
     const {
       memorySize,
