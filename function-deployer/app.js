@@ -291,10 +291,6 @@ const deploy = async (
 
 exports.handler = async (event, context) => {
   try {
-    console.log("event = ", event);
-    console.log(JSON.stringify(event));
-    console.log("context = ", context);
-    console.log(JSON.stringify(context));
     console.log("clientContext = ", context.clientContext);
     const {
       memorySize,
@@ -305,7 +301,7 @@ exports.handler = async (event, context) => {
       runtime,
       environment,
       snapStart,
-    } = event;
+    } = context.clientContext;
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,

@@ -14,7 +14,7 @@ const invokeFunction = async (
   environment,
   snapStart
 ) => {
-  const clientContext = {
+  const clientContext = JSON.stringify({
     path,
     slug,
     handler,
@@ -23,11 +23,10 @@ const invokeFunction = async (
     runtime,
     environment,
     snapStart,
-  };
+  });
   const params = {
     FunctionName: DEPLOYER,
-    InvocationType: "Event",
-    Payload: Buffer.from(JSON.stringify(clientContext)),
+    ClientContext: Buffer.from(clientContext).toString("base64"),
   };
   try {
     const command = new InvokeCommand(params);
