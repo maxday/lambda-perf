@@ -20,7 +20,6 @@ That's why I decided to create this project: data is always up to date as the be
 
 ### Step 1
 An ultra simple hello-world function has been written in each AWS supported runtime:
-- `nodejs12.x`
 - `nodejs14.x`
 - `nodejs16.x`
 - `nodejs18.x`

@@ -3,13 +3,6 @@
   "architectures": ["x86_64", "arm64"],
   "runtimes": [
     {
-      "displayName": "nodejs12.x",
-      "runtime": "nodejs12.x",
-      "handler": "index.handler",
-      "path": "nodejs12x",
-      "architectures": ["x86_64", "arm64"]
-    },
-    {
       "displayName": "nodejs14.x",
       "runtime": "nodejs14.x",
       "handler": "index.handler",
