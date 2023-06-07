@@ -9,6 +9,7 @@ const REGION = process.env.AWS_REGION;
 const INVOKER = process.env.INVOKER;
 const TABLE = "report-log";
 const DELAY = 5000;
+const MAX_LAMBDA_QUEUE = 50;
 
 const deleteTable = async (client, table) => {
   const params = {
@@ -66,12 +67,18 @@ const invokeFunction = async (client, runtime, architecture, memorySize) => {
     ClientContext: Buffer.from(clientContext).toString("base64"),
   };
   try {
+    console.log(
+      `function ${params.FunctionName} invoking with clientContext = ${clientContext}`
+    );
     const command = new InvokeCommand(params);
     await client.send(command);
     console.log(
-      `function ${params.FunctionName} invoked with clientContext = ${clientContext}`
+      `function ${params.FunctionName} invoked succeeded with clientContext = ${clientContext}`
     );
   } catch (e) {
+    console.error(
+      `function ${params.FunctionName} invoked failure with clientContext = ${clientContext}`
+    );
     console.error(e);
     throw e;
   }
@@ -88,10 +95,18 @@ exports.handler = async () => {
     await createTable(dynamoDbClient, TABLE);
     await delay(DELAY);
     const lambdaClient = new LambdaClient({ region: REGION });
-    const allPromises = [];
+    let allPromises = [];
+
+    // we need to batch for MAX_LAMBDA_QUEUE functions to avoid the invalid signature error
+    // see more details: https://repost.aws/knowledge-center/lambda-sdk-signature
     for (runtime of manifest.runtimes) {
       for (architecture of runtime.architectures) {
         for (memorySize of manifest.memorySizes) {
+          if (allPromises.length === MAX_LAMBDA_QUEUE) {
+            console.log("array is full, resolving the current batch");
+            await Promise.all(allPromises);
+            allPromises = [];
+          }
           allPromises.push(
             invokeFunction(lambdaClient, runtime, architecture, memorySize)
           );

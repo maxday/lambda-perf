@@ -59,7 +59,7 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
-      "displayName": "dotnet7 aot (prov.al2)",
+      "displayName": "dotnet7 aot prov.al2",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "dotnet7_aot_on_provided_al2",
@@ -80,11 +80,33 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
+      "displayName": "java11 TieredCompil",
+      "runtime": "java11",
+      "handler": "io.github.maxday.Handler",
+      "path": "java11",
+      "slug": "java11_tiered",
+      "architectures": ["x86_64", "arm64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
+    },
+    {
       "displayName": "java8",
       "runtime": "java8.al2",
       "handler": "io.github.maxday.Handler",
       "path": "java8",
       "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "java8 TieredCompil",
+      "runtime": "java8.al2",
+      "handler": "io.github.maxday.Handler",
+      "path": "java8",
+      "slug": "java8_tiered",
+      "architectures": ["x86_64", "arm64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
     },
     {
       "displayName": "ruby2.7",
@@ -94,21 +116,21 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
-      "displayName": "go (provided)",
+      "displayName": "go provided",
       "runtime": "provided",
       "handler": "bootstrap",
       "path": "go_on_provided",
       "architectures": ["x86_64"]
     },
     {
-      "displayName": "go (prov.al2)",
+      "displayName": "go prov.al2",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "go_on_provided_al2",
       "architectures": ["x86_64", "arm64"]
     },
     {
-      "displayName": "rust (prov.al2)",
+      "displayName": "rust prov.al2",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "rust_on_provided_al2",
@@ -127,11 +149,38 @@
       "architectures": ["x86_64"]
     },
     {
+      "displayName": "java11 snap TieredCompil",
+      "runtime": "java11",
+      "handler": "io.github.maxday.Handler",
+      "path": "java11_snapstart",
+      "slug": "java11_snapstart_tiered",
+      "snapStart": {
+        "SnapStart": {
+          "ApplyOn": "PublishedVersions"
+        }
+      },
+      "architectures": ["x86_64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
+    },
+    {
       "displayName": "java17",
       "runtime": "java17",
       "handler": "io.github.maxday.Handler",
       "path": "java17",
       "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "java17 TieredCompil",
+      "runtime": "java17",
+      "handler": "io.github.maxday.Handler",
+      "path": "java17",
+      "slug": "java17_tiered",
+      "architectures": ["x86_64", "arm64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
     },
     {
       "displayName": "java17 snapstart",
@@ -146,14 +195,30 @@
       "architectures": ["x86_64"]
     },
     {
-      "displayName": "quarkus (prov.al2)",
+      "displayName": "java17 snap TieredCompil",
+      "runtime": "java17",
+      "handler": "io.github.maxday.Handler",
+      "path": "java17_snapstart",
+      "slug": "java17_snapstart_tiered",
+      "snapStart": {
+        "SnapStart": {
+          "ApplyOn": "PublishedVersions"
+        }
+      },
+      "architectures": ["x86_64"],
+      "environment": {
+        "JAVA_TOOL_OPTIONS":"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      }
+    },
+    {
+      "displayName": "quarkus prov.al2",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "quarkus_native_on_provided_al2",
       "architectures": ["x86_64"]
     },
     {
-      "displayName": "graalvm java17 (prov.al2)",
+      "displayName": "graalvm java17 prov.al2",
       "runtime": "provided.al2",
       "handler": "com.xavierbouclet.OkHandler",
       "path": "graalvm_java17_on_provided_al2",

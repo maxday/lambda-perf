@@ -6,7 +6,7 @@ const {
 } = require("@aws-sdk/client-lambda");
 
 const REGION = process.env.AWS_REGION;
-const PREFIX = "lambda-perf-";
+const PROJECT = "lambda-perf";
 const NB_INVOKE = 10;
 const DELAY = 10000;
 
@@ -28,14 +28,14 @@ const invokeFunction = async (client, functionName, nbRetry) => {
   }
 };
 
-const updateFunction = async (client, functionName, nbRetry) => {
+const updateFunction = async (client, functionName, environment, nbRetry) => {
   if (nbRetry > 5) {
     throw "max retries exceeded in updateFunction";
   }
   const params = {
     FunctionName: functionName,
     Environment: {
-      Variables: { coldStart: `${Math.random()}` },
+      Variables: { coldStart: `${Math.random()}`, ...environment },
     },
   };
   try {
@@ -57,10 +57,12 @@ function isSnapStart(path) {
 
 exports.handler = async (_, context) => {
   try {
-    const path = context.clientContext.path;
-    const architecture = context.clientContext.architecture;
-    const memorySize = context.clientContext.memorySize;
-    const functionName = `${PREFIX}${path}-${memorySize}-${architecture}`;
+    const { path, slug, architecture, memorySize, environment } =
+      context.clientContext;
+
+    const functionSufix = slug ? slug : path;
+
+    const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
     const lambdaClient = new LambdaClient({ region: REGION });
 
     let versions = [];
@@ -74,7 +76,7 @@ exports.handler = async (_, context) => {
         await invokeFunction(lambdaClient, functionNameWithVersion, 0);
       } else {
         await invokeFunction(lambdaClient, functionName, 0);
-        await updateFunction(lambdaClient, functionName, 0);
+        await updateFunction(lambdaClient, functionName, environment, 0);
       }
       await delay(DELAY);
     }
@@ -82,8 +84,9 @@ exports.handler = async (_, context) => {
       statusCode: 200,
       body: JSON.stringify("success"),
     };
-  } catch (_) {
-    throw "failure";
+  } catch (e) {
+    console.error(e);
+    context.fail();
   }
 };
 
