@@ -94,6 +94,13 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
+      "displayName": "ruby3.2",
+      "runtime": "ruby3.2",
+      "handler": "index.handler",
+      "path": "ruby32",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
       "displayName": "go (provided)",
       "runtime": "provided",
       "handler": "bootstrap",
