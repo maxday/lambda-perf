@@ -42,4 +42,4 @@ jobs:
 
           cd s3-uploader
           yarn install
-          node app.js
+          node app.mjs
