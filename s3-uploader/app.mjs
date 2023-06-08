@@ -38,7 +38,6 @@ const upload = async () => {
   for (const runtime of manifest.runtimes) {
     for (const architecture of runtime.architectures) {
       if (architecture === ARCHITECTURE) {
-        console.log(runtime);
         const path = runtime.path;
         console.log(
           `start building the artifact for ${path} arch = ${architecture}`
