@@ -136,7 +136,7 @@
     {
       "displayName": "java17",
       "runtime": "java17",
-      "handler": "io.github.maxday.Handler",
+      "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java17",
       "architectures": ["x86_64", "arm64"]
     },
