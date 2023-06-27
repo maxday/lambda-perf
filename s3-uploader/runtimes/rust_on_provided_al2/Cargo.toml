@@ -4,9 +4,9 @@ version = "1.0.0"
 edition = "2021"
 
 [dependencies]
-lambda_runtime = "0.8.0"
+lambda_runtime = "0.8.1"
 tokio = { version = "1", features = ["macros"] }
-serde_json = "1.0.96"
+serde_json = "1.0.99"
 
 [profile.release]
 opt-level = 'z'

@@ -219,9 +219,9 @@ dependencies = [
 
 [[package]]
 name = "lambda_runtime"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "124a7d502e26b1ae9645bafd964d299d9c0d882cc8b3e228604d02bf0e13fc87"
+checksum = "9db262b5e9548a371d9e1dd54ba094b75e3e46b345c11458ea2b4d4c54fbffa9"
 dependencies = [
  "async-stream",
  "bytes",
@@ -231,6 +231,7 @@ dependencies = [
  "lambda_runtime_api_client",
  "serde",
  "serde_json",
+ "serde_path_to_error",
  "tokio",
  "tokio-stream",
  "tower",
@@ -376,12 +377,21 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.96"
+version = "1.0.99"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "057d394a50403bcac12672b2b18fb387ab6d289d957dab67dd201875391e52f1"
+checksum = "46266871c240a00b8f503b877622fe33430b3c7d963bdc0f2adc511e54a1eae3"
 dependencies = [
  "itoa",
  "ryu",
+ "serde",
+]
+
+[[package]]
+name = "serde_path_to_error"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7f05c1d5476066defcdfacce1f52fc3cae3af1d3089727100c02ae92e5abbe0"
+dependencies = [
  "serde",
 ]
 
