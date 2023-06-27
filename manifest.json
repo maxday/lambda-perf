@@ -75,14 +75,14 @@
     {
       "displayName": "java11",
       "runtime": "java11",
-      "handler": "io.github.maxday.Handler",
+      "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java11",
       "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "java8",
       "runtime": "java8.al2",
-      "handler": "io.github.maxday.Handler",
+      "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java8",
       "architectures": ["x86_64", "arm64"]
     },
@@ -124,7 +124,7 @@
     {
       "displayName": "java11 snapstart",
       "runtime": "java11",
-      "handler": "io.github.maxday.Handler",
+      "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java11_snapstart",
       "snapStart": {
         "SnapStart": {
@@ -143,7 +143,7 @@
     {
       "displayName": "java17 snapstart",
       "runtime": "java17",
-      "handler": "io.github.maxday.Handler",
+      "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java17_snapstart",
       "snapStart": {
         "SnapStart": {
