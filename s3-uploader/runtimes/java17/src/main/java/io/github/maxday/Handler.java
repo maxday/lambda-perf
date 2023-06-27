@@ -1,12 +1,11 @@
 package io.github.maxday;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-public class Handler implements RequestHandler<Object, String> {
+public class Handler {
 
-    @Override
-    public String handleRequest(Object request, Context context) {
+    public String handleRequest(InputStream inputStream, OutputStream outputStream) {
         return "ok";
     }
 }
