@@ -52,6 +52,13 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
+      "displayName": "python3.11",
+      "runtime": "python3.11",
+      "handler": "index.handler",
+      "path": "python311",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
       "displayName": "dotnet6",
       "runtime": "dotnet6",
       "handler": "LambdaPerf::LambdaPerf.Function::Handler",
