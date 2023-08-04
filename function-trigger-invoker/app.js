@@ -9,6 +9,7 @@ const REGION = process.env.AWS_REGION;
 const INVOKER = process.env.INVOKER;
 const TABLE = "report-log";
 const DELAY = 5000;
+const MAX_BULK = 25;
 
 const deleteTable = async (client, table) => {
   const params = {
@@ -88,13 +89,21 @@ exports.handler = async () => {
     await createTable(dynamoDbClient, TABLE);
     await delay(DELAY);
     const lambdaClient = new LambdaClient({ region: REGION });
-    const allPromises = [];
+    let allPromises = [];
+    let currentBulk = 0;
     for (runtime of manifest.runtimes) {
       for (architecture of runtime.architectures) {
         for (memorySize of manifest.memorySizes) {
           allPromises.push(
             invokeFunction(lambdaClient, runtime, architecture, memorySize)
           );
+          currentBulk++;
+          if (currentBulk === MAX_BULK) {
+            console.log("array is full, waiting for all promises to resolve");
+            await Promise.all(allPromises);
+            currentBulk = 0;
+            allPromises = [];
+          }
         }
       }
     }
