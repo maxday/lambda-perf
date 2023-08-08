@@ -70,7 +70,7 @@
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "dotnet7_aot_on_provided_al2",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "go1.x",
