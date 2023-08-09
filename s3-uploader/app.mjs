@@ -45,7 +45,7 @@ const upload = async () => {
         childProcess.execSync(
           `./runtimes/${path}/build.sh ${path} ${architecture}`
         );
-        //await sendToS3(s3Client, path, architecture, 0);
+        await sendToS3(s3Client, path, architecture, 0);
       }
     }
   }
