@@ -1,4 +1,5 @@
-FROM public.ecr.aws/sam/build-dotnet7:latest-x86_64 as builder
+ARG ARCH
+FROM public.ecr.aws/sam/build-dotnet7:latest-$ARCH as builder
 RUN dotnet tool install -g Amazon.Lambda.Tools
 WORKDIR /tmp
 COPY src .
