@@ -1,4 +1,5 @@
-FROM redhat/ubi9-minimal AS builder
+ARG ARCH
+FROM --platform=$ARCH redhat/ubi9-minimal AS builder
 ENV APP_BASE_DIR=/tmp/app
 COPY . $APP_BASE_DIR
 WORKDIR $APP_BASE_DIR

@@ -1,13 +1,19 @@
 #!/bin/bash
 
 DIR_NAME="./runtimes/$1"
-ARCH=$2
-ARCH="${ARCH/_/-}"
 
-rm ${DIR_NAME}/code.zip 2> /dev/null
+if [ $2 = "x86_64" ]; then
+    ARCH="linux/amd64"
+elif [ $2 = "arm64" ]; then
+    ARCH="linux/arm64"
+else
+    echo "The process architecture $2 is set incorrectly. The value can only be either x86_64 or arm64."
+    exit 1
+fi
 
-docker build ${DIR_NAME} -t maxday/cpp
-dockerId=$(docker create maxday/cpp)
+rm ${DIR_NAME}/code_${2}.zip 2> /dev/null
 
-ARCH=$2
-docker cp $dockerId:/code.zip ${DIR_NAME}/code_${ARCH}.zip
+docker build ${DIR_NAME} --build-arg ARCH=${ARCH} -t maxday/cpp_${2}
+dockerId=$(docker create maxday/cpp_${2})
+
+docker cp $dockerId:/code.zip ${DIR_NAME}/code_${2}.zip

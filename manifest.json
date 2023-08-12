@@ -165,6 +165,20 @@
       "handler": "com.xavierbouclet.OkHandler",
       "path": "graalvm_java17_on_provided_al2",
       "architectures": ["x86_64"]
+    },
+    {
+      "displayName": "c++ 11",
+      "runtime": "c++",
+      "handler": "handler",
+      "path": "cpp11",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "apple swift 5.8",
+      "runtime": "swift",
+      "handler": "SimpleLambdaHandler",
+      "path": "swift58",
+      "architectures": ["x86_64", "arm64"]
     }
   ]
 }
