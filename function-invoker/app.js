@@ -51,39 +51,35 @@ const updateFunction = async (client, functionName, nbRetry) => {
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function isSnapStart(path) {
-  return path.toLowerCase().includes("snapstart");
-}
-
-exports.handler = async (_, context) => {
+exports.handler = async (event, context) => {
   try {
-    const path = context.clientContext.path;
-    const architecture = context.clientContext.architecture;
-    const memorySize = context.clientContext.memorySize;
-    const functionName = `${PREFIX}${path}-${memorySize}-${architecture}`;
     const lambdaClient = new LambdaClient({ region: REGION });
-
-    let versions = [];
-    if (isSnapStart(path)) {
-      versions = await getFunctionVersions(lambdaClient, functionName);
-    }
-    for (let i = 0; i < NB_INVOKE; ++i) {
-      if (isSnapStart(path)) {
-        let functionNameWithVersion = `${functionName}:${versions[i]}`;
-        console.log(`invoking function ${functionNameWithVersion}`);
-        await invokeFunction(lambdaClient, functionNameWithVersion, 0);
-      } else {
-        await invokeFunction(lambdaClient, functionName, 0);
-        await updateFunction(lambdaClient, functionName, 0);
+    // should only contain 1 record as batch size is set to 1
+    for (const record of event.Records) {
+      console.log(record);
+      const { MemorySize, Architecture, Path, SnapStart } =
+        record.messageAttributes;
+      const isSnapStart = SnapStart.stringValue === "true";
+      const functionName = `${PREFIX}${Path.stringValue}-${MemorySize.stringValue}-${Architecture.stringValue}`;
+      let versions = [];
+      if (isSnapStart) {
+        versions = await getFunctionVersions(lambdaClient, functionName);
       }
-      await delay(DELAY);
+      for (let i = 0; i < NB_INVOKE; ++i) {
+        if (isSnapStart) {
+          let functionNameWithVersion = `${functionName}:${versions[i]}`;
+          console.log(`invoking function ${functionNameWithVersion}`);
+          await invokeFunction(lambdaClient, functionNameWithVersion, 0);
+        } else {
+          await invokeFunction(lambdaClient, functionName, 0);
+          await updateFunction(lambdaClient, functionName, 0);
+        }
+        await delay(DELAY);
+      }
     }
-    return {
-      statusCode: 200,
-      body: JSON.stringify("success"),
-    };
-  } catch (_) {
-    throw "failure";
+  } catch (e) {
+    console.error(e);
+    context.fail();
   }
 };
 

@@ -1,43 +1,177 @@
-const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
+const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
+const {
+  DynamoDBClient,
+  DeleteTableCommand,
+  CreateTableCommand,
+} = require("@aws-sdk/client-dynamodb");
 
-const DEPLOYER = process.env.DEPLOYER;
 const REGION = process.env.AWS_REGION;
+const ACCOUNT_ID = process.env.ACCOUNT_ID;
+const QUEUE_NAME = process.env.QUEUE_NAME;
+const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
+const TABLE = "report-log";
+const DELAY = 5000;
 
-const invokeFunction = async (client, memorySize, architecture) => {
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const deleteTable = async (client, table) => {
   const params = {
-    FunctionName: DEPLOYER,
-    ClientContext: Buffer.from(
-      JSON.stringify({ memorySize, architecture })
-    ).toString("base64"),
+    TableName: table,
   };
   try {
-    const command = new InvokeCommand(params);
+    const command = new DeleteTableCommand(params);
     await client.send(command);
-    console.log(`function ${params.FunctionName} invoked`);
+    console.log(`table ${table} deleted`);
+  } catch (e) {
+    if (e.name === "ResourceNotFoundException") {
+      console.log(`table ${table} does not exist, skipping deletion`);
+    } else {
+      console.error(e);
+      throw e;
+    }
+  }
+};
+
+const createTable = async (client, table) => {
+  const params = {
+    TableName: table,
+    AttributeDefinitions: [
+      {
+        AttributeName: "requestId",
+        AttributeType: "S",
+      },
+    ],
+    KeySchema: [
+      {
+        AttributeName: "requestId",
+        KeyType: "HASH",
+      },
+    ],
+    BillingMode: "PAY_PER_REQUEST",
+  };
+  try {
+    const command = new CreateTableCommand(params);
+    await client.send(command);
+    console.log(`table ${table} created`);
   } catch (e) {
     console.error(e);
     throw e;
   }
 };
 
+const writeEventToQueue = async (
+  client,
+  queueUrl,
+  memorySize,
+  architecture,
+  runtime,
+  path,
+  handler,
+  snapStart
+) => {
+  const params = {
+    MessageAttributes: {
+      Architecture: {
+        DataType: "String",
+        StringValue: architecture,
+      },
+      MemorySize: {
+        DataType: "Number",
+        StringValue: memorySize,
+      },
+      Runtime: {
+        DataType: "String",
+        StringValue: runtime,
+      },
+      Path: {
+        DataType: "String",
+        StringValue: path,
+      },
+      Handler: {
+        DataType: "String",
+        StringValue: handler,
+      },
+      SnapStart: {
+        DataType: "String",
+        StringValue: snapStart,
+      },
+    },
+    MessageBody: "deploy",
+    QueueUrl: queueUrl,
+  };
+
+  try {
+    const command = new SendMessageCommand(params);
+    await client.send(command);
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
+
+const addPermission = async (client, functionName) => {
+  const params = {
+    FunctionName: functionName,
+    Action: "lambda:InvokeFunction",
+    Principal: `logs.amazonaws.com`,
+    StatementId: "addInvokePermission",
+  };
+  try {
+    const command = new AddPermissionCommand(params);
+    await client.send(command);
+    console.log(`permission added to ${functionName}`);
+  } catch (e) {
+    console.warn(e);
+  }
+};
+
+const removePermission = async (client, functionName) => {
+  const params = {
+    FunctionName: functionName,
+    Action: "lambda:InvokeFunction",
+    Principal: `logs.amazonaws.com`,
+    StatementId: "addInvokePermission",
+  };
+  try {
+    const command = new AddPermissionCommand(params);
+    await client.send(command);
+    console.log(`permission added to ${functionName}`);
+  } catch (e) {
+    console.warn(e);
+  }
+};
+
 exports.handler = async (_, context) => {
   try {
     const manifest = require("../manifest.json");
-    const allPromises = [];
-    const lambdaClient = new LambdaClient({ region: REGION });
+    const sqsClient = new SQSClient({ region: REGION });
+    const queueUrl = `https://sqs.${REGION}.amazonaws.com/${ACCOUNT_ID}/${QUEUE_NAME}`;
 
-    for (memorySize of manifest.memorySizes) {
-      for (architecture of manifest.architectures) {
-        allPromises.push(
-          invokeFunction(lambdaClient, memorySize, architecture)
-        );
+    await removePermission(lambdaClient, LOG_PROCESSOR_ARN);
+    await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
+
+    const dynamoDbClient = new DynamoDBClient({ region: REGION });
+    await deleteTable(dynamoDbClient, TABLE);
+    await delay(DELAY);
+    await createTable(dynamoDbClient, TABLE);
+    await delay(DELAY);
+
+    for (const memorySize of manifest.memorySizes) {
+      for (const runtime of manifest.runtimes) {
+        for (const architecture of runtime.architectures) {
+          await writeEventToQueue(
+            sqsClient,
+            queueUrl,
+            memorySize,
+            architecture,
+            runtime.runtime,
+            runtime.path,
+            runtime.handler,
+            !!runtime.snapStart
+          );
+        }
       }
     }
-    await Promise.all(allPromises);
-    return {
-      statusCode: 200,
-      body: JSON.stringify("success"),
-    };
   } catch (e) {
     console.error(e);
     context.fail();

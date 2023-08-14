@@ -1,75 +1,81 @@
-service: lambda-perf
+service: lambda-perf-async
 
 provider:
   name: aws
   memorySize: 128
-  region: ${env:AWS_REGION}
   runtime: nodejs18.x
+  region: ${env:AWS_REGION}
   iam:
     role:
-      name: lambda-perf-${sls:stage}-role-${env:AWS_REGION}
+      name: lambda-perf-${sls:stage}-role-${aws:region}
   timeout: 900
   iamRoleStatements:
     - Effect: Allow
       Action: "logs:CreateLogGroup"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
+      Resource: "arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/lambda-perf-*"
     - Effect: Allow
       Action: "logs:CreateLogStream"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
+      Resource: "arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/lambda-perf-*"
     - Effect: Allow
       Action: "logs:DeleteLogGroup"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*"
+      Resource: "arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/lambda-perf-*"
     - Effect: Allow
       Action: "logs:PutLogEvents"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:log-group:/aws/lambda/lambda-perf-*:*"
+      Resource: "arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/lambda-perf-*:*"
     - Effect: Allow
       Action: "lambda:CreateFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:DeleteFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:InvokeFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:AddPermission"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "logs:PutSubscriptionFilter"
-      Resource: "arn:aws:logs:${self:provider.region}:${env:AWS_ACCOUNT_ID}:*:*"
+      Resource: "arn:aws:logs:${aws:region}:${aws:accountId}:*:*"
     - Effect: Allow
       Action: "lambda:UpdateFunctionConfiguration"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:GetFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:GetFunctionConfiguration"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:ListVersionsByFunction"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:PublishVersion"
-      Resource: "arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:lambda-perf-*"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "iam:PassRole"
-      Resource: "arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role-${env:AWS_REGION}"
+      Resource: "arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}"
     - Effect: Allow
       Action: "s3:GetObject"
-      Resource: "arn:aws:s3:::lambda-perf-${env:AWS_REGION}/*"
+      Resource: "arn:aws:s3:::lambda-perf-${aws:region}/*"
     - Effect: Allow
       Action: "dynamodb:DeleteTable"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
       Action: "dynamodb:CreateTable"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
       Action: "dynamodb:Scan"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
       Action: "dynamodb:PutItem"
-      Resource: "arn:aws:dynamodb:${self:provider.region}:${env:AWS_ACCOUNT_ID}:table/report-log"
+      Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
+    - Effect: Allow
+      Action: "sqs:SendMessage"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-deployer"
+    - Effect: Allow
+      Action: "sqs:SendMessage"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker"
 
 package:
   patterns:
@@ -80,79 +86,53 @@ package:
     - "!README.md"
 
 functions:
+  
   reportLogProcessor:
     package:
       individually: true
       patterns:
         - report-log-processor
         - "!function-trigger-deployer"
-        - "!function-trigger-invoker"
         - "!function-invoker"
         - "!function-deployer"
         - "!result-builder"
     handler: report-log-processor/app.handler
 
+  functionInvoker:
+    package:
+      individually: true
+      patterns:
+        - "function-invoker"
+        - "!function-trigger-deployer"
+        - "!function-deployer"
+        - "!report-log-processor"
+        - "!result-builder"
+    handler: function-invoker/app.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfInvoker
+              - Arn
+          batchSize: 1
+  
   functionTriggerDeployer:
     package:
       individually: true
       patterns:
         - "function-trigger-deployer"
-        - "!function-trigger-invoker"
         - "!function-invoker"
         - "!function-deployer"
         - "!report-log-processor"
         - "!result-builder"
     handler: function-trigger-deployer/app.handler
     environment:
-      DEPLOYER: 
-        "Fn::GetAtt": [ FunctionDeployerLambdaFunction, Arn ]
-    events:
-      - schedule: cron(30 13 * * ? *)
-
-  functionDeployer:
-    environment:
-      ROLE_ARN: arn:aws:iam::${env:AWS_ACCOUNT_ID}:role/lambda-perf-${sls:stage}-role-${env:AWS_REGION}
+      QUEUE_NAME: lambda-perf-deployer
+      ACCOUNT_ID: ${aws:accountId}
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-    package:
-      individually: true
-      patterns:
-        - function-deployer
-        - "!function-trigger-deployer"
-        - "!function-trigger-invoker"
-        - "!function-invoker"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-deployer/app.handler
-
-  functionInvoker:
-    package:
-      individually: true
-      patterns:
-        - function-invoker
-        - "!function-trigger-deployer"
-        - "!function-trigger-invoker"
-        - "!function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-invoker/app.handler
-
-  functionTriggerInvoker:
-    package:
-      individually: true
-      patterns:
-        - function-trigger-invoker
-        - "!function-trigger-deployer"
-        - "!function-invoker"
-        - "!function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-trigger-invoker/app.handler
-    environment:
-      INVOKER: 
-        "Fn::GetAtt": [ FunctionInvokerLambdaFunction, Arn ]
     events:
-      - schedule: cron(45 13 * * ? *)
+      - schedule: cron(30 13 * * ? *)
 
   resultBuilder:
     environment:
@@ -163,10 +143,45 @@ functions:
       patterns:
         - result-builder
         - "!function-trigger-deployer"
-        - "!function-trigger-invoker"
         - "!function-invoker"
         - "!function-deployer"
         - "!report-log-processor"
     handler: result-builder/app.handler
     events:
       - schedule: cron(0 14 * * ? *)
+
+  functionDeployer:
+    package:
+      individually: true
+      patterns:
+        - "!function-trigger-deployer"
+        - "!function-invoker"
+        - "function-deployer"
+        - "!report-log-processor"
+        - "!result-builder"
+    handler: function-deployer/app.handler
+    environment:
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+      LOG_PROCESSOR_ARN: 
+        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+      QUEUE_NAME: lambda-perf-invoker
+      ACCOUNT_ID: ${aws:accountId}
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfDeployer
+              - Arn
+          batchSize: 1
+resources:
+  Resources:
+    lambdaPerfDeployer:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "lambda-perf-deployer"
+        VisibilityTimeout: 900
+    lambdaPerfInvoker:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "lambda-perf-invoker"
+        VisibilityTimeout: 900
