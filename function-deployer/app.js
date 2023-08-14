@@ -1,6 +1,5 @@
 const {
   LambdaClient,
-  AddPermissionCommand,
   CreateFunctionCommand,
   DeleteFunctionCommand,
   PublishVersionCommand,

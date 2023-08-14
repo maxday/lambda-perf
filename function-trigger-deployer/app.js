@@ -4,15 +4,17 @@ const {
   DeleteTableCommand,
   CreateTableCommand,
 } = require("@aws-sdk/client-dynamodb");
+const {
+  LambdaClient,
+  AddPermissionCommand,
+  RemovePermissionCommand,
+} = require("@aws-sdk/client-lambda");
 
 const REGION = process.env.AWS_REGION;
 const ACCOUNT_ID = process.env.ACCOUNT_ID;
 const QUEUE_NAME = process.env.QUEUE_NAME;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const TABLE = "report-log";
-const DELAY = 5000;
-
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const deleteTable = async (client, table) => {
   const params = {
@@ -114,28 +116,27 @@ const addPermission = async (client, functionName) => {
     FunctionName: functionName,
     Action: "lambda:InvokeFunction",
     Principal: `logs.amazonaws.com`,
-    StatementId: "addInvokePermission",
+    StatementId: "invokePermission",
   };
   try {
     const command = new AddPermissionCommand(params);
     await client.send(command);
     console.log(`permission added to ${functionName}`);
   } catch (e) {
-    console.warn(e);
+    console.error(e);
+    throw e;
   }
 };
 
 const removePermission = async (client, functionName) => {
   const params = {
     FunctionName: functionName,
-    Action: "lambda:InvokeFunction",
-    Principal: `logs.amazonaws.com`,
-    StatementId: "addInvokePermission",
+    StatementId: "invokePermission",
   };
   try {
-    const command = new AddPermissionCommand(params);
+    const command = new RemovePermissionCommand(params);
     await client.send(command);
-    console.log(`permission added to ${functionName}`);
+    console.log(`permission removed from ${functionName}`);
   } catch (e) {
     console.warn(e);
   }
@@ -147,14 +148,13 @@ exports.handler = async (_, context) => {
     const sqsClient = new SQSClient({ region: REGION });
     const queueUrl = `https://sqs.${REGION}.amazonaws.com/${ACCOUNT_ID}/${QUEUE_NAME}`;
 
+    const lambdaClient = new LambdaClient({ region: REGION });
     await removePermission(lambdaClient, LOG_PROCESSOR_ARN);
     await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
 
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     await deleteTable(dynamoDbClient, TABLE);
-    await delay(DELAY);
     await createTable(dynamoDbClient, TABLE);
-    await delay(DELAY);
 
     for (const memorySize of manifest.memorySizes) {
       for (const runtime of manifest.runtimes) {

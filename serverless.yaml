@@ -35,6 +35,9 @@ provider:
       Action: "lambda:AddPermission"
       Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
+      Action: "lambda:RemovePermission"
+      Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
+    - Effect: Allow
       Action: "logs:PutSubscriptionFilter"
       Resource: "arn:aws:logs:${aws:region}:${aws:accountId}:*:*"
     - Effect: Allow
