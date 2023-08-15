@@ -15,6 +15,9 @@ const ACCOUNT_ID = process.env.ACCOUNT_ID;
 const QUEUE_NAME = process.env.QUEUE_NAME;
 const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
 const TABLE = "report-log";
+const DELAY = 5000;
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const deleteTable = async (client, table) => {
   const params = {
@@ -154,6 +157,7 @@ exports.handler = async (_, context) => {
 
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     await deleteTable(dynamoDbClient, TABLE);
+    await delay(DELAY);
     await createTable(dynamoDbClient, TABLE);
 
     for (const memorySize of manifest.memorySizes) {
