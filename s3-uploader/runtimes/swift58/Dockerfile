@@ -1,4 +1,5 @@
 FROM public.ecr.aws/docker/library/swift:5.8.0-amazonlinux2 AS builder
+RUN mkdir -p /tmp/app/src
 COPY . /tmp/app/src/
 WORKDIR /tmp/app/src/
 RUN yum install zip -y
