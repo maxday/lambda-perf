@@ -1,5 +1,4 @@
-ARG ARCH
-FROM --platform=$ARCH swift:5.8-amazonlinux2 AS builder
+FROM public.ecr.aws/docker/library/swift:5.8.0-amazonlinux2 AS builder
 COPY . /tmp/app/src/
 WORKDIR /tmp/app/src/
 RUN yum install zip -y

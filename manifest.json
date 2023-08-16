@@ -168,14 +168,14 @@
     },
     {
       "displayName": "c++ 11",
-      "runtime": "c++",
+      "runtime": "provided.al2",
       "handler": "handler",
       "path": "cpp11",
       "architectures": ["x86_64", "arm64"]
     },
     {
       "displayName": "apple swift 5.8",
-      "runtime": "swift",
+      "runtime": "provided.al2",
       "handler": "SimpleLambdaHandler",
       "path": "swift58",
       "architectures": ["x86_64", "arm64"]
