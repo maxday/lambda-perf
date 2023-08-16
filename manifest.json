@@ -3,6 +3,13 @@
   "architectures": ["x86_64", "arm64"],
   "runtimes": [
     {
+      "displayName": "apple swift 5.8",
+      "runtime": "provided.al2",
+      "handler": "SimpleLambdaHandler",
+      "path": "swift58",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
       "displayName": "nodejs14.x",
       "runtime": "nodejs14.x",
       "handler": "index.handler",
@@ -178,13 +185,6 @@
       "runtime": "provided.al2",
       "handler": "handler",
       "path": "cpp11",
-      "architectures": ["x86_64", "arm64"]
-    },
-    {
-      "displayName": "apple swift 5.8",
-      "runtime": "provided.al2",
-      "handler": "SimpleLambdaHandler",
-      "path": "swift58",
       "architectures": ["x86_64", "arm64"]
     }
   ]
