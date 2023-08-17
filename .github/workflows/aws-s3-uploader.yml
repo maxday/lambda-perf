@@ -26,6 +26,8 @@ jobs:
   build-upload:
     runs-on: self-hosted
     steps:
+      - name: WhoamI
+        run: whoami
       - uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
