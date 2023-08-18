@@ -2,6 +2,13 @@
   "memorySizes": [128, 256, 512, 1024],
   "runtimes": [
     {
+      "displayName": "apple swift 5.8",
+      "runtime": "provided.al2",
+      "handler": "SimpleLambdaHandler",
+      "path": "swift58",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
       "displayName": "nodejs14.x",
       "runtime": "nodejs14.x",
       "handler": "index.handler",
@@ -87,9 +94,16 @@
     },
     {
       "displayName": "java8",
-      "runtime": "java8.al2",
+      "runtime": "java8",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java8",
+      "architectures": ["x86_64"]
+    },
+    {
+      "displayName": "java8.al2",
+      "runtime": "java8.al2",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java8.al2",
       "architectures": ["x86_64", "arm64"]
     },
     {
@@ -170,7 +184,14 @@
       "runtime": "provided.al2",
       "handler": "com.xavierbouclet.OkHandler",
       "path": "graalvm_java17_on_provided_al2",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "c++ 11",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "cpp11",
+      "architectures": ["x86_64", "arm64"]
     }
   ]
 }

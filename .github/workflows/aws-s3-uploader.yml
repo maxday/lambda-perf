@@ -23,14 +23,25 @@ on:
         required: true
 
 jobs:
-  build-upload:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      runner: ${{ steps.select.outputs.runner }}
+    steps:
+      - name: Check branch
+        id: select
+        run: |
+          if [ ${{ inputs.architecture }} == 'x86_64' ]; then
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+          else
+            echo "runner=self-hosted" >> $GITHUB_OUTPUT
+          fi
+          cat $GITHUB_OUTPUT
+  build-upload:
+    needs: setup
+    runs-on: ${{ needs.setup.outputs.runner }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       - name: build and deploy
         env:
           ARCHITECTURE: ${{ inputs.architecture }}

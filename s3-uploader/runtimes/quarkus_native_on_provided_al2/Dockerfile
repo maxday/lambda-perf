@@ -1,4 +1,4 @@
-FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17 AS builder
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.0.1.2-Final-java17 AS builder
 RUN curl https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz --output apache-maven-3.9.4-bin.tar.gz
 RUN tar xzf apache-maven-3.9.4-bin.tar.gz
 COPY src ./src
