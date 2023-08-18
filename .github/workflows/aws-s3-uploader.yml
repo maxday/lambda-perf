@@ -36,6 +36,7 @@ jobs:
           else
             echo "runner=self-hosted" >> $GITHUB_OUTPUT
           fi
+          cat $GITHUB_OUTPUT
   build-upload:
     runs-on: ${{ needs.setup.outputs.runner }}
     steps:
