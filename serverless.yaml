@@ -79,12 +79,6 @@ provider:
     - Effect: Allow
       Action: "sqs:SendMessage"
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker"
-    - Effect: Allow
-      Action: "sqs:SendMessage"
-      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-deployer-dead-letter"
-    - Effect: Allow
-      Action: "sqs:SendMessage"
-      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker-dead-letter"
 
 package:
   patterns:
@@ -124,11 +118,6 @@ functions:
               - lambdaPerfInvoker
               - Arn
           batchSize: 1
-    onError: 
-      Fn::GetAtt:
-        - lambdaPerfInvokerDeadLetter
-        - Arn
-    maximumRetryAttempts: 0
   
   functionTriggerDeployer:
     package:
@@ -187,11 +176,6 @@ functions:
               - lambdaPerfDeployer
               - Arn
           batchSize: 1
-    onError: 
-      Fn::GetAtt:
-        - lambdaPerfDeployerDeadLetter
-        - Arn
-    maximumRetryAttempts: 0
 
 resources:
   Resources:
@@ -200,18 +184,8 @@ resources:
       Properties:
         QueueName: "lambda-perf-deployer"
         VisibilityTimeout: 900
-    lambdaPerfDeployerDeadLetter:
-      Type: "AWS::SQS::Queue"
-      Properties:
-        QueueName: "lambda-perf-deployer-dead-letter"
-        VisibilityTimeout: 900
     lambdaPerfInvoker:
       Type: "AWS::SQS::Queue"
       Properties:
         QueueName: "lambda-perf-invoker"
-        VisibilityTimeout: 900
-    lambdaPerfInvokerDeadLetter:
-      Type: "AWS::SQS::Queue"
-      Properties:
-        QueueName: "lambda-perf-invoker-dead-letter"
         VisibilityTimeout: 900
