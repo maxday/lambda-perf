@@ -38,6 +38,7 @@ jobs:
           fi
           cat $GITHUB_OUTPUT
   build-upload:
+    needs: setup
     runs-on: ${{ needs.setup.outputs.runner }}
     steps:
       - uses: actions/checkout@v3
