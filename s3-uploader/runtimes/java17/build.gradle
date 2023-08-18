@@ -8,13 +8,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 task buildZip(type: Zip) {
-    baseName = "code"
+    archiveBaseName = 'code'
     from compileJava
     from processResources
 }
 
 build.dependsOn buildZip
-
-wrapper {
-    gradleVersion = '6.1'
-}

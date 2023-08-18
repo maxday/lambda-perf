@@ -33,6 +33,20 @@ const sendToS3 = async (client, path, architecture, nbRetry) => {
   }
 };
 
+const build = async (path, architecture, nbRetry) => {
+  if (nbRetry > 5) {
+    throw new Error("Too many retries");
+  }
+  try {
+    childProcess.execSync(
+      `./runtimes/${path}/build.sh ${path} ${architecture}`
+    );
+  } catch (e) {
+    console.error(e);
+    await build(path, architecture, nbRetry + 1);
+  }
+};
+
 const upload = async () => {
   const s3Client = new S3Client();
   for (const runtime of manifest.runtimes) {
@@ -42,9 +56,7 @@ const upload = async () => {
         console.log(
           `start building the artifact for ${path} arch = ${architecture}`
         );
-        childProcess.execSync(
-          `./runtimes/${path}/build.sh ${path} ${architecture}`
-        );
+        await build(path, architecture, 0);
         await sendToS3(s3Client, path, architecture, 0);
       }
     }
