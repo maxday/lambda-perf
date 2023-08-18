@@ -5,12 +5,7 @@ const {
   ListVersionsByFunctionCommand,
 } = require("@aws-sdk/client-lambda");
 
-const REGION = process.env.AWS_REGION;
-const PREFIX = "lambda-perf-";
-const NB_INVOKE = 10;
-const DELAY = 10000;
-
-const invokeFunction = async (client, functionName, nbRetry) => {
+const invokeFunction = async (client, functionName, delayInMs, nbRetry) => {
   if (nbRetry > 5) {
     throw "max retries exceeded in invokeFunction";
   }
@@ -23,12 +18,12 @@ const invokeFunction = async (client, functionName, nbRetry) => {
     console.log(`function ${functionName} invoked`);
   } catch (e) {
     console.error(e);
-    await delay(DELAY);
-    await invokeFunction(client, functionName, nbRetry + 1);
+    await delay(delayInMs);
+    await invokeFunction(client, functionName, delayInMs, nbRetry + 1);
   }
 };
 
-const updateFunction = async (client, functionName, nbRetry) => {
+const updateFunction = async (client, functionName, delayInMs, nbRetry) => {
   if (nbRetry > 5) {
     throw "max retries exceeded in updateFunction";
   }
@@ -44,14 +39,18 @@ const updateFunction = async (client, functionName, nbRetry) => {
     console.log(`function ${functionName} updated`);
   } catch (e) {
     console.error(e);
-    await delay(DELAY);
-    await updateFunction(client, functionName, nbRetry + 1);
+    await delay(delayInMs);
+    await updateFunction(client, functionName, delayInMs, nbRetry + 1);
   }
 };
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 exports.handler = async (event, context) => {
+  const REGION = process.env.AWS_REGION;
+  const PREFIX = "lambda-perf-";
+  const NB_INVOKE = 10;
+  const DELAY = 10000;
   try {
     const lambdaClient = new LambdaClient({ region: REGION });
     // should only contain 1 record as batch size is set to 1
@@ -69,10 +68,10 @@ exports.handler = async (event, context) => {
         if (isSnapStart) {
           let functionNameWithVersion = `${functionName}:${versions[i]}`;
           console.log(`invoking function ${functionNameWithVersion}`);
-          await invokeFunction(lambdaClient, functionNameWithVersion, 0);
+          await invokeFunction(lambdaClient, functionNameWithVersion, DELAY, 0);
         } else {
-          await invokeFunction(lambdaClient, functionName, 0);
-          await updateFunction(lambdaClient, functionName, 0);
+          await invokeFunction(lambdaClient, functionName, DELAY, 0);
+          await updateFunction(lambdaClient, functionName, DELAY, 0);
         }
         await delay(DELAY);
       }

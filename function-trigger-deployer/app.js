@@ -10,13 +10,6 @@ const {
   RemovePermissionCommand,
 } = require("@aws-sdk/client-lambda");
 
-const REGION = process.env.AWS_REGION;
-const ACCOUNT_ID = process.env.ACCOUNT_ID;
-const QUEUE_NAME = process.env.QUEUE_NAME;
-const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
-const TABLE = "report-log";
-const DELAY = 5000;
-
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const deleteTable = async (client, table) => {
@@ -146,6 +139,12 @@ const removePermission = async (client, functionName) => {
 };
 
 exports.handler = async (_, context) => {
+  const REGION = process.env.AWS_REGION;
+  const ACCOUNT_ID = process.env.ACCOUNT_ID;
+  const QUEUE_NAME = process.env.QUEUE_NAME;
+  const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
+  const TABLE = "report-log";
+  const DELAY = 5000;
   try {
     const manifest = require("../manifest.json");
     const sqsClient = new SQSClient({ region: REGION });

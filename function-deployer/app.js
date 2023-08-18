@@ -14,13 +14,6 @@ const {
 } = require("@aws-sdk/client-cloudwatch-logs");
 const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
 
-const REGION = process.env.AWS_REGION;
-const ROLE_ARN = process.env.ROLE_ARN;
-const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
-const ACCOUNT_ID = process.env.ACCOUNT_ID;
-const QUEUE_NAME = process.env.QUEUE_NAME;
-const PROJECT = `lambda-perf`;
-
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const deleteFunction = async (client, functionName) => {
@@ -59,6 +52,9 @@ async function updateFunction(client, functionName) {
 
 const createFunction = async (
   client,
+  project,
+  region,
+  roleArn,
   functionName,
   memorySize,
   architecture,
@@ -73,10 +69,10 @@ const createFunction = async (
     Handler: handler,
     Runtime: runtime,
     Code: {
-      S3Bucket: `${PROJECT}-${REGION}`,
+      S3Bucket: `${project}-${region}`,
       S3Key: `${path}/code_${architecture}.zip`,
     },
-    Role: ROLE_ARN,
+    Role: roleArn,
     ...(snapStartEnabled && {
       SnapStart: {
         ApplyOn: "PublishedVersions",
@@ -186,9 +182,13 @@ const createLogGroup = async (client, functionName) => {
   }
 };
 
-const createSubscriptionFilter = async (client, functionName) => {
+const createSubscriptionFilter = async (
+  client,
+  functionName,
+  logProcessorArn
+) => {
   const params = {
-    destinationArn: LOG_PROCESSOR_ARN,
+    destinationArn: logProcessorArn,
     filterName: `report-log-from-${functionName}`,
     filterPattern: "REPORT",
     logGroupName: `/aws/lambda/${functionName}`,
@@ -206,6 +206,10 @@ const createSubscriptionFilter = async (client, functionName) => {
 const deploy = async (
   lambdaClient,
   cloudWatchLogsClient,
+  project,
+  region,
+  roleArn,
+  logProcessorArn,
   memorySize,
   architecture,
   runtime,
@@ -213,11 +217,14 @@ const deploy = async (
   handler,
   snapStart
 ) => {
-  const functionName = `${PROJECT}-${path}-${memorySize}-${architecture}`;
+  const functionName = `${project}-${path}-${memorySize}-${architecture}`;
   try {
     await deleteFunction(lambdaClient, functionName);
     await createFunction(
       lambdaClient,
+      project,
+      region,
+      roleArn,
       functionName,
       memorySize,
       architecture,
@@ -228,7 +235,11 @@ const deploy = async (
     );
     await deleteLogGroup(cloudWatchLogsClient, functionName);
     await createLogGroup(cloudWatchLogsClient, functionName);
-    await createSubscriptionFilter(cloudWatchLogsClient, functionName);
+    await createSubscriptionFilter(
+      cloudWatchLogsClient,
+      functionName,
+      logProcessorArn
+    );
   } catch (e) {
     console.error(e);
     throw e;
@@ -281,6 +292,13 @@ const writeEventToQueue = async (
 };
 
 exports.handler = async (event, context) => {
+  const REGION = process.env.AWS_REGION;
+  const ROLE_ARN = process.env.ROLE_ARN;
+  const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
+  const ACCOUNT_ID = process.env.ACCOUNT_ID;
+  const QUEUE_NAME = process.env.QUEUE_NAME;
+  const PROJECT = `lambda-perf`;
+
   try {
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
@@ -295,6 +313,10 @@ exports.handler = async (event, context) => {
       await deploy(
         lambdaClient,
         cloudWatchLogsClient,
+        PROJECT,
+        REGION,
+        ROLE_ARN,
+        LOG_PROCESSOR_ARN,
         MemorySize.stringValue,
         Architecture.stringValue,
         Runtime.stringValue,
