@@ -178,7 +178,7 @@
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "quarkus_native_on_provided_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "graalvm java17 (prov.al2)",
