@@ -95,6 +95,13 @@
     },
     {
       "displayName": "java8",
+      "runtime": "java8",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java8",
+      "architectures": ["x86_64"]
+    },
+    {
+      "displayName": "java8.al2",
       "runtime": "java8.al2",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java8",
