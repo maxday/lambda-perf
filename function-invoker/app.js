@@ -50,7 +50,7 @@ exports.handler = async (event, context) => {
   const REGION = process.env.AWS_REGION;
   const PREFIX = "lambda-perf-";
   const NB_INVOKE = 10;
-  const DELAY = 10000;
+  const DELAY = 30000;
   try {
     const lambdaClient = new LambdaClient({ region: REGION });
     // should only contain 1 record as batch size is set to 1
