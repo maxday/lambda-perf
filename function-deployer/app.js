@@ -1,6 +1,5 @@
 const {
   LambdaClient,
-  AddPermissionCommand,
   CreateFunctionCommand,
   DeleteFunctionCommand,
   PublishVersionCommand,
@@ -13,11 +12,7 @@ const {
   DeleteLogGroupCommand,
   PutSubscriptionFilterCommand,
 } = require("@aws-sdk/client-cloudwatch-logs");
-
-const REGION = process.env.AWS_REGION;
-const ROLE_ARN = process.env.ROLE_ARN;
-const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
-const PROJECT = `lambda-perf`;
+const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -57,25 +52,33 @@ async function updateFunction(client, functionName) {
 
 const createFunction = async (
   client,
+  project,
+  region,
+  roleArn,
   functionName,
-  singleFunction,
   memorySize,
-  architecture
+  architecture,
+  runtime,
+  path,
+  handler,
+  snapStart
 ) => {
-  const sanitizedRuntime = singleFunction.path
-    ? singleFunction.path
-    : singleFunction.runtime.replace(".", "");
+  const snapStartEnabled = snapStart === "true";
   const params = {
     FunctionName: functionName,
-    Handler: singleFunction.handler,
-    Runtime: singleFunction.runtime,
+    Handler: handler,
+    Runtime: runtime,
     Code: {
-      S3Bucket: `${PROJECT}-${REGION}`,
-      S3Key: `${sanitizedRuntime}/code_${architecture}.zip`,
+      S3Bucket: `${project}-${region}`,
+      S3Key: `${path}/code_${architecture}.zip`,
     },
-    Role: ROLE_ARN,
-    ...(singleFunction.snapStart && singleFunction.snapStart),
-    MemorySize: memorySize,
+    Role: roleArn,
+    ...(snapStartEnabled && {
+      SnapStart: {
+        ApplyOn: "PublishedVersions",
+      },
+    }),
+    MemorySize: parseInt(memorySize, 10),
     Architectures: [architecture],
   };
   try {
@@ -85,7 +88,7 @@ const createFunction = async (
     const command = new CreateFunctionCommand(params);
     await client.send(command);
 
-    if (singleFunction.snapStart) {
+    if (snapStartEnabled) {
       await waitForActive(client, functionName);
 
       //publish 10 versions
@@ -179,9 +182,13 @@ const createLogGroup = async (client, functionName) => {
   }
 };
 
-const createSubscriptionFilter = async (client, functionName) => {
+const createSubscriptionFilter = async (
+  client,
+  functionName,
+  logProcessorArn
+) => {
   const params = {
-    destinationArn: LOG_PROCESSOR_ARN,
+    destinationArn: logProcessorArn,
     filterName: `report-log-from-${functionName}`,
     filterPattern: "REPORT",
     logGroupName: `/aws/lambda/${functionName}`,
@@ -196,74 +203,141 @@ const createSubscriptionFilter = async (client, functionName) => {
   }
 };
 
-const addPermission = async (client, functionName) => {
-  const params = {
-    FunctionName: functionName,
-    Action: "lambda:InvokeFunction",
-    Principal: `logs.amazonaws.com`,
-    StatementId: "addInvokePermission",
-  };
-  try {
-    const command = new AddPermissionCommand(params);
-    await client.send(command);
-    console.log(`permission added to ${functionName}`);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
 const deploy = async (
   lambdaClient,
   cloudWatchLogsClient,
+  project,
+  region,
+  roleArn,
+  logProcessorArn,
   memorySize,
-  architecture
+  architecture,
+  runtime,
+  path,
+  handler,
+  snapStart
 ) => {
-  const runtimes = require("../manifest.json").runtimes;
-  for (const singleFunction of runtimes) {
-    if (singleFunction.architectures.includes(architecture)) {
-      const functionSufix = singleFunction.path
-        ? singleFunction.path
-        : singleFunction.runtime.replace(".", "");
-      const functionName = `${PROJECT}-${functionSufix}-${memorySize}-${architecture}`;
-      try {
-        await deleteFunction(lambdaClient, functionName);
-        await createFunction(
-          lambdaClient,
-          functionName,
-          singleFunction,
-          memorySize,
-          architecture
-        );
-        await deleteLogGroup(cloudWatchLogsClient, functionName);
-        await createLogGroup(cloudWatchLogsClient, functionName);
-        await createSubscriptionFilter(cloudWatchLogsClient, functionName);
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-      await delay(5000);
-    } else {
-      console.log(
-        `Skipping ${singleFunction.path} as it's not available for ${architecture}`
-      );
-    }
+  const functionName = `${project}-${path}-${memorySize}-${architecture}`;
+  try {
+    await deleteFunction(lambdaClient, functionName);
+    await createFunction(
+      lambdaClient,
+      project,
+      region,
+      roleArn,
+      functionName,
+      memorySize,
+      architecture,
+      runtime,
+      path,
+      handler,
+      snapStart
+    );
+    await deleteLogGroup(cloudWatchLogsClient, functionName);
+    await createLogGroup(cloudWatchLogsClient, functionName);
+    await createSubscriptionFilter(
+      cloudWatchLogsClient,
+      functionName,
+      logProcessorArn
+    );
+  } catch (e) {
+    console.error(e);
+    throw e;
   }
 };
 
-exports.handler = async (_, context) => {
+const writeEventToQueue = async (
+  client,
+  queueUrl,
+  memorySize,
+  architecture,
+  runtime,
+  path,
+  snapStart
+) => {
+  const params = {
+    MessageAttributes: {
+      Architecture: {
+        DataType: "String",
+        StringValue: architecture,
+      },
+      MemorySize: {
+        DataType: "Number",
+        StringValue: memorySize,
+      },
+      Runtime: {
+        DataType: "String",
+        StringValue: runtime,
+      },
+      Path: {
+        DataType: "String",
+        StringValue: path,
+      },
+      SnapStart: {
+        DataType: "String",
+        StringValue: snapStart,
+      },
+    },
+    MessageBody: "invoke",
+    QueueUrl: queueUrl,
+  };
+
   try {
-    console.log("clientContext = ", context.clientContext);
-    const { memorySize, architecture } = context.clientContext;
+    const command = new SendMessageCommand(params);
+    await client.send(command);
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
+
+exports.handler = async (event, context) => {
+  const REGION = process.env.AWS_REGION;
+  const ROLE_ARN = process.env.ROLE_ARN;
+  const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
+  const ACCOUNT_ID = process.env.ACCOUNT_ID;
+  const QUEUE_NAME = process.env.QUEUE_NAME;
+  const PROJECT = `lambda-perf`;
+
+  try {
     const lambdaClient = new LambdaClient({ region: REGION });
     const cloudWatchLogsClient = new CloudWatchLogsClient({
       region: REGION,
     });
-    await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
-    await deploy(lambdaClient, cloudWatchLogsClient, memorySize, architecture);
-    return {
-      statusCode: 200,
-      body: JSON.stringify("success"),
-    };
+    // should only contain 1 record as batch size is set to 1
+    for (const record of event.Records) {
+      console.log(record);
+      const { MemorySize, Architecture, Runtime, Path, Handler, SnapStart } =
+        record.messageAttributes;
+
+      await deploy(
+        lambdaClient,
+        cloudWatchLogsClient,
+        PROJECT,
+        REGION,
+        ROLE_ARN,
+        LOG_PROCESSOR_ARN,
+        MemorySize.stringValue,
+        Architecture.stringValue,
+        Runtime.stringValue,
+        Path.stringValue,
+        Handler.stringValue,
+        SnapStart.stringValue
+      );
+
+      const sqsClient = new SQSClient({ region: REGION });
+      const queueUrl = `https://sqs.${REGION}.amazonaws.com/${ACCOUNT_ID}/${QUEUE_NAME}`;
+
+      await writeEventToQueue(
+        sqsClient,
+        queueUrl,
+        MemorySize.stringValue,
+        Architecture.stringValue,
+        Runtime.stringValue,
+        Path.stringValue,
+        SnapStart.stringValue
+      );
+    }
   } catch (e) {
     console.error(e);
     context.fail();

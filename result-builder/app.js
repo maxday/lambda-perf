@@ -1,14 +1,7 @@
 const { Octokit } = require("@octokit/rest");
 const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 
-const TABLE = "report-log";
-const OWNER = "maxday";
-const REPO = "lambda-perf";
-const REGION = process.env.AWS_REGION;
-const GH_AUTH_TOKEN = process.env.GH_AUTH_TOKEN;
-const IS_PRODUCTION = process.env.LAMBDA_PERF_ENV === "production";
-
-const commitFile = async (content, filename, authToken) => {
+const commitFile = async (content, filename, authToken, owner, repo) => {
   try {
     const octokit = new Octokit({
       auth: authToken,
@@ -17,8 +10,8 @@ const commitFile = async (content, filename, authToken) => {
     let sha = "";
     try {
       const resultGet = await octokit.rest.repos.getContent({
-        owner: OWNER,
-        repo: REPO,
+        owner,
+        repo,
         path: `data/${filename}.json`,
       });
       sha = resultGet.data.sha;
@@ -26,8 +19,8 @@ const commitFile = async (content, filename, authToken) => {
       console.log(`impossible to get the sha for ${filename}`);
     }
     await octokit.rest.repos.createOrUpdateFileContents({
-      owner: OWNER,
-      repo: REPO,
+      owner,
+      repo,
       path: `data/${filename}.json`,
       message: `perf data`,
       content: b64Content,
@@ -127,6 +120,12 @@ const formatMaxThreeDigits = (number) => Math.round(number * 1e3) / 1e3;
 const computeMean = (array) => array.reduce((a, b) => a + b, 0) / array.length;
 
 exports.handler = async (_, context) => {
+  const TABLE = "report-log";
+  const OWNER = "maxday";
+  const REPO = "lambda-perf";
+  const REGION = process.env.AWS_REGION;
+  const GH_AUTH_TOKEN = process.env.GH_AUTH_TOKEN;
+  const IS_PRODUCTION = process.env.LAMBDA_PERF_ENV === "production";
   try {
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     const data = await fetchData(dynamoDbClient, TABLE);
@@ -136,8 +135,8 @@ exports.handler = async (_, context) => {
     if (IS_PRODUCTION) {
       console.log("production env detected, pushing to GitHub");
       await updateFileToPreventCaching(GH_AUTH_TOKEN);
-      await commitFile(content, today, GH_AUTH_TOKEN);
-      await commitFile(content, "last", GH_AUTH_TOKEN);
+      await commitFile(content, today, GH_AUTH_TOKEN, OWNER, REPO);
+      await commitFile(content, "last", GH_AUTH_TOKEN, OWNER, REPO);
     } else {
       console.log("non-production env detected, output the content:");
       console.log(content);

@@ -3,11 +3,10 @@ const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDB } = require("@aws-sdk/client-dynamodb");
 const dynamoDb = DynamoDBDocument.from(new DynamoDB());
 
-const TABLE = "report-log";
-
 const runtimes = require("../manifest.json").runtimes;
 
 exports.handler = async (input, context) => {
+  const TABLE = "report-log";
   let payload = Buffer.from(input.awslogs.data, "base64");
   let result = zlib.gunzipSync(payload);
   result = JSON.parse(result.toString());

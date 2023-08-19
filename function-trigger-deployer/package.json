@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@aws-sdk/client-lambda": "^3.379.1"
+  "devDependencies": {
+    "@aws-sdk/client-sqs": "^3.388.0"
   }
 }

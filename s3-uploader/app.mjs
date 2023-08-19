@@ -3,22 +3,23 @@ import childProcess from "child_process";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import manifest from "../manifest.json" assert { type: "json" };
 
-const REGION = process.env.AWS_REGION;
-const ARCHITECTURE = process.env.ARCHITECTURE;
-const SLEEP_DELAY_IN_SEC = 5;
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const sleep = (seconds) => {
-  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-};
-
-const sendToS3 = async (client, path, architecture, nbRetry) => {
+const sendToS3 = async (
+  client,
+  region,
+  path,
+  architecture,
+  delayInMs,
+  nbRetry
+) => {
   if (nbRetry > 5) {
     throw new Error("Too many retries");
   }
   const codeFilename = `code_${architecture}.zip`;
   const fileStream = fs.createReadStream(`./runtimes/${path}/${codeFilename}`);
   const putObjectParams = {
-    Bucket: `lambda-perf-${REGION}`,
+    Bucket: `lambda-perf-${region}`,
     Key: `${path}/${codeFilename}`,
     Body: fileStream,
   };
@@ -28,8 +29,8 @@ const sendToS3 = async (client, path, architecture, nbRetry) => {
     console.log(`s3 upload success for ${path} arch = ${architecture}`);
   } catch (e) {
     console.error(e);
-    await sleep(SLEEP_DELAY_IN_SEC);
-    await sendToS3(client, path, architecture, nbRetry + 1);
+    await sleep(delayInMs);
+    await sendToS3(client, region, path, architecture, delayInMs, nbRetry + 1);
   }
 };
 
@@ -48,6 +49,10 @@ const build = async (path, architecture, nbRetry) => {
 };
 
 const upload = async () => {
+  const REGION = process.env.AWS_REGION;
+  const ARCHITECTURE = process.env.ARCHITECTURE;
+  const SLEEP_DELAY_IN_MILLISEC = 5000;
+
   const s3Client = new S3Client();
   for (const runtime of manifest.runtimes) {
     for (const architecture of runtime.architectures) {
@@ -57,7 +62,14 @@ const upload = async () => {
           `start building the artifact for ${path} arch = ${architecture}`
         );
         await build(path, architecture, 0);
-        await sendToS3(s3Client, path, architecture, 0);
+        await sendToS3(
+          s3Client,
+          REGION,
+          path,
+          architecture,
+          SLEEP_DELAY_IN_MILLISEC,
+          0
+        );
       }
     }
   }

@@ -1,6 +1,5 @@
 {
   "memorySizes": [128, 256, 512, 1024],
-  "architectures": ["x86_64", "arm64"],
   "runtimes": [
     {
       "displayName": "apple swift 5.8",
@@ -104,7 +103,7 @@
       "displayName": "java8.al2",
       "runtime": "java8.al2",
       "handler": "io.github.maxday.Handler::handleRequest",
-      "path": "java8.al2",
+      "path": "java8_al2",
       "architectures": ["x86_64", "arm64"]
     },
     {
