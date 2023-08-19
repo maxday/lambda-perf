@@ -18,7 +18,6 @@ const animate = async (dataManager) => {
       await load(dataManager);
     }
     const data = dataManager.fetchData;
-    console.log(data);
     document.getElementById("lastUpdate").innerHTML = data.metadata.generatedAt;
     const promiseArray = [];
     let i = 0;

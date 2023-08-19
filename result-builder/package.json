@@ -9,8 +9,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.145.0",
+  "dependencies": {
     "@octokit/rest": "^20.0.1"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.145.0"
   }
 }
