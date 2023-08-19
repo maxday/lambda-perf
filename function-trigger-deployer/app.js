@@ -107,7 +107,8 @@ const writeEventToQueue = async (
   }
 };
 
-const addPermission = async (client, functionName) => {
+const addPermission = async (region, functionName) => {
+  const client = new LambdaClient({ region });
   const params = {
     FunctionName: functionName,
     Action: "lambda:InvokeFunction",
@@ -124,7 +125,11 @@ const addPermission = async (client, functionName) => {
   }
 };
 
-const removePermission = async (client, functionName) => {
+const removePermission = async (region, functionName, delayInMs, nbRetry) => {
+  if (nbRetry > 5) {
+    throw "max retries exceeded in removePermission";
+  }
+  const client = new LambdaClient({ region });
   const params = {
     FunctionName: functionName,
     StatementId: "invokePermission",
@@ -135,6 +140,10 @@ const removePermission = async (client, functionName) => {
     console.log(`permission removed from ${functionName}`);
   } catch (e) {
     console.warn(e);
+    if (e.name === "ServiceException") {
+      await delay(delayInMs);
+      await removePermission(region, functionName, delayInMs, nbRetry + 1);
+    }
   }
 };
 
@@ -144,15 +153,14 @@ exports.handler = async (_, context) => {
   const QUEUE_NAME = process.env.QUEUE_NAME;
   const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
   const TABLE = "report-log";
-  const DELAY = 5000;
+  const DELAY = 30000;
   try {
     const manifest = require("../manifest.json");
     const sqsClient = new SQSClient({ region: REGION });
     const queueUrl = `https://sqs.${REGION}.amazonaws.com/${ACCOUNT_ID}/${QUEUE_NAME}`;
 
-    const lambdaClient = new LambdaClient({ region: REGION });
-    await removePermission(lambdaClient, LOG_PROCESSOR_ARN);
-    await addPermission(lambdaClient, LOG_PROCESSOR_ARN);
+    await removePermission(REGION, LOG_PROCESSOR_ARN, DELAY, 0);
+    await addPermission(REGION, LOG_PROCESSOR_ARN);
 
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
     await deleteTable(dynamoDbClient, TABLE);
