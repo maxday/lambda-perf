@@ -186,6 +186,13 @@
       "handler": "hello",
       "path": "cobol",
       "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "fortran",
+      "runtime": "provided.al2",
+      "handler": "hello",
+      "path": "fortran",
+      "architectures": ["x86_64", "arm64"]
     }
   ]
 }

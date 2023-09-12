@@ -17,7 +17,6 @@ RUN cobc -x lambda.cob
 RUN rm -f lambda.cob
 ### Only for debug
 #ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APP_BASE_DIR/lambda/lib 
-WORKDIR $APP_BASE_DIR/lambda
 RUN zip -r $APP_BASE_DIR/code.zip .
 
 FROM scratch
