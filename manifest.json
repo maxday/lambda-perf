@@ -179,6 +179,13 @@
       "handler": "SimpleLambdaHandler",
       "path": "swift58",
       "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "cobol",
+      "runtime": "provided.al2",
+      "handler": "hello",
+      "path": "cobol",
+      "architectures": ["x86_64", "arm64"]
     }
   ]
 }
