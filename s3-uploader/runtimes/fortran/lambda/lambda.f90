@@ -1,3 +1,3 @@
 program maxdaylambda
-  print *, 'Hello from FORTARN!'
+  print *, 'Hello from FORTRAN!'
 end program maxdaylambda
