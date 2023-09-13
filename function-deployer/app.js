@@ -61,7 +61,8 @@ const createFunction = async (
   runtime,
   path,
   handler,
-  snapStart
+  snapStart,
+  layer
 ) => {
   const snapStartEnabled = snapStart === "true";
   const params = {
@@ -80,6 +81,9 @@ const createFunction = async (
     }),
     MemorySize: parseInt(memorySize, 10),
     Architectures: [architecture],
+    ...(layer && {
+      Layers: [layer],
+    }),
   };
   try {
     console.log(
@@ -215,7 +219,8 @@ const deploy = async (
   runtime,
   path,
   handler,
-  snapStart
+  snapStart,
+  layer
 ) => {
   const functionName = `${project}-${path}-${memorySize}-${architecture}`;
   try {
@@ -231,7 +236,8 @@ const deploy = async (
       runtime,
       path,
       handler,
-      snapStart
+      snapStart,
+      layer
     );
     await deleteLogGroup(cloudWatchLogsClient, functionName);
     await createLogGroup(cloudWatchLogsClient, functionName);
@@ -306,9 +312,17 @@ exports.handler = async (event, context) => {
     });
     // should only contain 1 record as batch size is set to 1
     for (const record of event.Records) {
-      console.log(record);
-      const { MemorySize, Architecture, Runtime, Path, Handler, SnapStart } =
-        record.messageAttributes;
+      const {
+        MemorySize,
+        Architecture,
+        Runtime,
+        Path,
+        Handler,
+        SnapStart,
+        Layer,
+      } = record.messageAttributes;
+
+      const layer = Layer ? Layer.stringValue : null;
 
       await deploy(
         lambdaClient,
@@ -322,7 +336,8 @@ exports.handler = async (event, context) => {
         Runtime.stringValue,
         Path.stringValue,
         Handler.stringValue,
-        SnapStart.stringValue
+        SnapStart.stringValue,
+        layer
       );
 
       const sqsClient = new SQSClient({ region: REGION });

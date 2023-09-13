@@ -65,7 +65,8 @@ const writeEventToQueue = async (
   runtime,
   path,
   handler,
-  snapStart
+  snapStart,
+  layer
 ) => {
   const params = {
     MessageAttributes: {
@@ -93,6 +94,12 @@ const writeEventToQueue = async (
         DataType: "String",
         StringValue: snapStart,
       },
+      ...(layer && {
+        Layer: {
+          DataType: "String",
+          StringValue: layer,
+        },
+      }),
     },
     MessageBody: "deploy",
     QueueUrl: queueUrl,
@@ -147,6 +154,13 @@ const removePermission = async (region, functionName, delayInMs, nbRetry) => {
   }
 };
 
+const buildLayerName = (layer, architecture, region) => {
+  if (layer && layer[architecture]) {
+    return layer[architecture].replace("_REGION_", region);
+  }
+  return null;
+};
+
 exports.handler = async (_, context) => {
   const REGION = process.env.AWS_REGION;
   const ACCOUNT_ID = process.env.ACCOUNT_ID;
@@ -170,6 +184,7 @@ exports.handler = async (_, context) => {
     for (const memorySize of manifest.memorySizes) {
       for (const runtime of manifest.runtimes) {
         for (const architecture of runtime.architectures) {
+          const layerName = buildLayerName(runtime.layer, architecture, REGION);
           await writeEventToQueue(
             sqsClient,
             queueUrl,
@@ -178,7 +193,8 @@ exports.handler = async (_, context) => {
             runtime.runtime,
             runtime.path,
             runtime.handler,
-            !!runtime.snapStart
+            !!runtime.snapStart,
+            layerName
           );
         }
       }

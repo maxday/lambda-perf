@@ -192,6 +192,17 @@
       "handler": "handler",
       "path": "cpp11",
       "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "bun",
+      "runtime": "provided.al2",
+      "handler": "index.hello",
+      "path": "bun",
+      "architectures": ["x86_64"],
+      "layer": {
+        "x86_64": "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-x64:1",
+        "arm64": "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-aarch64:1"
+      }
     }
   ]
 }
