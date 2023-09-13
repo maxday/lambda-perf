@@ -2,7 +2,7 @@
   "memorySizes": [128, 256, 512, 1024],
   "runtimes": [
     {
-      "displayName": "apple swift 5.8",
+      "displayName": "apple swift 5.8 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "SimpleLambdaHandler",
       "path": "swift58",
@@ -187,14 +187,14 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
-      "displayName": "c++ 11",
+      "displayName": "c++ 11 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "handler",
       "path": "cpp11",
       "architectures": ["x86_64", "arm64"]
     },
     {
-      "displayName": "bun",
+      "displayName": "bun (prov.al2)",
       "runtime": "provided.al2",
       "handler": "index.hello",
       "path": "bun",
