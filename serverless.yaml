@@ -51,7 +51,7 @@ provider:
       Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
     - Effect: Allow
       Action: "lambda:GetLayerVersion"
-      Resource: "arn:aws:lambda:eu-west-1:*:layer:*:*"
+      Resource: "arn:aws:lambda:*:*:layer:*:*"
     - Effect: Allow
       Action: "lambda:ListVersionsByFunction"
       Resource: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lambda-perf-*"
