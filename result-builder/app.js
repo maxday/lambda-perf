@@ -32,25 +32,28 @@ const commitFile = async (content, filename, authToken, owner, repo) => {
   }
 };
 
-const updateFileToPreventCaching = async (authToken) => {
+const updateFileToPreventCaching = async (authToken, owner, repo) => {
   try {
     const octokit = new Octokit({
       auth: authToken,
     });
     const resultGet = await octokit.rest.repos.getContent({
-      owner: OWNER,
-      repo: REPO,
+      owner,
+      repo,
       path: `docs/script.js`,
     });
     let base64Content = resultGet.data.content;
     const sha = resultGet.data.sha;
     const textContent = Buffer.from(base64Content, "base64").toString("utf8");
-    const replace = `data/last.json?${Math.random()}'`;
-    const newScriptJs = textContent.replace(/data\/last\.json.*'/, replace);
+    const replace = `data/last.json?${Math.random()}`;
+    const newScriptJs = textContent.replace(
+      /data\/last\.json\?[0-9\.]+/,
+      replace
+    );
     base64Content = Buffer.from(newScriptJs, "utf8").toString("base64");
     await octokit.rest.repos.createOrUpdateFileContents({
-      owner: OWNER,
-      repo: REPO,
+      owner,
+      repo,
       path: `docs/script.js`,
       message: `prevent cache`,
       content: base64Content,
@@ -134,7 +137,7 @@ exports.handler = async (_, context) => {
     const content = JSON.stringify(json, null, "\t");
     if (IS_PRODUCTION) {
       console.log("production env detected, pushing to GitHub");
-      await updateFileToPreventCaching(GH_AUTH_TOKEN);
+      await updateFileToPreventCaching(GH_AUTH_TOKEN, OWNER, REPO);
       await commitFile(content, today, GH_AUTH_TOKEN, OWNER, REPO);
       await commitFile(content, "last", GH_AUTH_TOKEN, OWNER, REPO);
     } else {
