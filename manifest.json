@@ -209,6 +209,13 @@
       "handler": "index.hello",
       "path": "bun",
       "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "Java 21 native (prov.al2)",
+      "runtime": "provided.al2",
+      "handler": "Main.main",
+      "path": "java_graalvm_ce_21_on_provided_al2",
+      "architectures": ["x86_64", "arm64"]
     }
   ]
 }
