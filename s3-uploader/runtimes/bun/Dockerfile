@@ -1,4 +1,4 @@
-FROM oven/bun AS builder
+FROM oven/bun:1.0.4 AS builder
 RUN apt-get update
 RUN apt-get install curl zip -y
 RUN curl https://raw.githubusercontent.com/oven-sh/bun/main/packages/bun-lambda/runtime.ts --output runtime.ts
