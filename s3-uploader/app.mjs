@@ -40,12 +40,14 @@ const build = async (path, architecture, nbRetry) => {
     throw new Error("Too many retries");
   }
   try {
+    // pruning all previous images to avoid disk space issue
+    childProcess.execSync(`docker system prune --all --force`);
+
     childProcess.execSync(
       `./runtimes/${path}/build.sh ${path} ${architecture}`
     );
   } catch (e) {
     console.error(e);
-    childProcess.execSync(`docker system prune --all --force`);
     await build(path, architecture, nbRetry + 1);
   }
 };
