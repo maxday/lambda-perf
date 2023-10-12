@@ -48,7 +48,6 @@ const build = async (path, architecture, nbRetry) => {
     );
   } catch (e) {
     console.error(e);
-    childProcess.execSync(`docker system prune --all --force`);
     await build(path, architecture, nbRetry + 1);
   }
 };
