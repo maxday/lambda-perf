@@ -42,6 +42,12 @@ jobs:
     runs-on: ${{ needs.setup.outputs.runner }}
     steps:
       - uses: actions/checkout@v3
+      - name: Delete huge unnecessary folders
+        run: |
+          rm -rf /opt/hostedtoolcache
+          rm -rf /usr/share/dotnet
+          rm -rf /opt/ghc
+          rm -rf "$AGENT_TOOLSDIRECTORY"
       - name: build and deploy
         env:
           ARCHITECTURE: ${{ inputs.architecture }}
