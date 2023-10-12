@@ -3,8 +3,6 @@ import childProcess from "child_process";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import manifest from "../manifest.json" assert { type: "json" };
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const sendToS3 = async (
   client,
   region,
@@ -35,6 +33,9 @@ const sendToS3 = async (
 };
 
 const build = async (path, architecture, nbRetry) => {
+  console.log(
+    `start building the artifact for ${path} arch = ${architecture}, retry = ${nbRetry}`
+  );
   if (nbRetry > 5) {
     throw new Error("Too many retries");
   }
@@ -59,9 +60,6 @@ const upload = async () => {
     for (const architecture of runtime.architectures) {
       if (architecture === ARCHITECTURE) {
         const path = runtime.path;
-        console.log(
-          `start building the artifact for ${path} arch = ${architecture}`
-        );
         await build(path, architecture, 0);
         await sendToS3(
           s3Client,
