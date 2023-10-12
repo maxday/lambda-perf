@@ -14,7 +14,7 @@ RUN make && make install
 WORKDIR "${APP_BASE_DIR}/lambda/"
 RUN mkdir build
 WORKDIR "${APP_BASE_DIR}/lambda/build"
-RUN cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=~/lambda-install
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/lambda-install
 RUN make && make aws-lambda-package-maxdaylambda
 
 
