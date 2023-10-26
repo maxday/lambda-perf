@@ -3,6 +3,8 @@ import childProcess from "child_process";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import manifest from "../manifest.json" assert { type: "json" };
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const sendToS3 = async (
   client,
   region,

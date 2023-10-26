@@ -1,5 +1,9 @@
 .serverless
 
+container-uploader/node_modules
+container-uploader/*/*
+container-uploader/*.zip
+
 s3-uploader/node_modules
 s3-uploader/runtimes/rust_on_provided_al2/target
 s3-uploader/runtimes/dotnetcore31/src/obj

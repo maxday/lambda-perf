@@ -1,0 +1,7 @@
+ARG baseImage
+FROM ${baseImage}
+ARG handlerCode
+ARG handlerCmd
+COPY ./${handlerCode} /var/task
+ENV LAMBDA_PERF_CMD=${handlerCmd}
+CMD [ ${LAMBDA_PERF_CMD} ]
