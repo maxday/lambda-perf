@@ -118,7 +118,7 @@
       "path": "go1x",
       "architectures": ["x86_64"],
       "container": {
-        "baseImage": "public.ecr.aws/lambda/go:1.x"
+        "baseImage": "public.ecr.aws/lambda/go:1"
       }
     },
     {
