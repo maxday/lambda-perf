@@ -164,14 +164,16 @@ const buildLayerName = (layer, architecture, region) => {
 exports.handler = async (_, context) => {
   const REGION = process.env.AWS_REGION;
   const ACCOUNT_ID = process.env.ACCOUNT_ID;
-  const QUEUE_NAME = process.env.QUEUE_NAME;
+  const FUNCTION_QUEUE_NAME = process.env.FUNCTION_QUEUE_NAME;
+  const CONTAINER_QUEUE_NAME = process.env.CONTAINER_QUEUE_NAME;
   const LOG_PROCESSOR_ARN = process.env.LOG_PROCESSOR_ARN;
   const TABLE = "report-log";
   const DELAY = 30000;
   try {
     const manifest = require("../manifest.json");
     const sqsClient = new SQSClient({ region: REGION });
-    const queueUrl = `https://sqs.${REGION}.amazonaws.com/${ACCOUNT_ID}/${QUEUE_NAME}`;
+    const functionQueueUrl = `https://sqs.${REGION}.amazonaws.com/${ACCOUNT_ID}/${FUNCTION_QUEUE_NAME}`;
+    const containerQueueUrl = `https://sqs.${REGION}.amazonaws.com/${ACCOUNT_ID}/${CONTAINER_QUEUE_NAME}`;
 
     await removePermission(REGION, LOG_PROCESSOR_ARN, DELAY, 0);
     await addPermission(REGION, LOG_PROCESSOR_ARN);
@@ -185,9 +187,10 @@ exports.handler = async (_, context) => {
       for (const runtime of manifest.runtimes) {
         for (const architecture of runtime.architectures) {
           const layerName = buildLayerName(runtime.layer, architecture, REGION);
+          // functions
           await writeEventToQueue(
             sqsClient,
-            queueUrl,
+            functionQueueUrl,
             memorySize,
             architecture,
             runtime.runtime,
@@ -196,6 +199,20 @@ exports.handler = async (_, context) => {
             !!runtime.snapStart,
             layerName
           );
+          // containers
+          if (runtime.hasOwnProperty("container")) {
+            await writeEventToQueue(
+              sqsClient,
+              containerQueueUrl,
+              memorySize,
+              architecture,
+              runtime.runtime,
+              runtime.path,
+              runtime.handler,
+              !!runtime.snapStart,
+              layerName
+            );
+          }
         }
       }
     }

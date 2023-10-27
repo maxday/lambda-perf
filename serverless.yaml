@@ -78,7 +78,10 @@ provider:
       Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
       Action: "sqs:SendMessage"
-      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-deployer"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-function-deployer"
+    - Effect: Allow
+      Action: "sqs:SendMessage"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-container-deployer"
     - Effect: Allow
       Action: "sqs:SendMessage"
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker"
@@ -87,6 +90,7 @@ package:
   patterns:
     - "!app"
     - "!s3-uploader"
+    - "!container-uploader"
     - "!docs"
     - "!data"
     - "!README.md"
@@ -133,7 +137,8 @@ functions:
         - "!result-builder"
     handler: function-trigger-deployer/app.handler
     environment:
-      QUEUE_NAME: lambda-perf-deployer
+      FUNCTION_QUEUE_NAME: lambda-perf-function-deployer
+      CONTAINER_QUEUE_NAME: lambda-perf-container-deployer
       ACCOUNT_ID: ${aws:accountId}
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
@@ -165,7 +170,7 @@ functions:
         - "function-deployer"
         - "!report-log-processor"
         - "!result-builder"
-    handler: function-deployer/app.handler
+    handler: function-deployer/function.handler
     environment:
       ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
       LOG_PROCESSOR_ARN: 
@@ -176,16 +181,45 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt:
-              - lambdaPerfDeployer
+              - lambdaPerfFunctionDeployer
+              - Arn
+          batchSize: 1
+
+  containerDeployer:
+    package:
+      individually: true
+      patterns:
+        - "!function-trigger-deployer"
+        - "!function-invoker"
+        - "function-deployer"
+        - "!report-log-processor"
+        - "!result-builder"
+    handler: function-deployer/container.handler
+    environment:
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+      LOG_PROCESSOR_ARN: 
+        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+      QUEUE_NAME: lambda-perf-invoker
+      ACCOUNT_ID: ${aws:accountId}
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfContainerDeployer
               - Arn
           batchSize: 1
 
 resources:
   Resources:
-    lambdaPerfDeployer:
+    lambdaPerfFunctionDeployer:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "lambda-perf-deployer"
+        QueueName: "lambda-perf-function-deployer"
+        VisibilityTimeout: 900
+    lambdaPerfContainerDeployer:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "lambda-perf-container-deployer"
         VisibilityTimeout: 900
     lambdaPerfInvoker:
       Type: "AWS::SQS::Queue"

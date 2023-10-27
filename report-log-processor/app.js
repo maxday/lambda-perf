@@ -13,11 +13,12 @@ exports.handler = async (input, context) => {
   const fromLambda = result.logGroup.replace("/aws/lambda/", "");
   const functionName = fromLambda.replace("lambda-perf-", "");
   const tokens = functionName.split("-");
-  if (tokens.length !== 3) {
+  if (tokens.length !== 4) {
     context.fail();
   }
   const name = tokens[0];
-  const architecture = tokens[2];
+  const packageType = tokens[1];
+  const architecture = tokens[3];
   const filter = runtimes.filter((e) => e.path === name);
   if (filter.length !== 1) {
     // could not find the display name
@@ -53,6 +54,7 @@ exports.handler = async (input, context) => {
           restoreDuration: restoreDuration ?? 0,
           billedRestoreDuration: billedRestoreDuration ?? 0,
           architecture,
+          packageType,
         };
         await dynamoDb.put({
           TableName: TABLE,

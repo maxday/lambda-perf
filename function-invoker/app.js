@@ -56,10 +56,12 @@ exports.handler = async (event, context) => {
     // should only contain 1 record as batch size is set to 1
     for (const record of event.Records) {
       console.log(record);
-      const { MemorySize, Architecture, Path, SnapStart } =
+      const { MemorySize, Architecture, Path, SnapStart, IsContainer } =
         record.messageAttributes;
       const isSnapStart = SnapStart.stringValue === "true";
-      const functionName = `${PREFIX}${Path.stringValue}-${MemorySize.stringValue}-${Architecture.stringValue}`;
+      const containerPrefix =
+        IsContainer.stringValue === "true" ? "container" : "zip";
+      const functionName = `${PREFIX}${Path.stringValue}-${containerPrefix}-${MemorySize.stringValue}-${Architecture.stringValue}`;
       let versions = [];
       if (isSnapStart) {
         versions = await getFunctionVersions(lambdaClient, functionName);
@@ -70,6 +72,7 @@ exports.handler = async (event, context) => {
           console.log(`invoking function ${functionNameWithVersion}`);
           await invokeFunction(lambdaClient, functionNameWithVersion, DELAY, 0);
         } else {
+          console.log(`invoking function ${functionName}`);
           await invokeFunction(lambdaClient, functionName, DELAY, 0);
           await updateFunction(lambdaClient, functionName, DELAY, 0);
         }
