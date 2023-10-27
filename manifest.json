@@ -2,6 +2,36 @@
   "memorySizes": [128, 256, 512, 1024],
   "runtimes": [
     {
+      "displayName": "apple swift 5.8 (prov.al2)",
+      "runtime": "provided.al2",
+      "handler": "SimpleLambdaHandler",
+      "path": "swift58",
+      "architectures": ["x86_64", "arm64"],
+      "container": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
+    },
+    {
+      "displayName": "nodejs14.x",
+      "runtime": "nodejs14.x",
+      "handler": "index.handler",
+      "path": "nodejs14x",
+      "architectures": ["x86_64", "arm64"],
+      "container": {
+        "baseImage": "public.ecr.aws/lambda/nodejs:14"
+      }
+    },
+    {
+      "displayName": "nodejs16.x",
+      "runtime": "nodejs16.x",
+      "handler": "index.handler",
+      "path": "nodejs16x",
+      "architectures": ["x86_64", "arm64"],
+      "container": {
+        "baseImage": "public.ecr.aws/lambda/nodejs:16"
+      }
+    },
+    {
       "displayName": "nodejs18.x",
       "runtime": "nodejs18.x",
       "handler": "index.handler",
