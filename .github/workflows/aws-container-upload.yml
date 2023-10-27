@@ -64,7 +64,7 @@ jobs:
 
           cd container-uploader
           yarn install
-          # node app.mjs
+          node app.mjs
 
           UNTAGGED_IMAGES=$( aws ecr list-images --region ${AWS_REGION} --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
           aws ecr batch-delete-image --region ${AWS_REGION} --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
