@@ -59,7 +59,7 @@ const createFunction = async (
     await client.send(command);
 
     if (snapStartEnabled) {
-      await waitForActive(client, functionName);
+      await waitForActive(client, functionName, 10_000, 0);
 
       //publish 10 versions
       for (let i = 0; i < 10; i++) {
@@ -135,7 +135,7 @@ const deploy = async (
       logProcessorArn,
       0
     );
-    await waitForActive(lambdaClient, functionName, 0);
+    await waitForActive(lambdaClient, functionName, 10_000, 0);
   } catch (e) {
     console.error(e);
     throw e;

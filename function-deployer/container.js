@@ -108,7 +108,7 @@ const deploy = async (
       logProcessorArn,
       0
     );
-    await waitForActive(lambdaClient, functionName, 0);
+    await waitForActive(lambdaClient, functionName, 30_000, 0);
   } catch (e) {
     console.error(e);
     throw e;

@@ -2,7 +2,8 @@ ARG baseImage
 FROM ${baseImage}
 ARG handlerCode
 ARG handlerCmd
-ARG destination
-COPY ./${handlerCode} ${destination}
+
+COPY ./${handlerCode} /var/runtime
+COPY ./${handlerCode} /var/task
 ENV LAMBDA_PERF_CMD=${handlerCmd}
 CMD [ ${LAMBDA_PERF_CMD} ]

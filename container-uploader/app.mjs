@@ -28,10 +28,7 @@ const buildDockerImage = async (
     `unzip ${runtime.path}_${architecture}.zip -d ${runtime.path}`
   );
   const tag = `${accountId}.dkr.ecr.${region}.amazonaws.com/lambda-perf:${runtime.path}-${architecture}`;
-  const destination = runtime.container.baseImage.includes("provided")
-    ? "/var/runtime"
-    : "/var/task";
-  const cmdLine = `docker build . -f Dockerfile.sample -t ${tag} --build-arg baseImage='${runtime.container.baseImage}' --build-arg handlerCode='${runtime.path}' --build-arg handlerCmd='${runtime.handler}' --build-arg destination='${destination}'`;
+  const cmdLine = `docker build . -f Dockerfile.sample -t ${tag} --build-arg baseImage='${runtime.container.baseImage}' --build-arg handlerCode='${runtime.path}' --build-arg handlerCmd='${runtime.handler}'`;
   childProcess.execSync(cmdLine);
   const cmdLogin = `aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${accountId}.dkr.ecr.${region}.amazonaws.com`;
   console.log("docker logging in!");

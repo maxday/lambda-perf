@@ -198,7 +198,7 @@ const getFunction = async (client, functionName, nbRetry) => {
   }
 };
 
-const waitForActive = async (client, functionName, nbRetry) => {
+const waitForActive = async (client, functionName, delayInMs, nbRetry) => {
   if (nbRetry > MAX_RETRY) {
     throw "max retries exceeded in waitForActive";
   }
@@ -207,13 +207,13 @@ const waitForActive = async (client, functionName, nbRetry) => {
     console.log(`waiting for function ${functionName} to be active`, func);
     while (func.Configuration.State !== "Active") {
       console.log(`waiting for function ${functionName} to be active`);
-      await delay(1000);
+      await delay(delayInMs);
       func = await getFunction(client, functionName);
     }
   } catch (e) {
     console.error(e);
     await delay(SLEEP_DELAY_IN_MILLISEC);
-    await waitForActive(client, functionName, nbRetry + 1);
+    await waitForActive(client, functionName, delayInMs, nbRetry + 1);
   }
 };
 
