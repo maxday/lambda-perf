@@ -6,12 +6,15 @@ const { CloudWatchLogsClient } = require("@aws-sdk/client-cloudwatch-logs");
 const { SQSClient } = require("@aws-sdk/client-sqs");
 
 const {
+  delay,
   deleteFunction,
   deleteLogGroup,
   createLogGroup,
   createSubscriptionFilter,
   writeEventToQueue,
   waitForActive,
+  MAX_RETRY,
+  SLEEP_DELAY_IN_MILLISEC,
 } = require("./common");
 
 const createFunction = async (
@@ -24,8 +27,12 @@ const createFunction = async (
   memorySize,
   architecture,
   path,
-  handler
+  handler,
+  nbRetry
 ) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in createFunction";
+  }
   const params = {
     FunctionName: functionName,
     PackageType: "Image",
@@ -47,7 +54,20 @@ const createFunction = async (
     await client.send(command);
   } catch (e) {
     console.error(e);
-    throw e;
+    await delay(SLEEP_DELAY_IN_MILLISEC);
+    await createFunction(
+      client,
+      accountId,
+      project,
+      region,
+      roleArn,
+      functionName,
+      memorySize,
+      architecture,
+      path,
+      handler,
+      nbRetry + 1
+    );
   }
 };
 
@@ -66,7 +86,7 @@ const deploy = async (
 ) => {
   const functionName = `${project}-${path}-container-${memorySize}-${architecture}`;
   try {
-    await deleteFunction(lambdaClient, functionName);
+    await deleteFunction(lambdaClient, functionName, 0);
     await createFunction(
       lambdaClient,
       accountId,
@@ -77,16 +97,18 @@ const deploy = async (
       memorySize,
       architecture,
       path,
-      handler
+      handler,
+      0
     );
-    await deleteLogGroup(cloudWatchLogsClient, functionName);
-    await createLogGroup(cloudWatchLogsClient, functionName);
+    await deleteLogGroup(cloudWatchLogsClient, functionName, 0);
+    await createLogGroup(cloudWatchLogsClient, functionName, 0);
     await createSubscriptionFilter(
       cloudWatchLogsClient,
       functionName,
-      logProcessorArn
+      logProcessorArn,
+      0
     );
-    await waitForActive(lambdaClient, functionName);
+    await waitForActive(lambdaClient, functionName, 0);
   } catch (e) {
     console.error(e);
     throw e;

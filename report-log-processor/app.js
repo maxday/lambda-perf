@@ -55,6 +55,7 @@ exports.handler = async (input, context) => {
           billedRestoreDuration: billedRestoreDuration ?? 0,
           architecture,
           packageType,
+          insertDate: new Date().toISOString(),
         };
         await dynamoDb.put({
           TableName: TABLE,

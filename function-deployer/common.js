@@ -9,11 +9,17 @@ const {
   PutSubscriptionFilterCommand,
 } = require("@aws-sdk/client-cloudwatch-logs");
 
+const MAX_RETRY = 10;
+const SLEEP_DELAY_IN_MILLISEC = 5000;
+
 const { SendMessageCommand } = require("@aws-sdk/client-sqs");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const deleteFunction = async (client, functionName) => {
+const deleteFunction = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in deleteFunction";
+  }
   const params = {
     FunctionName: functionName,
   };
@@ -26,12 +32,16 @@ const deleteFunction = async (client, functionName) => {
       console.log(`function ${functionName} does not exist, skipping deletion`);
     } else {
       console.error(e);
-      throw e;
+      await delay(SLEEP_DELAY_IN_MILLISEC);
+      await deleteFunction(client, functionName, nbRetry + 1);
     }
   }
 };
 
-async function updateFunction(client, functionName) {
+async function updateFunction(client, functionName, nbRetry) {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in updateFunction";
+  }
   const params = {
     FunctionName: functionName,
     Environment: {
@@ -43,11 +53,15 @@ async function updateFunction(client, functionName) {
     await client.send(command);
   } catch (e) {
     console.error(e);
-    throw e;
+    await delay(SLEEP_DELAY_IN_MILLISEC);
+    await updateFunction(client, functionName, nbRetry + 1);
   }
 }
 
-const deleteLogGroup = async (client, functionName) => {
+const deleteLogGroup = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in deleteLogGroup";
+  }
   const params = {
     logGroupName: `/aws/lambda/${functionName}`,
   };
@@ -62,12 +76,16 @@ const deleteLogGroup = async (client, functionName) => {
       );
     } else {
       console.error(e);
-      throw e;
+      await delay(SLEEP_DELAY_IN_MILLISEC);
+      await deleteLogGroup(client, functionName, nbRetry + 1);
     }
   }
 };
 
-const createLogGroup = async (client, functionName) => {
+const createLogGroup = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in createLogGroup";
+  }
   const params = {
     logGroupName: `/aws/lambda/${functionName}`,
   };
@@ -77,15 +95,20 @@ const createLogGroup = async (client, functionName) => {
     console.log(`log group ${params.logGroupName} created`);
   } catch (e) {
     console.error(e);
-    throw e;
+    await delay(SLEEP_DELAY_IN_MILLISEC);
+    await createLogGroup(client, functionName, nbRetry + 1);
   }
 };
 
 const createSubscriptionFilter = async (
   client,
   functionName,
-  logProcessorArn
+  logProcessorArn,
+  nbRetry
 ) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in createSubscriptionFilter";
+  }
   const params = {
     destinationArn: logProcessorArn,
     filterName: `report-log-from-${functionName}`,
@@ -98,7 +121,13 @@ const createSubscriptionFilter = async (
     console.log(`subscription ${params.filterName} created`);
   } catch (e) {
     console.error(e);
-    throw e;
+    await delay(SLEEP_DELAY_IN_MILLISEC);
+    await createSubscriptionFilter(
+      client,
+      functionName,
+      logProcessorArn,
+      nbRetry + 1
+    );
   }
 };
 
@@ -152,7 +181,10 @@ const writeEventToQueue = async (
   }
 };
 
-const getFunction = async (client, functionName) => {
+const getFunction = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in getFunction";
+  }
   const params = {
     FunctionName: functionName,
   };
@@ -161,17 +193,27 @@ const getFunction = async (client, functionName) => {
     return await client.send(command);
   } catch (e) {
     console.error(e);
-    throw e;
+    await delay(SLEEP_DELAY_IN_MILLISEC);
+    await getFunction(client, functionName, nbRetry + 1);
   }
 };
 
-const waitForActive = async (client, functionName) => {
-  let func = await getFunction(client, functionName);
-  console.log(`waiting for function ${functionName} to be active`, func);
-  while (func.Configuration.State !== "Active") {
-    console.log(`waiting for function ${functionName} to be active`);
-    await delay(1000);
-    func = await getFunction(client, functionName);
+const waitForActive = async (client, functionName, nbRetry) => {
+  if (nbRetry > MAX_RETRY) {
+    throw "max retries exceeded in waitForActive";
+  }
+  try {
+    let func = await getFunction(client, functionName);
+    console.log(`waiting for function ${functionName} to be active`, func);
+    while (func.Configuration.State !== "Active") {
+      console.log(`waiting for function ${functionName} to be active`);
+      await delay(1000);
+      func = await getFunction(client, functionName);
+    }
+  } catch (e) {
+    console.error(e);
+    await delay(SLEEP_DELAY_IN_MILLISEC);
+    await waitForActive(client, functionName, nbRetry + 1);
   }
 };
 
@@ -184,4 +226,6 @@ module.exports = {
   createSubscriptionFilter,
   writeEventToQueue,
   waitForActive,
+  MAX_RETRY,
+  SLEEP_DELAY_IN_MILLISEC,
 };

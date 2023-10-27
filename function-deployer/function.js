@@ -112,7 +112,7 @@ const deploy = async (
 ) => {
   const functionName = `${project}-${path}-zip-${memorySize}-${architecture}`;
   try {
-    await deleteFunction(lambdaClient, functionName);
+    await deleteFunction(lambdaClient, functionName, 0);
     await createFunction(
       lambdaClient,
       project,
@@ -127,13 +127,15 @@ const deploy = async (
       snapStart,
       layer
     );
-    await deleteLogGroup(cloudWatchLogsClient, functionName);
-    await createLogGroup(cloudWatchLogsClient, functionName);
+    await deleteLogGroup(cloudWatchLogsClient, functionName, 0);
+    await createLogGroup(cloudWatchLogsClient, functionName, 0);
     await createSubscriptionFilter(
       cloudWatchLogsClient,
       functionName,
-      logProcessorArn
+      logProcessorArn,
+      0
     );
+    await waitForActive(lambdaClient, functionName, 0);
   } catch (e) {
     console.error(e);
     throw e;
