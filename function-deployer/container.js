@@ -62,10 +62,9 @@ const deploy = async (
   memorySize,
   architecture,
   path,
-  handler,
-  packageType
+  handler
 ) => {
-  const functionName = `${project}-${path}-${packageType}-${memorySize}-${architecture}`;
+  const functionName = `${project}-${path}-container-${memorySize}-${architecture}`;
   try {
     await deleteFunction(lambdaClient, functionName);
     await createFunction(

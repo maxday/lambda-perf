@@ -6,7 +6,6 @@ const {
 const { CloudWatchLogsClient } = require("@aws-sdk/client-cloudwatch-logs");
 const { SQSClient } = require("@aws-sdk/client-sqs");
 const {
-  writeEventToQueue,
   delay,
   deleteFunction,
   updateFunction,
