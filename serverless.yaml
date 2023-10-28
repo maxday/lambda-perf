@@ -85,7 +85,7 @@ provider:
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-function-deployer"
     - Effect: Allow
       Action: "sqs:SendMessage"
-      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-container-deployer"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-image-deployer"
     - Effect: Allow
       Action: "sqs:SendMessage"
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker"
@@ -158,23 +158,24 @@ functions:
       TABLE_NAME: report-log
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-      IMAGE_QUEUE_NAME: lambda-perf-container-deployer
+      IMAGE_QUEUE_NAME: lambda-perf-image-deployer
+      ACCOUNT_ID: ${aws:accountId}
     package:
       individually: true
       artifact: target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-deployer-rs.zip
 
-  functionDeployerImageRs:
+  functionImageDeployerRs:
     runtime: provided.al2
     architecture: arm64
     handler: bootstrap
     package:
       individually: true
-      artifact: target/lambda/function-deployer-image-rs/bootstrap-function-deployer-image-rs.zip
+      artifact: target/lambda/function-image-deployer-rs/bootstrap-function-image-deployer-rs.zip
     events:
       - sqs:
           arn:
             Fn::GetAtt:
-              - lambdaPerfFunctionDeployer
+              - lambdaPerfImageDeployer
               - Arn
           batchSize: 1
 
@@ -210,13 +211,13 @@ functions:
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
       QUEUE_NAME: lambda-perf-invoker
       ACCOUNT_ID: ${aws:accountId}
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - lambdaPerfFunctionDeployer
-              - Arn
-          batchSize: 1
+    # events:
+    #   - sqs:
+    #       arn:
+    #         Fn::GetAtt:
+    #           - lambdaPerfFunctionDeployer
+    #           - Arn
+    #       batchSize: 1
 
   containerDeployer:
     package:
@@ -234,13 +235,13 @@ functions:
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
       QUEUE_NAME: lambda-perf-invoker
       ACCOUNT_ID: ${aws:accountId}
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - lambdaPerfContainerDeployer
-              - Arn
-          batchSize: 1
+    # events:
+    #   - sqs:
+    #       arn:
+    #         Fn::GetAtt:
+    #           - lambdaPerfContainerDeployer
+    #           - Arn
+    #       batchSize: 1
 
 resources:
   Resources:
@@ -249,10 +250,10 @@ resources:
       Properties:
         QueueName: "lambda-perf-function-deployer"
         VisibilityTimeout: 900
-    lambdaPerfContainerDeployer:
+    lambdaPerfImageDeployer:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "lambda-perf-container-deployer"
+        QueueName: "lambda-perf-image-deployer"
         VisibilityTimeout: 900
     lambdaPerfInvoker:
       Type: "AWS::SQS::Queue"
