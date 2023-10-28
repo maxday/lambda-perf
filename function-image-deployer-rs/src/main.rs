@@ -1,9 +1,9 @@
-use aws_lambda_events::{event::sqs::SqsEventObj, sqs::SqsEvent};
+use aws_lambda_events::{event::sqs::SqsEventObj};
 use common_lib::Runtime;
 use lambda_manager::FunctionManager;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde::{Serialize};
+
 
 mod lambda_manager;
 
