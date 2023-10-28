@@ -1,26 +1,7 @@
-use std::collections::HashMap;
-
-use aws_sdk_sqs::types::MessageAttributeValue;
-use aws_sdk_sqs::Client as SQSClient;
-
+use crate::manifest::{ManifestManager, SQSDeployMessage};
 use async_trait::async_trait;
-
-use crate::manifest::ManifestManager;
-
+use aws_sdk_sqs::Client as SQSClient;
 use lambda_runtime::Error;
-
-pub struct SQSDeployMessage {
-    attributes: HashMap<String, MessageAttributeValue>,
-    body: String,
-}
-impl SQSDeployMessage {
-    fn new(attributes: HashMap<String, MessageAttributeValue>) -> Self {
-        SQSDeployMessage {
-            body: "deploy".to_string(),
-            attributes,
-        }
-    }
-}
 
 pub struct SQSManager {
     pub client: SQSClient,
@@ -69,51 +50,8 @@ impl QueueManager for SQSManager {
     fn build_message(&self) -> Vec<SQSDeployMessage> {
         let mut sqs_messages: Vec<SQSDeployMessage> = Vec::new();
         let manifest = self.manifest_manager.read_manifest();
-        for memory_size in manifest.memory_sizes {
-            for runtime in manifest.runtimes.iter() {
-                for architecture in runtime.architectures.iter() {
-                    let mut attributes = HashMap::new();
-                    attributes.insert(
-                        "architecture".to_string(),
-                        MessageAttributeValue::builder()
-                            .data_type("String")
-                            .string_value(architecture.to_string())
-                            .build(),
-                    );
-                    attributes.insert(
-                        "memorysize".to_string(),
-                        MessageAttributeValue::builder()
-                            .data_type("Number")
-                            .string_value(memory_size.to_string())
-                            .build(),
-                    );
-                    attributes.insert(
-                        "runtime".to_string(),
-                        MessageAttributeValue::builder()
-                            .data_type("String")
-                            .string_value(runtime.runtime.to_string())
-                            .build(),
-                    );
-                    attributes.insert(
-                        "path".to_string(),
-                        MessageAttributeValue::builder()
-                            .data_type("String")
-                            .string_value(runtime.path.to_string())
-                            .build(),
-                    );
-                    // todo snapstart
-                    // todo layer
-                    // todo do not hardcode
-                    attributes.insert(
-                        "packageType".to_string(),
-                        MessageAttributeValue::builder()
-                            .data_type("String")
-                            .string_value("image".to_string())
-                            .build(),
-                    );
-                    sqs_messages.push(SQSDeployMessage::new(attributes));
-                }
-            }
+        for runtime in manifest.runtimes.iter() {
+            sqs_messages.push(runtime.to_sqs_deploy_message());
         }
         sqs_messages
     }
