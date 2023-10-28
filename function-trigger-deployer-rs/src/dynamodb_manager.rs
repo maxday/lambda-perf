@@ -8,13 +8,7 @@ use aws_sdk_dynamodb::{
     Client as DynamoDbClient,
 };
 
-
-
-use lambda_runtime::{Error};
-
-
-
-
+use lambda_runtime::Error;
 
 #[async_trait]
 pub trait TableManager {
@@ -182,7 +176,5 @@ mod tests {
             .region(Region::new("test-region"))
             .build();
         Client::from_conf(conf)
-    }  
+    }
 }
-
-

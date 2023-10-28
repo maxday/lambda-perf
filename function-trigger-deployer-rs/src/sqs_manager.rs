@@ -44,7 +44,11 @@ impl SQSManager {
             }
         };
         let queue_url = SQSManager::build_queue_url(account_id, region, queue_name);
-        SQSManager { client, queue_url, manifest_manager }
+        SQSManager {
+            client,
+            queue_url,
+            manifest_manager,
+        }
     }
     fn build_queue_url(account_id: &str, region: &str, queue_name: &str) -> String {
         format!(
@@ -65,53 +69,53 @@ impl QueueManager for SQSManager {
     fn build_message(&self) -> Vec<SQSDeployMessage> {
         let mut sqs_messages: Vec<SQSDeployMessage> = Vec::new();
         let manifest = self.manifest_manager.read_manifest();
-    for memory_size in manifest.memory_sizes {
-        for runtime in manifest.runtimes.iter() {
-            for architecture in runtime.architectures.iter() {
-                let mut attributes = HashMap::new();
-                attributes.insert(
-                    "architecture".to_string(),
-                    MessageAttributeValue::builder()
-                        .data_type("String")
-                        .string_value(architecture.to_string())
-                        .build(),
-                );
-                attributes.insert(
-                    "memorysize".to_string(),
-                    MessageAttributeValue::builder()
-                        .data_type("Number")
-                        .string_value(memory_size.to_string())
-                        .build(),
-                );
-                attributes.insert(
-                    "runtime".to_string(),
-                    MessageAttributeValue::builder()
-                        .data_type("String")
-                        .string_value(runtime.runtime.to_string())
-                        .build(),
-                );
-                attributes.insert(
-                    "path".to_string(),
-                    MessageAttributeValue::builder()
-                        .data_type("String")
-                        .string_value(runtime.path.to_string())
-                        .build(),
-                );
-                // todo snapstart
-                // todo layer
-                // todo do not hardcode
-                attributes.insert(
-                    "packageType".to_string(),
-                    MessageAttributeValue::builder()
-                        .data_type("String")
-                        .string_value("image".to_string())
-                        .build(),
-                );
-                sqs_messages.push(SQSDeployMessage::new(attributes));
+        for memory_size in manifest.memory_sizes {
+            for runtime in manifest.runtimes.iter() {
+                for architecture in runtime.architectures.iter() {
+                    let mut attributes = HashMap::new();
+                    attributes.insert(
+                        "architecture".to_string(),
+                        MessageAttributeValue::builder()
+                            .data_type("String")
+                            .string_value(architecture.to_string())
+                            .build(),
+                    );
+                    attributes.insert(
+                        "memorysize".to_string(),
+                        MessageAttributeValue::builder()
+                            .data_type("Number")
+                            .string_value(memory_size.to_string())
+                            .build(),
+                    );
+                    attributes.insert(
+                        "runtime".to_string(),
+                        MessageAttributeValue::builder()
+                            .data_type("String")
+                            .string_value(runtime.runtime.to_string())
+                            .build(),
+                    );
+                    attributes.insert(
+                        "path".to_string(),
+                        MessageAttributeValue::builder()
+                            .data_type("String")
+                            .string_value(runtime.path.to_string())
+                            .build(),
+                    );
+                    // todo snapstart
+                    // todo layer
+                    // todo do not hardcode
+                    attributes.insert(
+                        "packageType".to_string(),
+                        MessageAttributeValue::builder()
+                            .data_type("String")
+                            .string_value("image".to_string())
+                            .build(),
+                    );
+                    sqs_messages.push(SQSDeployMessage::new(attributes));
+                }
             }
         }
-    }
-    sqs_messages
+        sqs_messages
     }
 
     async fn send_message(&self) -> Result<(), Error> {
@@ -131,12 +135,16 @@ impl QueueManager for SQSManager {
 
 #[cfg(test)]
 mod tests {
-    use crate::{sqs_manager::{SQSManager, QueueManager}, manifest::ManifestManager};
+    use crate::{
+        manifest::ManifestManager,
+        sqs_manager::{QueueManager, SQSManager},
+    };
 
     #[tokio::test]
     async fn test_build_sqs() {
         let manifest = ManifestManager::new("manifest.test.json");
-        let sqs_manager = SQSManager::new("123456789", "us-east-1", "test_queue", manifest, None).await;
+        let sqs_manager =
+            SQSManager::new("123456789", "us-east-1", "test_queue", manifest, None).await;
         let sqs_messages = sqs_manager.build_message();
         assert_eq!(sqs_messages.len(), 6);
 

@@ -1,19 +1,12 @@
-
-
-
-
-
-
-
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::{Serialize};
+use serde::Serialize;
 use serde_json::Value;
 
 mod lambda_manager;
 use lambda_manager::{LambdaManager, PermissionManager};
 
 mod sqs_manager;
-use sqs_manager::{SQSManager, QueueManager};
+use sqs_manager::{QueueManager, SQSManager};
 
 pub mod dynamodb_manager;
 use dynamodb_manager::{DynamoDBManager, TableManager};
@@ -27,7 +20,6 @@ struct Response {
     status_code: u32,
 }
 
-
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     tracing_subscriber::fmt()
@@ -40,11 +32,6 @@ async fn main() -> Result<(), Error> {
     lambda_runtime::run(func).await?;
     Ok(())
 }
-
-
-
-
-
 
 async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     let table_name = std::env::var("TABLE_NAME").expect("TABLE_NAME not set");
@@ -65,9 +52,15 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
 
     let manifest_manager = ManifestManager::new("manifest.json");
 
-    let queue_manager = SQSManager::new(&account_id, &region, &image_queue_name, manifest_manager, None).await;
+    let queue_manager = SQSManager::new(
+        &account_id,
+        &region,
+        &image_queue_name,
+        manifest_manager,
+        None,
+    )
+    .await;
     queue_manager.send_message().await?;
 
     Ok(Response { status_code: 200 })
 }
-

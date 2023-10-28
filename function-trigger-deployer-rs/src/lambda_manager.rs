@@ -1,6 +1,6 @@
-use aws_sdk_lambda::Client as LambdaClient;
 use async_trait::async_trait;
-use lambda_runtime::{Error};
+use aws_sdk_lambda::Client as LambdaClient;
+use lambda_runtime::Error;
 
 pub struct LambdaManager {
     pub client: LambdaClient,
@@ -13,7 +13,6 @@ pub trait PermissionManager {
     async fn remove_permission(&self) -> Result<(), Error>;
     async fn add_permission(&self) -> Result<(), Error>;
 }
-
 
 impl LambdaManager {
     pub async fn new(log_processor_arn: String, client: Option<LambdaClient>) -> Self {

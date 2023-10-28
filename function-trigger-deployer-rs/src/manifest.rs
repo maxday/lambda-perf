@@ -36,7 +36,8 @@ impl ManifestManager {
     }
 
     pub fn read_manifest(&self) -> Manifest {
-        let manifest = std::fs::read_to_string(&self.file_name).expect("Could not read manifest.json");
+        let manifest =
+            std::fs::read_to_string(&self.file_name).expect("Could not read manifest.json");
         let manifest: Manifest =
             serde_json::from_str(&manifest).expect("Could not parse manifest.json");
         manifest
