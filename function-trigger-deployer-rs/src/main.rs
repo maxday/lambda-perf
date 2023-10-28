@@ -3,8 +3,7 @@ use std::{thread, time::Duration};
 use async_trait::async_trait;
 use aws_sdk_dynamodb::{
     types::{
-        self, AttributeDefinition, BillingMode, KeySchemaElement,
-        KeyType, ScalarAttributeType,
+        self, AttributeDefinition, BillingMode, KeySchemaElement, KeyType, ScalarAttributeType,
     },
     Client as DynamoDbClient,
 };
