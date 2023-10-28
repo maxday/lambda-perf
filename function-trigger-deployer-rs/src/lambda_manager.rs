@@ -1,6 +1,6 @@
 use aws_sdk_lambda::Client as LambdaClient;
 use async_trait::async_trait;
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error};
 
 pub struct LambdaManager {
     pub client: LambdaClient,

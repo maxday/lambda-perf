@@ -10,9 +10,9 @@ use aws_sdk_dynamodb::{
 
 
 
-use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use lambda_runtime::{Error};
+
+
 
 
 
@@ -140,12 +140,12 @@ mod tests {
     use std::io::Result;
     use testcontainers::{self, clients};
     mod custom_container;
-    use crate::tests::custom_container::dynamo_test::DynamoDb;
+    use custom_container::dynamo_test;
 
     #[tokio::test]
     async fn test_create_table() -> Result<()> {
         let docker = clients::Cli::default();
-        let node = docker.run(DynamoDb);
+        let node = docker.run(dynamo_test::DynamoDb);
         let port = node.get_host_port_ipv4(8000);
         let client = build_custom_client(port).await;
         let dynamodb_manager =
@@ -182,39 +182,7 @@ mod tests {
             .region(Region::new("test-region"))
             .build();
         Client::from_conf(conf)
-    }
-
-    #[test]
-    fn test_read_manifest() {
-        let manifest = read_manifest("manifest.test.json");
-        assert_eq!(manifest.memory_sizes.len(), 2);
-        assert_eq!(manifest.runtimes.len(), 2);
-
-        assert_eq!(manifest.runtimes[0].display_name, "nodejs18.x");
-        assert_eq!(manifest.runtimes[0].runtime, "nodejs18.x");
-        assert_eq!(manifest.runtimes[0].handler, "index.handler");
-        assert_eq!(manifest.runtimes[0].path, "nodejs18x");
-        assert_eq!(manifest.runtimes[0].architectures.len(), 2);
-        assert_eq!(manifest.runtimes[0].architectures[0], "x86_64");
-        assert_eq!(manifest.runtimes[0].architectures[1], "arm64");
-        assert_eq!(
-            manifest.runtimes[0].image.base_image,
-            "public.ecr.aws/lambda/nodejs:18"
-        );
-
-        assert_eq!(manifest.runtimes[1].display_name, "python3.7");
-        assert_eq!(manifest.runtimes[1].runtime, "python3.7");
-        assert_eq!(manifest.runtimes[1].handler, "index.handler");
-        assert_eq!(manifest.runtimes[1].path, "python37");
-        assert_eq!(manifest.runtimes[1].architectures.len(), 1);
-        assert_eq!(manifest.runtimes[1].architectures[0], "x86_64");
-        assert_eq!(
-            manifest.runtimes[1].image.base_image,
-            "public.ecr.aws/lambda/python:3.7"
-        );
-    }
-
-    
+    }  
 }
 
 

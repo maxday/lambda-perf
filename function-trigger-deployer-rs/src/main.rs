@@ -1,17 +1,12 @@
-use std::{thread, time::Duration};
 
-use async_trait::async_trait;
-use aws_sdk_dynamodb::{
-    types::{
-        self, AttributeDefinition, BillingMode, KeySchemaElement, KeyType, ScalarAttributeType,
-    },
-    Client as DynamoDbClient,
-};
+
+
+
 
 
 
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::{Deserialize, Serialize};
+use serde::{Serialize};
 use serde_json::Value;
 
 mod lambda_manager;
