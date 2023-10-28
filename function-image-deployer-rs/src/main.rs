@@ -1,8 +1,11 @@
 use aws_lambda_events::{event::sqs::SqsEventObj, sqs::SqsEvent};
 use common_lib::Runtime;
+use lambda_manager::FunctionManager;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+
+mod lambda_manager;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -24,10 +27,8 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Error> {
-    println!("event: {:?}", event);
-    let data = &event.payload.records[0].body;
-    tracing::info!(text = ?data.runtime, "runtime");
-    tracing::info!(text = ?data.architecture, "architecture");
-    tracing::info!(text = ?data.memory_size, "memory_size");
+    let runtime = &event.payload.records[0].body;
+    let lambda_manager = lambda_manager::LambdaManager::new(None, runtime).await;
+    lambda_manager.delete_function().await?;
     Ok(Response { status_code: 200 })
 }

@@ -1,6 +1,3 @@
-use std::collections::HashMap;
-
-use aws_sdk_sqs::types::MessageAttributeValue;
 use common_lib::{Image, Runtime};
 use serde::Deserialize;
 
@@ -15,20 +12,6 @@ pub struct Manifest {
     pub runtimes: Vec<Runtime>,
 }
 
-pub struct SQSDeployMessage {
-    pub attributes: HashMap<String, MessageAttributeValue>,
-    pub body: String,
-}
-
-impl SQSDeployMessage {
-    fn new(attributes: HashMap<String, MessageAttributeValue>) -> Self {
-        SQSDeployMessage {
-            body: "deploy".to_string(),
-            attributes,
-        }
-    }
-}
-
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct InputRuntime {
@@ -37,7 +20,7 @@ pub struct InputRuntime {
     pub handler: String,
     pub path: String,
     pub architectures: Vec<String>,
-    pub image: Image,
+    pub image: Option<Image>,
 }
 
 pub struct ManifestManager {
@@ -95,10 +78,8 @@ mod tests {
         assert_eq!(manifest.runtimes[0].path, "nodejs18x");
         assert_eq!(manifest.runtimes[0].architecture, "x86_64");
         assert_eq!(manifest.runtimes[0].memory_size, 128);
-        assert_eq!(
-            manifest.runtimes[0].image.base_image,
-            "public.ecr.aws/lambda/nodejs:18"
-        );
+        let image = manifest.runtimes[0].image.as_ref().unwrap();
+        assert_eq!(image.base_image, "public.ecr.aws/lambda/nodejs:18");
 
         assert_eq!(manifest.runtimes[1].display_name, "nodejs18.x");
         assert_eq!(manifest.runtimes[1].runtime, "nodejs18.x");
@@ -106,10 +87,8 @@ mod tests {
         assert_eq!(manifest.runtimes[1].path, "nodejs18x");
         assert_eq!(manifest.runtimes[1].architecture, "arm64");
         assert_eq!(manifest.runtimes[1].memory_size, 128);
-        assert_eq!(
-            manifest.runtimes[1].image.base_image,
-            "public.ecr.aws/lambda/nodejs:18"
-        );
+        let image = manifest.runtimes[1].image.as_ref().unwrap();
+        assert_eq!(image.base_image, "public.ecr.aws/lambda/nodejs:18");
 
         assert_eq!(manifest.runtimes[2].display_name, "python3.7");
         assert_eq!(manifest.runtimes[2].runtime, "python3.7");
@@ -117,10 +96,8 @@ mod tests {
         assert_eq!(manifest.runtimes[2].path, "python37");
         assert_eq!(manifest.runtimes[2].architecture, "x86_64");
         assert_eq!(manifest.runtimes[2].memory_size, 128);
-        assert_eq!(
-            manifest.runtimes[2].image.base_image,
-            "public.ecr.aws/lambda/python:3.7"
-        );
+        let image = manifest.runtimes[2].image.as_ref().unwrap();
+        assert_eq!(image.base_image, "public.ecr.aws/lambda/python:3.7");
 
         assert_eq!(manifest.runtimes[3].display_name, "nodejs18.x");
         assert_eq!(manifest.runtimes[3].runtime, "nodejs18.x");
@@ -128,10 +105,8 @@ mod tests {
         assert_eq!(manifest.runtimes[3].path, "nodejs18x");
         assert_eq!(manifest.runtimes[3].architecture, "x86_64");
         assert_eq!(manifest.runtimes[3].memory_size, 256);
-        assert_eq!(
-            manifest.runtimes[03].image.base_image,
-            "public.ecr.aws/lambda/nodejs:18"
-        );
+        let image = manifest.runtimes[3].image.as_ref().unwrap();
+        assert_eq!(image.base_image, "public.ecr.aws/lambda/nodejs:18");
 
         assert_eq!(manifest.runtimes[4].display_name, "nodejs18.x");
         assert_eq!(manifest.runtimes[4].runtime, "nodejs18.x");
@@ -139,10 +114,8 @@ mod tests {
         assert_eq!(manifest.runtimes[4].path, "nodejs18x");
         assert_eq!(manifest.runtimes[4].architecture, "arm64");
         assert_eq!(manifest.runtimes[4].memory_size, 256);
-        assert_eq!(
-            manifest.runtimes[4].image.base_image,
-            "public.ecr.aws/lambda/nodejs:18"
-        );
+        let image = manifest.runtimes[4].image.as_ref().unwrap();
+        assert_eq!(image.base_image, "public.ecr.aws/lambda/nodejs:18");
 
         assert_eq!(manifest.runtimes[5].display_name, "python3.7");
         assert_eq!(manifest.runtimes[5].runtime, "python3.7");
@@ -150,9 +123,7 @@ mod tests {
         assert_eq!(manifest.runtimes[5].path, "python37");
         assert_eq!(manifest.runtimes[5].architecture, "x86_64");
         assert_eq!(manifest.runtimes[5].memory_size, 256);
-        assert_eq!(
-            manifest.runtimes[5].image.base_image,
-            "public.ecr.aws/lambda/python:3.7"
-        );
+        let image = manifest.runtimes[5].image.as_ref().unwrap();
+        assert_eq!(image.base_image, "public.ecr.aws/lambda/python:3.7");
     }
 }
