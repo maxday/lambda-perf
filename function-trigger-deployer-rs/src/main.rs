@@ -2,9 +2,8 @@ use std::{thread, time::Duration};
 
 use async_trait::async_trait;
 use aws_sdk_dynamodb::{
-    operation::delete_table::DeleteTableError,
     types::{
-        self, error::ResourceNotFoundException, AttributeDefinition, BillingMode, KeySchemaElement,
+        self, AttributeDefinition, BillingMode, KeySchemaElement,
         KeyType, ScalarAttributeType,
     },
     Client as DynamoDbClient,
@@ -211,7 +210,7 @@ mod tests {
     #[tokio::test]
     async fn test_create_table() -> Result<()> {
         let docker = clients::Cli::default();
-        let node = docker.run(DynamoDb::default());
+        let node = docker.run(DynamoDb);
         let port = node.get_host_port_ipv4(8000);
         let client = build_custom_client(port).await;
         let dynamodb_manager =
