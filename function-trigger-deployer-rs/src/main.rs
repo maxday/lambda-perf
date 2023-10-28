@@ -1,4 +1,4 @@
-use std::{thread, time::Duration, collections::HashMap};
+use std::{collections::HashMap, thread, time::Duration};
 
 use async_trait::async_trait;
 use aws_sdk_dynamodb::{
@@ -7,8 +7,8 @@ use aws_sdk_dynamodb::{
     },
     Client as DynamoDbClient,
 };
-use aws_sdk_sqs::types::MessageAttributeValue;
 use aws_sdk_lambda::Client as LambdaClient;
+use aws_sdk_sqs::types::MessageAttributeValue;
 use aws_sdk_sqs::Client as SQSClient;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde::{Deserialize, Serialize};
@@ -18,7 +18,7 @@ use serde_json::Value;
 #[serde(rename_all = "camelCase")]
 struct Manifest {
     memory_sizes: Vec<u32>,
-    runtimes: Vec<Runtime>
+    runtimes: Vec<Runtime>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -29,13 +29,13 @@ struct Runtime {
     handler: String,
     path: String,
     architectures: Vec<String>,
-    image: Image
+    image: Image,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct Image {
-    base_image: String
+    base_image: String,
 }
 
 #[derive(Serialize)]
@@ -46,13 +46,13 @@ struct Response {
 
 pub struct SQSDeployMessage {
     attributes: HashMap<String, MessageAttributeValue>,
-    body: String
+    body: String,
 }
 impl SQSDeployMessage {
     fn new(attributes: HashMap<String, MessageAttributeValue>) -> Self {
         SQSDeployMessage {
             body: "deploy".to_string(),
-            attributes
+            attributes,
         }
     }
 }
@@ -106,7 +106,12 @@ pub struct LambdaManager {
 }
 
 impl SQSManager {
-    pub async fn new(account_id: &str, region: &str, queue_name: &str, client: Option<SQSClient>) -> Self {
+    pub async fn new(
+        account_id: &str,
+        region: &str,
+        queue_name: &str,
+        client: Option<SQSClient>,
+    ) -> Self {
         let client = match client {
             Some(client) => client,
             None => {
@@ -118,7 +123,10 @@ impl SQSManager {
         SQSManager { client, queue_url }
     }
     fn build_queue_url(account_id: &str, region: &str, queue_name: &str) -> String {
-        format!("https://sqs.{}.amazonaws.com/{}/{}", region, account_id, queue_name)
+        format!(
+            "https://sqs.{}.amazonaws.com/{}/{}",
+            region, account_id, queue_name
+        )
     }
 }
 
@@ -231,9 +239,11 @@ impl TableManager for DynamoDBManager {
                 .send()
                 .await?;
             let table_description = describe_table_output
-                        .table
-                        .expect("Could not fetch the table deletion status");
-            table_status = table_description.table_status.expect("Could not get the table status");
+                .table
+                .expect("Could not fetch the table deletion status");
+            table_status = table_description
+                .table_status
+                .expect("Could not get the table status");
             thread::sleep(Duration::from_secs(1));
         }
         Ok(())
@@ -281,10 +291,10 @@ impl QueueManager for SQSManager {
     }
 }
 
-
 fn read_manifest(file_name: &str) -> Manifest {
     let manifest = std::fs::read_to_string(file_name).expect("Could not read manifest.json");
-    let manifest: Manifest = serde_json::from_str(&manifest).expect("Could not parse manifest.json");
+    let manifest: Manifest =
+        serde_json::from_str(&manifest).expect("Could not parse manifest.json");
     manifest
 }
 
@@ -432,7 +442,10 @@ mod tests {
         assert_eq!(manifest.runtimes[0].architectures.len(), 2);
         assert_eq!(manifest.runtimes[0].architectures[0], "x86_64");
         assert_eq!(manifest.runtimes[0].architectures[1], "arm64");
-        assert_eq!(manifest.runtimes[0].image.base_image, "public.ecr.aws/lambda/nodejs:18");
+        assert_eq!(
+            manifest.runtimes[0].image.base_image,
+            "public.ecr.aws/lambda/nodejs:18"
+        );
 
         assert_eq!(manifest.runtimes[1].display_name, "python3.7");
         assert_eq!(manifest.runtimes[1].runtime, "python3.7");
@@ -440,7 +453,10 @@ mod tests {
         assert_eq!(manifest.runtimes[1].path, "python37");
         assert_eq!(manifest.runtimes[1].architectures.len(), 1);
         assert_eq!(manifest.runtimes[1].architectures[0], "x86_64");
-        assert_eq!(manifest.runtimes[1].image.base_image, "public.ecr.aws/lambda/python:3.7");
+        assert_eq!(
+            manifest.runtimes[1].image.base_image,
+            "public.ecr.aws/lambda/python:3.7"
+        );
     }
 
     #[test]
@@ -450,51 +466,144 @@ mod tests {
         assert_eq!(sqs_messages.len(), 6);
 
         assert_eq!(sqs_messages[0].attributes.len(), 5);
-        assert_eq!(sqs_messages[0].attributes["architecture"].string_value, Some("x86_64".to_string()));
-        assert_eq!(sqs_messages[0].attributes["memorysize"].string_value, Some("128".to_string()));
-        assert_eq!(sqs_messages[0].attributes["runtime"].string_value, Some("nodejs18.x".to_string()));
-        assert_eq!(sqs_messages[0].attributes["path"].string_value, Some("nodejs18x".to_string()));
-        assert_eq!(sqs_messages[0].attributes["packageType"].string_value, Some("image".to_string()));
-       
+        assert_eq!(
+            sqs_messages[0].attributes["architecture"].string_value,
+            Some("x86_64".to_string())
+        );
+        assert_eq!(
+            sqs_messages[0].attributes["memorysize"].string_value,
+            Some("128".to_string())
+        );
+        assert_eq!(
+            sqs_messages[0].attributes["runtime"].string_value,
+            Some("nodejs18.x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[0].attributes["path"].string_value,
+            Some("nodejs18x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[0].attributes["packageType"].string_value,
+            Some("image".to_string())
+        );
+
         assert_eq!(sqs_messages[1].attributes.len(), 5);
-        assert_eq!(sqs_messages[1].attributes["architecture"].string_value, Some("arm64".to_string()));
-        assert_eq!(sqs_messages[1].attributes["memorysize"].string_value, Some("128".to_string()));
-        assert_eq!(sqs_messages[1].attributes["runtime"].string_value, Some("nodejs18.x".to_string()));
-        assert_eq!(sqs_messages[1].attributes["path"].string_value, Some("nodejs18x".to_string()));
-        assert_eq!(sqs_messages[1].attributes["packageType"].string_value, Some("image".to_string()));
-        
+        assert_eq!(
+            sqs_messages[1].attributes["architecture"].string_value,
+            Some("arm64".to_string())
+        );
+        assert_eq!(
+            sqs_messages[1].attributes["memorysize"].string_value,
+            Some("128".to_string())
+        );
+        assert_eq!(
+            sqs_messages[1].attributes["runtime"].string_value,
+            Some("nodejs18.x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[1].attributes["path"].string_value,
+            Some("nodejs18x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[1].attributes["packageType"].string_value,
+            Some("image".to_string())
+        );
+
         assert_eq!(sqs_messages[2].attributes.len(), 5);
-        assert_eq!(sqs_messages[2].attributes["architecture"].string_value, Some("x86_64".to_string()));
-        assert_eq!(sqs_messages[2].attributes["memorysize"].string_value, Some("128".to_string()));
-        assert_eq!(sqs_messages[2].attributes["runtime"].string_value, Some("python3.7".to_string()));
-        assert_eq!(sqs_messages[2].attributes["path"].string_value, Some("python37".to_string()));
-        assert_eq!(sqs_messages[2].attributes["packageType"].string_value, Some("image".to_string()));
+        assert_eq!(
+            sqs_messages[2].attributes["architecture"].string_value,
+            Some("x86_64".to_string())
+        );
+        assert_eq!(
+            sqs_messages[2].attributes["memorysize"].string_value,
+            Some("128".to_string())
+        );
+        assert_eq!(
+            sqs_messages[2].attributes["runtime"].string_value,
+            Some("python3.7".to_string())
+        );
+        assert_eq!(
+            sqs_messages[2].attributes["path"].string_value,
+            Some("python37".to_string())
+        );
+        assert_eq!(
+            sqs_messages[2].attributes["packageType"].string_value,
+            Some("image".to_string())
+        );
 
         assert_eq!(sqs_messages[3].attributes.len(), 5);
-        assert_eq!(sqs_messages[3].attributes["architecture"].string_value, Some("x86_64".to_string()));
-        assert_eq!(sqs_messages[3].attributes["memorysize"].string_value, Some("256".to_string()));
-        assert_eq!(sqs_messages[3].attributes["runtime"].string_value, Some("nodejs18.x".to_string()));
-        assert_eq!(sqs_messages[3].attributes["path"].string_value, Some("nodejs18x".to_string()));
-        assert_eq!(sqs_messages[3].attributes["packageType"].string_value, Some("image".to_string()));
-       
+        assert_eq!(
+            sqs_messages[3].attributes["architecture"].string_value,
+            Some("x86_64".to_string())
+        );
+        assert_eq!(
+            sqs_messages[3].attributes["memorysize"].string_value,
+            Some("256".to_string())
+        );
+        assert_eq!(
+            sqs_messages[3].attributes["runtime"].string_value,
+            Some("nodejs18.x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[3].attributes["path"].string_value,
+            Some("nodejs18x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[3].attributes["packageType"].string_value,
+            Some("image".to_string())
+        );
+
         assert_eq!(sqs_messages[4].attributes.len(), 5);
-        assert_eq!(sqs_messages[4].attributes["architecture"].string_value, Some("arm64".to_string()));
-        assert_eq!(sqs_messages[4].attributes["memorysize"].string_value, Some("256".to_string()));
-        assert_eq!(sqs_messages[4].attributes["runtime"].string_value, Some("nodejs18.x".to_string()));
-        assert_eq!(sqs_messages[4].attributes["path"].string_value, Some("nodejs18x".to_string()));
-        assert_eq!(sqs_messages[4].attributes["packageType"].string_value, Some("image".to_string()));
-        
+        assert_eq!(
+            sqs_messages[4].attributes["architecture"].string_value,
+            Some("arm64".to_string())
+        );
+        assert_eq!(
+            sqs_messages[4].attributes["memorysize"].string_value,
+            Some("256".to_string())
+        );
+        assert_eq!(
+            sqs_messages[4].attributes["runtime"].string_value,
+            Some("nodejs18.x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[4].attributes["path"].string_value,
+            Some("nodejs18x".to_string())
+        );
+        assert_eq!(
+            sqs_messages[4].attributes["packageType"].string_value,
+            Some("image".to_string())
+        );
+
         assert_eq!(sqs_messages[5].attributes.len(), 5);
-        assert_eq!(sqs_messages[5].attributes["architecture"].string_value, Some("x86_64".to_string()));
-        assert_eq!(sqs_messages[5].attributes["memorysize"].string_value, Some("256".to_string()));
-        assert_eq!(sqs_messages[5].attributes["runtime"].string_value, Some("python3.7".to_string()));
-        assert_eq!(sqs_messages[5].attributes["path"].string_value, Some("python37".to_string()));
-        assert_eq!(sqs_messages[5].attributes["packageType"].string_value, Some("image".to_string()));
+        assert_eq!(
+            sqs_messages[5].attributes["architecture"].string_value,
+            Some("x86_64".to_string())
+        );
+        assert_eq!(
+            sqs_messages[5].attributes["memorysize"].string_value,
+            Some("256".to_string())
+        );
+        assert_eq!(
+            sqs_messages[5].attributes["runtime"].string_value,
+            Some("python3.7".to_string())
+        );
+        assert_eq!(
+            sqs_messages[5].attributes["path"].string_value,
+            Some("python37".to_string())
+        );
+        assert_eq!(
+            sqs_messages[5].attributes["packageType"].string_value,
+            Some("image".to_string())
+        );
     }
 
     #[test]
     fn test_build_queue_url() {
         let queue_url = SQSManager::build_queue_url("123456789", "us-east-1", "test_queue");
-        assert_eq!(queue_url, "https://sqs.us-east-1.amazonaws.com/123456789/test_queue");
-    }   
+        assert_eq!(
+            queue_url,
+            "https://sqs.us-east-1.amazonaws.com/123456789/test_queue"
+        );
+    }
 }
