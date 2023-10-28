@@ -1,12 +1,5 @@
-
-
-
-
-
-
-
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::{Serialize};
+use serde::Serialize;
 use serde_json::Value;
 
 #[derive(Serialize)]
