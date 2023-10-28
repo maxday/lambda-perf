@@ -72,6 +72,9 @@ provider:
       Action: "dynamodb:CreateTable"
       Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
+      Action: "dynamodb:DescribeTable"
+      Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
+    - Effect: Allow
       Action: "dynamodb:Scan"
       Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
@@ -155,9 +158,25 @@ functions:
       TABLE_NAME: report-log
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+      IMAGE_QUEUE_NAME: lambda-perf-container-deployer
     package:
       individually: true
       artifact: target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-deployer-rs.zip
+
+  functionDeployerImageRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    package:
+      individually: true
+      artifact: target/lambda/function-deployer-image-rs/bootstrap-function-deployer-image-rs.zip
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfFunctionDeployer
+              - Arn
+          batchSize: 1
 
   resultBuilder:
     environment:

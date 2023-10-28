@@ -214,6 +214,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "aws-sdk-sqs"
+version = "0.34.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2aeaa523f366aa1d1281231149715b60fec753957ba78adf470bf6ef9638f966"
+dependencies = [
+ "aws-credential-types",
+ "aws-http",
+ "aws-runtime",
+ "aws-smithy-async",
+ "aws-smithy-client",
+ "aws-smithy-http",
+ "aws-smithy-json",
+ "aws-smithy-query",
+ "aws-smithy-runtime",
+ "aws-smithy-runtime-api",
+ "aws-smithy-types",
+ "aws-smithy-xml",
+ "aws-types",
+ "http",
+ "regex",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
 name = "aws-sdk-sso"
 version = "0.30.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -766,13 +791,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "function-trigger-deployer-rs"
+name = "function-deployer-image-rs"
 version = "0.1.0"
 dependencies = [
  "async-trait",
  "aws-config",
  "aws-sdk-dynamodb",
  "aws-sdk-lambda",
+ "aws-sdk-sqs",
  "aws_lambda_events",
  "lambda_http",
  "lambda_runtime",
@@ -780,6 +806,27 @@ dependencies = [
  "serde_json",
  "testcontainers",
  "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "function-trigger-deployer-rs"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "aws-config",
+ "aws-sdk-dynamodb",
+ "aws-sdk-lambda",
+ "aws-sdk-sqs",
+ "aws_lambda_events",
+ "lambda_http",
+ "lambda_runtime",
+ "serde",
+ "serde_json",
+ "testcontainers",
+ "tokio",
+ "tracing",
  "tracing-subscriber",
 ]
 
