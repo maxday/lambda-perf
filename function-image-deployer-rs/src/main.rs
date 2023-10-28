@@ -25,7 +25,9 @@ async fn main() -> Result<(), Error> {
 
 async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Error> {
     println!("event: {:?}", event);
-    let data = &event.payload.records[0];
-    tracing::info!(text = ?data, "data received from SQS");
+    let data = &event.payload.records[0].body;
+    tracing::info!(text = ?data.runtime, "runtime");
+    tracing::info!(text = ?data.architecture, "architecture");
+    tracing::info!(text = ?data.memory_size, "memory_size");
     Ok(Response { status_code: 200 })
 }
