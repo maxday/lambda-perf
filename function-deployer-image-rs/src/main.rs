@@ -14,6 +14,12 @@ use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct Response {
+    status_code: u32,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     tracing_subscriber::fmt()
