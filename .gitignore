@@ -17,13 +17,15 @@ s3-uploader/runtimes/quarkus_native_on_provided_al2/target
 s3-uploader/runtimes/dotnet7_aot_on_provided_al2/src/obj
 s3-uploader/runtimes/*/code*.zip
 
-
 result-builder/node_modules
+
 report-log-processor/node_modules
+
 function-invoker/node_modules
 function-trigger-deployer/node_modules
 function-deployer/node_modules
 function-trigger-invoker/node_modules
+
 data
 .DS_Store
 docs/node_modules
@@ -31,3 +33,6 @@ docs/public
 docs/app.js
 docs/package.json
 docs/package-lock.json
+
+target
+

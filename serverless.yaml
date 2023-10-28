@@ -1,4 +1,5 @@
 service: lambda-perf
+configValidationMode: error
 
 provider:
   name: aws
@@ -91,6 +92,7 @@ package:
     - "!app"
     - "!s3-uploader"
     - "!container-uploader"
+    - "!target"
     - "!docs"
     - "!data"
     - "!README.md"
@@ -142,8 +144,20 @@ functions:
       ACCOUNT_ID: ${aws:accountId}
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-    events:
-      - schedule: cron(30 13 * * ? *)
+    #events:
+    #  - schedule: cron(30 13 * * ? *)
+
+  functionTriggerDeployerRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    environment:
+      TABLE_NAME: report-log
+      LOG_PROCESSOR_ARN: 
+        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+    package:
+      individually: true
+      artifact: target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-deployer-rs.zip
 
   resultBuilder:
     environment:
@@ -158,8 +172,8 @@ functions:
         - "!function-deployer"
         - "!report-log-processor"
     handler: result-builder/app.handler
-    events:
-      - schedule: cron(0 14 * * ? *)
+    #events:
+    #  - schedule: cron(0 14 * * ? *)
 
   functionDeployer:
     package:
