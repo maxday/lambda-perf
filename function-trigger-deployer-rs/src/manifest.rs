@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use aws_sdk_sqs::types::MessageAttributeValue;
+use common_lib::{Image, Runtime};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -37,69 +38,6 @@ pub struct InputRuntime {
     pub path: String,
     pub architectures: Vec<String>,
     pub image: Image,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct Runtime {
-    pub display_name: String,
-    pub runtime: String,
-    pub handler: String,
-    pub path: String,
-    pub architecture: String,
-    pub memory_size: u32,
-    pub image: Image,
-}
-
-impl Runtime {
-    pub fn to_sqs_deploy_message(&self) -> SQSDeployMessage {
-        let mut attributes = HashMap::new();
-        attributes.insert(
-            "architecture".to_string(),
-            MessageAttributeValue::builder()
-                .data_type("String")
-                .string_value(self.architecture.to_string())
-                .build(),
-        );
-        attributes.insert(
-            "memorysize".to_string(),
-            MessageAttributeValue::builder()
-                .data_type("Number")
-                .string_value(self.memory_size.to_string())
-                .build(),
-        );
-        attributes.insert(
-            "runtime".to_string(),
-            MessageAttributeValue::builder()
-                .data_type("String")
-                .string_value(self.runtime.to_string())
-                .build(),
-        );
-        attributes.insert(
-            "path".to_string(),
-            MessageAttributeValue::builder()
-                .data_type("String")
-                .string_value(self.path.to_string())
-                .build(),
-        );
-        // todo snapstart
-        // todo layer
-        // todo do not hardcode
-        attributes.insert(
-            "packageType".to_string(),
-            MessageAttributeValue::builder()
-                .data_type("String")
-                .string_value("image".to_string())
-                .build(),
-        );
-        SQSDeployMessage::new(attributes)
-    }
-}
-
-#[derive(Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct Image {
-    pub base_image: String,
 }
 
 pub struct ManifestManager {

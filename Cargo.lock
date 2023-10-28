@@ -604,6 +604,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "common_lib"
+version = "0.1.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -800,6 +807,7 @@ dependencies = [
  "aws-sdk-lambda",
  "aws-sdk-sqs",
  "aws_lambda_events",
+ "common_lib",
  "lambda_http",
  "lambda_runtime",
  "serde",
@@ -820,6 +828,7 @@ dependencies = [
  "aws-sdk-lambda",
  "aws-sdk-sqs",
  "aws_lambda_events",
+ "common_lib",
  "lambda_http",
  "lambda_runtime",
  "serde",

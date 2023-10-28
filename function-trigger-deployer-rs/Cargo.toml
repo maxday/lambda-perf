@@ -18,3 +18,5 @@ aws-sdk-dynamodb = "0.34.0"
 aws-config = "0.56.1"
 tracing = { version = "0.1.40", features = ["log"] }
 aws-sdk-sqs = "0.34.0"
+
+common_lib = { path = "../common_lib" }

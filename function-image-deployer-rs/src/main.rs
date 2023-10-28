@@ -1,5 +1,7 @@
+use aws_lambda_events::{event::sqs::SqsEventObj, sqs::SqsEvent};
+use common_lib::Runtime;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Serialize)]
@@ -21,7 +23,9 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-async fn func(event: LambdaEvent<Value>) -> Result<Response, Error> {
+async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Error> {
     println!("event: {:?}", event);
+    let data = &event.payload.records[0];
+    tracing::info!(text = ?data, "data received from SQS");
     Ok(Response { status_code: 200 })
 }
