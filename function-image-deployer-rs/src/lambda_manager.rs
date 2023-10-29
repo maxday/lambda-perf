@@ -12,7 +12,7 @@ pub struct LambdaManager<'a> {
 
 #[async_trait]
 pub trait FunctionManager {
-    async fn delete_function(&self) -> Result<(), Error>;
+    async fn delete_function(&self) -> Result<bool, Error>;
     async fn wait_for_deletion(&self) -> Result<(), Error>;
 }
 
@@ -31,14 +31,24 @@ impl<'a> LambdaManager<'a> {
 
 #[async_trait]
 impl<'a> FunctionManager for LambdaManager<'a> {
-    async fn delete_function(&self) -> Result<(), Error> {
+    async fn delete_function(&self) -> Result<bool, Error> {
         let function_name = self.runtime.function_name();
-        self.client
+        let res = self
+            .client
             .delete_function()
             .function_name(&function_name)
             .send()
-            .await?;
-        Ok(())
+            .await;
+        match res {
+            Ok(_) => Ok(true),
+            Err(e) => {
+                let e = e.into_service_error();
+                if e.is_resource_not_found_exception() {
+                    return Ok(false);
+                }
+                Err(Box::new(e))
+            }
+        }
     }
     async fn wait_for_deletion(&self) -> Result<(), Error> {
         let res = self
@@ -54,7 +64,8 @@ impl<'a> FunctionManager for LambdaManager<'a> {
                 self.wait_for_deletion().await
             }
             Err(e) => {
-                if e.to_string().contains("ResourceNotFoundException") {
+                let e = e.into_service_error();
+                if e.is_resource_not_found_exception() {
                     return Ok(());
                 }
                 Err(Box::new(e))

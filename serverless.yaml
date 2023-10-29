@@ -177,7 +177,8 @@ functions:
             Fn::GetAtt:
               - lambdaPerfImageDeployer
               - Arn
-          batchSize: 1
+          batchSize: 25
+          maximumBatchingWindow: 30
 
   resultBuilder:
     environment:

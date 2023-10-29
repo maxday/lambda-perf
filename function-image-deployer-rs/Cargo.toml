@@ -20,3 +20,5 @@ tracing = { version = "0.1.40", features = ["log"] }
 aws-sdk-sqs = "0.34.0"
 
 common_lib = { path = "../common_lib" }
+backon = "0.4.1"
+rand = "0.8.5"
