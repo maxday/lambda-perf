@@ -1,4 +1,5 @@
 use rand::Rng;
+use std::fmt::Debug;
 use std::future::Future;
 use std::time::Duration;
 
@@ -20,6 +21,8 @@ impl RetryManager {
     pub async fn retry_async<T, E, Fut, F: FnMut() -> Fut>(&self, mut f: F) -> Result<T, E>
     where
         Fut: Future<Output = Result<T, E>>,
+        E: std::fmt::Debug, 
+        T: std::fmt::Debug,
     {
         let mut count = 0;
         loop {
@@ -29,13 +32,12 @@ impl RetryManager {
             if result.is_ok() {
                 break result;
             } else {
+                println!("error: {:?}", result);
                 if count > self.max_attempts {
                     break result;
                 }
                 count += 1;
-                // get a random value between delay_min and delay_max
                 let delay = rand::thread_rng().gen_range(self.delay_min..self.delay_max);
-                // print the random value
                 println!("delay: {:?}", delay);
                 tokio::time::sleep(delay).await;
             }

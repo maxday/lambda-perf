@@ -4,7 +4,7 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct InputManifest {
-    pub memory_sizes: Vec<u32>,
+    pub memory_sizes: Vec<i32>,
     pub runtimes: Vec<InputRuntime>,
 }
 

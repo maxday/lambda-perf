@@ -171,6 +171,9 @@ functions:
     package:
       individually: true
       artifact: target/lambda/function-image-deployer-rs/bootstrap-function-image-deployer-rs.zip
+    environment:
+      ACCOUNT_ID: ${aws:accountId}
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
     events:
       - sqs:
           arn:

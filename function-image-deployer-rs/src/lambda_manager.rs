@@ -1,23 +1,27 @@
 use std::{thread, time::Duration};
 
 use async_trait::async_trait;
-use aws_sdk_lambda::Client as LambdaClient;
+use aws_sdk_lambda::{Client as LambdaClient, types::{PackageType, self, builders::FunctionCodeBuilder, ImageConfig, Architecture}};
 use common_lib::Runtime;
 use lambda_runtime::Error;
 
 pub struct LambdaManager<'a> {
     pub client: LambdaClient,
     pub runtime: &'a Runtime,
+    pub role_arn: &'a str,
+    pub account_id: &'a str,
+    pub region: &'a str,
 }
 
 #[async_trait]
 pub trait FunctionManager {
     async fn delete_function(&self) -> Result<bool, Error>;
     async fn wait_for_deletion(&self) -> Result<(), Error>;
+    async fn create_function(&self) -> Result<(), Error>;
 }
 
 impl<'a> LambdaManager<'a> {
-    pub async fn new(client: Option<LambdaClient>, runtime: &'a Runtime) -> LambdaManager<'a> {
+    pub async fn new(client: Option<LambdaClient>, account_id: &'a str, region: &'a str, runtime: &'a Runtime, role_arn: &'a str) -> LambdaManager<'a> {
         let client = match client {
             Some(client) => client,
             None => {
@@ -25,7 +29,7 @@ impl<'a> LambdaManager<'a> {
                 LambdaClient::new(&config)
             }
         };
-        LambdaManager { client, runtime }
+        LambdaManager { client, runtime, role_arn, account_id, region }
     }
 }
 
@@ -70,6 +74,30 @@ impl<'a> FunctionManager for LambdaManager<'a> {
                 }
                 Err(Box::new(e))
             }
+        }
+    }
+    async fn create_function(&self) -> Result<(), Error> {
+        let function_name = self.runtime.function_name();
+        let package_type = PackageType::Image;
+        let res = self
+            .client
+            .create_function()
+            .function_name(&function_name)
+            .package_type(package_type)
+            .code(FunctionCodeBuilder::default()
+                .image_uri(self.runtime.image_name(self.account_id, self.region))
+                .build())
+            .image_config(ImageConfig::builder()
+                .command(self.runtime.handler.clone())
+                .build())
+            .role(self.role_arn)
+            .memory_size(self.runtime.memory_size)
+            .architectures(Architecture::from(self.runtime.architecture.as_str()))
+            .send()
+            .await;
+        match res {
+            Ok(_) => Ok(()),
+            Err(e) => Err(Box::new(e.into_service_error())),
         }
     }
 }
