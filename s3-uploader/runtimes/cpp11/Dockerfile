@@ -18,6 +18,8 @@ RUN mkdir build
 WORKDIR "${APP_BASE_DIR}/lambda/build"
 RUN cmake3 .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/lambda-install
 RUN make && make aws-lambda-package-maxdaylambda
+# /lib folder is actually useless
+RUN zip -d maxdaylambda.zip 'lib/*'
 
 FROM scratch
 COPY --from=builder /tmp/app/lambda/build/maxdaylambda.zip /code.zip
