@@ -21,7 +21,7 @@ impl RetryManager {
     pub async fn retry_async<T, E, Fut, F: FnMut() -> Fut>(&self, mut f: F) -> Result<T, E>
     where
         Fut: Future<Output = Result<T, E>>,
-        E: std::fmt::Debug, 
+        E: std::fmt::Debug,
         T: std::fmt::Debug,
     {
         let mut count = 0;

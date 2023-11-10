@@ -15,7 +15,10 @@ pub trait LogManager {
 }
 
 impl<'a> CloudWatchManager<'a> {
-    pub async fn new(client: Option<CloudWatchLogsClient>, runtime: &'a Runtime) -> CloudWatchManager<'a> {
+    pub async fn new(
+        client: Option<CloudWatchLogsClient>,
+        runtime: &'a Runtime,
+    ) -> CloudWatchManager<'a> {
         let client = match client {
             Some(client) => client,
             None => {
@@ -30,7 +33,6 @@ impl<'a> CloudWatchManager<'a> {
 #[async_trait]
 impl<'a> LogManager for CloudWatchManager<'a> {
     async fn delete_log_group(&self) -> Result<(), Error> {
-        
         let function_name = self.runtime.function_name();
         let log_group_name = format!("/aws/lambda/{}", function_name);
         let res = self
@@ -53,8 +55,7 @@ impl<'a> LogManager for CloudWatchManager<'a> {
     async fn create_log_group(&self) -> Result<(), Error> {
         let function_name = self.runtime.function_name();
         let log_group_name = format!("/aws/lambda/{}", function_name);
-        self
-            .client
+        self.client
             .create_log_group()
             .log_group_name(&log_group_name)
             .send()

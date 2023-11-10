@@ -6,9 +6,9 @@ use lambda_manager::FunctionManager;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde::Serialize;
 
-use crate::{retry_manager::RetryManager, cloudwatch_manager::LogManager};
-mod lambda_manager;
+use crate::{cloudwatch_manager::LogManager, retry_manager::RetryManager};
 mod cloudwatch_manager;
+mod lambda_manager;
 
 mod retry_manager;
 
@@ -37,7 +37,9 @@ async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Erro
     let region = std::env::var("AWS_REGION").expect("AWS_REGION not set");
     for record in event.payload.records.iter() {
         let runtime = &record.body;
-        let lambda_manager = lambda_manager::LambdaManager::new(None, &account_id, &region, runtime, &role_arn).await;
+        let lambda_manager =
+            lambda_manager::LambdaManager::new(None, &account_id, &region, runtime, &role_arn)
+                .await;
         let cloudwatch_manager = cloudwatch_manager::CloudWatchManager::new(None, runtime).await;
         println!("deleting function: {}", runtime.function_name());
         let retry = RetryManager::new(3, Duration::from_secs(1), Duration::from_secs(30));
@@ -51,15 +53,19 @@ async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Erro
                 .await?;
         }
         println!("function deleted");
-        retry.retry_async(|| async { cloudwatch_manager.delete_log_group().await }).await?;
+        retry
+            .retry_async(|| async { cloudwatch_manager.delete_log_group().await })
+            .await?;
         println!("log group deleted");
-        retry.retry_async(|| async { cloudwatch_manager.create_log_group().await }).await?;
+        retry
+            .retry_async(|| async { cloudwatch_manager.create_log_group().await })
+            .await?;
         println!("log group created");
 
         if runtime.image.is_some() {
             retry
-            .retry_async(|| async { lambda_manager.create_function().await })
-            .await?;
+                .retry_async(|| async { lambda_manager.create_function().await })
+                .await?;
             println!("function created");
         }
     }

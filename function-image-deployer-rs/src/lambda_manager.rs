@@ -1,7 +1,10 @@
 use std::{thread, time::Duration};
 
 use async_trait::async_trait;
-use aws_sdk_lambda::{Client as LambdaClient, types::{PackageType, self, builders::FunctionCodeBuilder, ImageConfig, Architecture}};
+use aws_sdk_lambda::{
+    types::{self, builders::FunctionCodeBuilder, Architecture, ImageConfig, PackageType},
+    Client as LambdaClient,
+};
 use common_lib::Runtime;
 use lambda_runtime::Error;
 
@@ -21,7 +24,13 @@ pub trait FunctionManager {
 }
 
 impl<'a> LambdaManager<'a> {
-    pub async fn new(client: Option<LambdaClient>, account_id: &'a str, region: &'a str, runtime: &'a Runtime, role_arn: &'a str) -> LambdaManager<'a> {
+    pub async fn new(
+        client: Option<LambdaClient>,
+        account_id: &'a str,
+        region: &'a str,
+        runtime: &'a Runtime,
+        role_arn: &'a str,
+    ) -> LambdaManager<'a> {
         let client = match client {
             Some(client) => client,
             None => {
@@ -29,7 +38,13 @@ impl<'a> LambdaManager<'a> {
                 LambdaClient::new(&config)
             }
         };
-        LambdaManager { client, runtime, role_arn, account_id, region }
+        LambdaManager {
+            client,
+            runtime,
+            role_arn,
+            account_id,
+            region,
+        }
     }
 }
 
@@ -84,12 +99,16 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             .create_function()
             .function_name(&function_name)
             .package_type(package_type)
-            .code(FunctionCodeBuilder::default()
-                .image_uri(self.runtime.image_name(self.account_id, self.region))
-                .build())
-            .image_config(ImageConfig::builder()
-                .command(self.runtime.handler.clone())
-                .build())
+            .code(
+                FunctionCodeBuilder::default()
+                    .image_uri(self.runtime.image_name(self.account_id, self.region))
+                    .build(),
+            )
+            .image_config(
+                ImageConfig::builder()
+                    .command(self.runtime.handler.clone())
+                    .build(),
+            )
             .role(self.role_arn)
             .memory_size(self.runtime.memory_size)
             .architectures(Architecture::from(self.runtime.architecture.as_str()))
