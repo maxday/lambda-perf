@@ -1,5 +1,4 @@
-ARG ARCH
-FROM public.ecr.aws/lambda/provided:al2-$ARCH AS builder
+FROM public.ecr.aws/lambda/provided:al2 AS builder
 ENV APP_BASE_DIR=/tmp/app
 WORKDIR $APP_BASE_DIR
 RUN yum install cmake3 git zip autoconf automake -y
@@ -14,7 +13,7 @@ RUN tar -xvf curl-7.88.1.tar.gz
 WORKDIR "${APP_BASE_DIR}/curl-7.88.1"
 RUN autoreconf -fi
 RUN ./configure --disable-shared --disable-pthreads --disable-threaded-resolver \
---with-pic --without-ssl --without-zlib --prefix=${APP_BASE_DIR}/lambda-install
+--with-pic --without-ssl --without-zlib
 RUN make -j && make install
 # Build the C++ Lambda runtime
 WORKDIR "${APP_BASE_DIR}"
