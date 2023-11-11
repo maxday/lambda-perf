@@ -5,7 +5,7 @@
       "displayName": "apple swift 5.8 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "SimpleLambdaHandler",
-      "path": "swift58",
+      "path": "swift58_on_provided_al2",
       "architectures": ["x86_64", "arm64"]
     },
     {
@@ -121,13 +121,6 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
-      "displayName": "go (provided)",
-      "runtime": "provided",
-      "handler": "bootstrap",
-      "path": "go_on_provided",
-      "architectures": ["x86_64"]
-    },
-    {
       "displayName": "go (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
@@ -135,10 +128,24 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
+      "displayName": "go (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "bootstrap",
+      "path": "go_on_provided_al2023",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
       "displayName": "rust (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "rust_on_provided_al2",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "rust (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "bootstrap",
+      "path": "rust_on_provided_al2023",
       "architectures": ["x86_64", "arm64"]
     },
     {
@@ -190,7 +197,14 @@
       "displayName": "c++ 11 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "handler",
-      "path": "cpp11",
+      "path": "cpp11_on_provided_al2",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "c++ 11 (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "handler",
+      "path": "cpp11_on_provided_al2023",
       "architectures": ["x86_64", "arm64"]
     },
     {
