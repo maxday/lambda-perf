@@ -28,24 +28,29 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `python3.9`
 - `python3.10`
 - `python3.11`
-- `dotnetcore3.1`
 - `dotnet6`
 - `go1.x`
+- `java8`
+- `java8.al2`
 - `java11`
 - `java11 + snapstart`
 - `java17`
 - `java17 + snapstart`
-- `java8`
 - `ruby2.7`
 - `ruby3.2`
 
-in addition to 5 custom runtimes:
-- `go` on `provided`
+in addition to the following custom runtimes:
 - `go` on `provided.al2`
+- `go` on `provided.al2023`
 - `rust` on `provided.al2`
+- `rust` on `provided.al2023`
+- `c++` on `provided.al2`
+- `c++` on `provided.al2023`
 - `dotnet7 aot` on `provided.al2`
 - `quarkus native` on `provided.al2`
 - `graalvm java17` on `provided.al2`
+- `apple swift 5.8` on `provided.al2`
+- `bun` on `provided.al2` (with and without layer)
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
