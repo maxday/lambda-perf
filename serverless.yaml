@@ -89,6 +89,19 @@ provider:
     - Effect: Allow
       Action: "sqs:SendMessage"
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker"
+    - Effect: Allow
+      Action: "ecr:GetRepositoryPolicy"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+    - Effect: Allow
+      Action: "ecr:SetRepositoryPolicy"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+    - Effect: Allow
+      Action: "ecr:BatchGetImage"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+    - Effect: Allow
+      Action: "ecr:GetDownloadUrlForLayer"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+
 
 package:
   patterns:
@@ -113,42 +126,42 @@ functions:
         - "!result-builder"
     handler: report-log-processor/app.handler
 
-  functionInvoker:
-    package:
-      individually: true
-      patterns:
-        - "function-invoker"
-        - "!function-trigger-deployer"
-        - "!function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-invoker/app.handler
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - lambdaPerfInvoker
-              - Arn
-          batchSize: 1
+  # functionInvoker:
+  #   package:
+  #     individually: true
+  #     patterns:
+  #       - "function-invoker"
+  #       - "!function-trigger-deployer"
+  #       - "!function-deployer"
+  #       - "!report-log-processor"
+  #       - "!result-builder"
+  #   handler: function-invoker/app.handler
+  #   events:
+  #     - sqs:
+  #         arn:
+  #           Fn::GetAtt:
+  #             - lambdaPerfInvoker
+  #             - Arn
+  #         batchSize: 1
   
-  functionTriggerDeployer:
-    package:
-      individually: true
-      patterns:
-        - "function-trigger-deployer"
-        - "!function-invoker"
-        - "!function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-trigger-deployer/app.handler
-    environment:
-      FUNCTION_QUEUE_NAME: lambda-perf-function-deployer
-      CONTAINER_QUEUE_NAME: lambda-perf-container-deployer
-      ACCOUNT_ID: ${aws:accountId}
-      LOG_PROCESSOR_ARN: 
-        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-    #events:
-    #  - schedule: cron(30 13 * * ? *)
+  # functionTriggerDeployer:
+  #   package:
+  #     individually: true
+  #     patterns:
+  #       - "function-trigger-deployer"
+  #       - "!function-invoker"
+  #       - "!function-deployer"
+  #       - "!report-log-processor"
+  #       - "!result-builder"
+  #   handler: function-trigger-deployer/app.handler
+  #   environment:
+  #     FUNCTION_QUEUE_NAME: lambda-perf-function-deployer
+  #     CONTAINER_QUEUE_NAME: lambda-perf-container-deployer
+  #     ACCOUNT_ID: ${aws:accountId}
+  #     LOG_PROCESSOR_ARN: 
+  #       "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+  #   #events:
+  #   #  - schedule: cron(30 13 * * ? *)
 
   functionTriggerDeployerRs:
     runtime: provided.al2
@@ -180,41 +193,42 @@ functions:
             Fn::GetAtt:
               - lambdaPerfImageDeployer
               - Arn
-          batchSize: 25
-          maximumBatchingWindow: 30
+          # batchSize: 25
+          # maximumBatchingWindow: 30
+          batchSize: 1
 
-  resultBuilder:
-    environment:
-      GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
-      LAMBDA_PERF_ENV: ${env:LAMBDA_PERF_ENV}
-    package:
-      individually: true
-      patterns:
-        - result-builder
-        - "!function-trigger-deployer"
-        - "!function-invoker"
-        - "!function-deployer"
-        - "!report-log-processor"
-    handler: result-builder/app.handler
-    #events:
+  # resultBuilder:
+  #   environment:
+  #     GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
+  #     LAMBDA_PERF_ENV: ${env:LAMBDA_PERF_ENV}
+  #   package:
+  #     individually: true
+  #     patterns:
+  #       - result-builder
+  #       - "!function-trigger-deployer"
+  #       - "!function-invoker"
+  #       - "!function-deployer"
+  #       - "!report-log-processor"
+  #   handler: result-builder/app.handler
+  #   #events:
     #  - schedule: cron(0 14 * * ? *)
 
-  functionDeployer:
-    package:
-      individually: true
-      patterns:
-        - "!function-trigger-deployer"
-        - "!function-invoker"
-        - "function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-deployer/function.handler
-    environment:
-      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
-      LOG_PROCESSOR_ARN: 
-        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-      QUEUE_NAME: lambda-perf-invoker
-      ACCOUNT_ID: ${aws:accountId}
+  # functionDeployer:
+  #   package:
+  #     individually: true
+  #     patterns:
+  #       - "!function-trigger-deployer"
+  #       - "!function-invoker"
+  #       - "function-deployer"
+  #       - "!report-log-processor"
+  #       - "!result-builder"
+  #   handler: function-deployer/function.handler
+  #   environment:
+  #     ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+  #     LOG_PROCESSOR_ARN: 
+  #       "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+  #     QUEUE_NAME: lambda-perf-invoker
+  #     ACCOUNT_ID: ${aws:accountId}
     # events:
     #   - sqs:
     #       arn:
@@ -223,22 +237,22 @@ functions:
     #           - Arn
     #       batchSize: 1
 
-  containerDeployer:
-    package:
-      individually: true
-      patterns:
-        - "!function-trigger-deployer"
-        - "!function-invoker"
-        - "function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-deployer/container.handler
-    environment:
-      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
-      LOG_PROCESSOR_ARN: 
-        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-      QUEUE_NAME: lambda-perf-invoker
-      ACCOUNT_ID: ${aws:accountId}
+  # containerDeployer:
+  #   package:
+  #     individually: true
+  #     patterns:
+  #       - "!function-trigger-deployer"
+  #       - "!function-invoker"
+  #       - "function-deployer"
+  #       - "!report-log-processor"
+  #       - "!result-builder"
+  #   handler: function-deployer/container.handler
+  #   environment:
+  #     ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+  #     LOG_PROCESSOR_ARN: 
+  #       "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
+  #     QUEUE_NAME: lambda-perf-invoker
+  #     ACCOUNT_ID: ${aws:accountId}
     # events:
     #   - sqs:
     #       arn:

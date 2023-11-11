@@ -34,13 +34,23 @@ impl LambdaManager {
 #[async_trait]
 impl PermissionManager for LambdaManager {
     async fn remove_permission(&self) -> Result<(), Error> {
-        self.client
+        match self
+            .client
             .remove_permission()
             .function_name(&self.log_processor_arn)
             .statement_id(&self.statement_id)
             .send()
-            .await?;
-        Ok(())
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(err) => {
+                let new_err = err.into_service_error();
+                if new_err.is_resource_not_found_exception() {
+                    return Ok(());
+                }
+                Err(new_err.into())
+            }
+        }
     }
 
     async fn add_permission(&self) -> Result<(), Error> {

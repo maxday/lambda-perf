@@ -9,7 +9,7 @@ lambda_runtime = "0.8.1"
 lambda_http = { version = "0.8.1", default-features = false, features = ["apigw_rest"] }
 serde = "1.0.179"
 serde_json = "1.0.104"
-tracing-subscriber = "0.3.17"
+tracing-subscriber = { version = "0.3.17", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
 testcontainers = "0.15.0"
 async-trait = "0.1.74"

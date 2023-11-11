@@ -28,7 +28,7 @@ const buildDockerImage = async (
     `unzip ${runtime.path}_${architecture}.zip -d ${runtime.path}`
   );
   const tag = `${accountId}.dkr.ecr.${region}.amazonaws.com/lambda-perf:${runtime.path}-${architecture}`;
-  const cmdLine = `docker build . -f Dockerfile.sample -t ${tag} --build-arg baseImage='${runtime.container.baseImage}' --build-arg handlerCode='${runtime.path}' --build-arg handlerCmd='${runtime.handler}'`;
+  const cmdLine = `docker build . -f Dockerfile.sample -t ${tag} --build-arg baseImage='${runtime.image.baseImage}' --build-arg handlerCode='${runtime.path}' --build-arg handlerCmd='${runtime.handler}'`;
   childProcess.execSync(cmdLine);
   const cmdLogin = `aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${accountId}.dkr.ecr.${region}.amazonaws.com`;
   console.log("docker logging in!");
@@ -82,9 +82,12 @@ const run = async () => {
 
   const s3Client = new S3Client();
   for (const runtime of manifest.runtimes) {
+    console.log(runtime);
     for (const architecture of runtime.architectures) {
+      console.log(architecture);
       if (architecture === ARCHITECTURE) {
-        if (runtime.hasOwnProperty("container")) {
+        console.log("building image");
+        if (runtime.hasOwnProperty("image")) {
           await buildDockerImage(
             ACCOUNT_ID,
             s3Client,

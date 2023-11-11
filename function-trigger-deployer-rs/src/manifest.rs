@@ -1,4 +1,4 @@
-use common_lib::{Image, Runtime};
+use common_lib::{Image, LayerInfo, Runtime};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -21,6 +21,7 @@ pub struct InputRuntime {
     pub path: String,
     pub architectures: Vec<String>,
     pub image: Option<Image>,
+    pub layer: Option<LayerInfo>,
 }
 
 pub struct ManifestManager {
@@ -51,6 +52,7 @@ impl ManifestManager {
                         architecture: architecture.to_string(),
                         memory_size: *memory_size,
                         image: None,
+                        layer: runtime.layer.clone(),
                     };
                     runtimes.push(zip_runtime);
                     if runtime.image.is_some() {
@@ -62,6 +64,7 @@ impl ManifestManager {
                             architecture: architecture.to_string(),
                             memory_size: *memory_size,
                             image: runtime.image.clone(),
+                            layer: None,
                         };
                         runtimes.push(image_runtime);
                     }
@@ -167,5 +170,27 @@ mod tests {
         assert_eq!(manifest.runtimes[9].architecture, "x86_64");
         assert_eq!(manifest.runtimes[9].memory_size, 256);
         assert!(manifest.runtimes[9].image.is_none());
+    }
+
+    #[test]
+    fn test_read_manifest_layer() {
+        let manifest = manifest::ManifestManager::new("manifest.test.layer.json");
+        let manifest = manifest.read_manifest();
+
+        assert_eq!(manifest.runtimes.len(), 1);
+
+        assert_eq!(manifest.runtimes[0].display_name, "bun layer(prov.al2)");
+        assert_eq!(manifest.runtimes[0].runtime, "provided.al2");
+        assert_eq!(manifest.runtimes[0].handler, "index.hello");
+        assert_eq!(manifest.runtimes[0].path, "bun_layer");
+        assert_eq!(manifest.runtimes[0].architecture, "x86_64");
+        assert_eq!(manifest.runtimes[0].memory_size, 128);
+        assert!(manifest.runtimes[0].image.is_none());
+
+        let layer = manifest.runtimes[0].layer.as_ref().unwrap();
+        assert_eq!(
+            layer.x86_64,
+            Some("arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-x64:1".to_string())
+        )
     }
 }

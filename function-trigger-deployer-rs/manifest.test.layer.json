@@ -1,0 +1,15 @@
+{
+    "memorySizes": [128],
+    "runtimes": [
+      {
+        "displayName": "bun layer(prov.al2)",
+        "runtime": "provided.al2",
+        "handler": "index.hello",
+        "path": "bun_layer",
+        "architectures": ["x86_64"],
+        "layer": {
+          "x86_64": "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-x64:1"
+        }
+      }
+    ]
+}

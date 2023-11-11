@@ -1,5 +1,17 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Response {
+    status_code: u32,
+}
+
+impl Response {
+    pub fn success() -> Self {
+        Response { status_code: 200 }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Runtime {
@@ -10,6 +22,13 @@ pub struct Runtime {
     pub architecture: String,
     pub memory_size: i32,
     pub image: Option<Image>,
+    pub layer: Option<LayerInfo>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct LayerInfo {
+    pub x86_64: Option<String>,
+    pub arm64: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]

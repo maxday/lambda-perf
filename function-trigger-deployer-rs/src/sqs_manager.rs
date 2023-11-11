@@ -43,22 +43,12 @@ impl SQSManager {
 
 #[async_trait]
 pub trait QueueManager {
-    //fn build_message(&self) -> Vec<SQSDeployMessage>;
     fn build_message(&self) -> Vec<Runtime>;
     async fn send_message(&self) -> Result<(), Error>;
 }
 
 #[async_trait]
 impl QueueManager for SQSManager {
-    // fn build_message(&self) -> Vec<SQSDeployMessage> {
-    //     let mut sqs_messages: Vec<SQSDeployMessage> = Vec::new();
-    //     let manifest = self.manifest_manager.read_manifest();
-    //     for runtime in manifest.runtimes.iter() {
-    //         sqs_messages.push(runtime.to_sqs_deploy_message());
-    //     }
-    //     sqs_messages
-    // }
-
     fn build_message(&self) -> Vec<Runtime> {
         let manifest = self.manifest_manager.read_manifest();
         manifest.runtimes
@@ -105,6 +95,7 @@ mod tests {
                 display_name: "nodejs18.x".to_string(),
                 handler: "index.handler".to_string(),
                 image: None,
+                layer: None,
             }
         );
         assert_eq!(
@@ -119,6 +110,7 @@ mod tests {
                 image: Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
+                layer: None,
             }
         );
         assert_eq!(
@@ -131,6 +123,7 @@ mod tests {
                 display_name: "nodejs18.x".to_string(),
                 handler: "index.handler".to_string(),
                 image: None,
+                layer: None,
             }
         );
         assert_eq!(
@@ -145,6 +138,7 @@ mod tests {
                 image: Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
+                layer: None,
             }
         );
         assert_eq!(
@@ -156,7 +150,8 @@ mod tests {
                 path: "python37".to_string(),
                 display_name: "python3.7".to_string(),
                 handler: "index.handler".to_string(),
-                image: None
+                image: None,
+                layer: None
             }
         );
 
@@ -170,6 +165,7 @@ mod tests {
                 display_name: "nodejs18.x".to_string(),
                 handler: "index.handler".to_string(),
                 image: None,
+                layer: None
             }
         );
         assert_eq!(
@@ -184,6 +180,7 @@ mod tests {
                 image: Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
+                layer: None
             }
         );
         assert_eq!(
@@ -196,6 +193,7 @@ mod tests {
                 display_name: "nodejs18.x".to_string(),
                 handler: "index.handler".to_string(),
                 image: None,
+                layer: None
             }
         );
         assert_eq!(
@@ -210,6 +208,7 @@ mod tests {
                 image: Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
+                layer: None,
             }
         );
         assert_eq!(
@@ -221,7 +220,8 @@ mod tests {
                 path: "python37".to_string(),
                 display_name: "python3.7".to_string(),
                 handler: "index.handler".to_string(),
-                image: None
+                image: None,
+                layer: None,
             }
         );
     }

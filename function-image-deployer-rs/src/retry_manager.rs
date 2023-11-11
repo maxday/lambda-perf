@@ -1,7 +1,7 @@
 use rand::Rng;
-use std::fmt::Debug;
 use std::future::Future;
 use std::time::Duration;
+use tracing::info;
 
 pub struct RetryManager {
     max_attempts: u32,
@@ -24,21 +24,20 @@ impl RetryManager {
         E: std::fmt::Debug,
         T: std::fmt::Debug,
     {
-        let mut count = 0;
+        let mut nb_attempt = 0;
         loop {
-            println!("attempt: {}", count);
             let result = f().await;
 
             if result.is_ok() {
                 break result;
             } else {
-                println!("error: {:?}", result);
-                if count > self.max_attempts {
+                info!("attempt #{}, error: {:?}", (nb_attempt + 1), result);
+                if nb_attempt > self.max_attempts {
                     break result;
                 }
-                count += 1;
+                nb_attempt += 1;
                 let delay = rand::thread_rng().gen_range(self.delay_min..self.delay_max);
-                println!("delay: {:?}", delay);
+                info!("delay: {:?}", delay);
                 tokio::time::sleep(delay).await;
             }
         }
