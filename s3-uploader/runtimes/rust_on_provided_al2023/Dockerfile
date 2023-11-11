@@ -1,11 +1,11 @@
 FROM public.ecr.aws/lambda/provided:al2023 as builder
 ARG ARCH
 WORKDIR /usr/src/app
-RUN yum -y update
-RUN yum -y install openssl openssl-devel
-RUN yum -y install gcc
-RUN yum -y install zip
-RUN yum -y install python3-pip
+RUN dnf -y update
+RUN dnf -y install openssl openssl-devel
+RUN dnf -y install gcc
+RUN dnf -y install zip
+RUN dnf -y install python3-pip
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN source $HOME/.cargo/env
 COPY Cargo.toml .

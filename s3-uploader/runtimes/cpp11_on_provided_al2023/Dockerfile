@@ -1,8 +1,9 @@
-FROM public.ecr.aws/lambda/provided:al2 AS builder
+FROM public.ecr.aws/lambda/provided:al2023 AS builder
 ENV APP_BASE_DIR=/tmp/app
 WORKDIR $APP_BASE_DIR
-RUN yum install cmake3 git zip autoconf automake -y
-RUN yum groupinstall "Development Tools" -y
+RUN dnf install cmake3 git zip autoconf automake gcc g++ tar libtool -y
+
+#RUN dnf group install "Development Tools" -y
 
 COPY . $APP_BASE_DIR
 WORKDIR $APP_BASE_DIR
