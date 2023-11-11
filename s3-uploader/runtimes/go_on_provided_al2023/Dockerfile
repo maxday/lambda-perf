@@ -1,7 +1,13 @@
-FROM golang:1.19.0 as builder
+FROM public.ecr.aws/lambda/provided:al2023 as builder
 ARG ARCH
-RUN apt-get update
-RUN apt-get install -y zip
+
+RUN dnf update -y
+RUN dnf install gzip zip tar -y
+
+RUN curl -LO https://go.dev/dl/go1.21.4.linux-${ARCH}.tar.gz
+RUN tar -C /usr/local -xzf go1.21.4.linux-${ARCH}.tar.gz
+ENV PATH=$PATH:/usr/local/go/bin
+
 WORKDIR /tmpBuild
 
 COPY main.go .
