@@ -5,7 +5,7 @@
       "displayName": "apple swift 5.8 (prov.al2023)",
       "runtime": "provided.al2023",
       "handler": "SimpleLambdaHandler",
-      "path": "swift58",
+      "path": "swift58_on_provided_al2",
       "architectures": ["x86_64", "arm64"]
     },
     {
@@ -81,6 +81,13 @@
     {
       "displayName": "dotnet7 aot (prov.al2)",
       "runtime": "provided.al2",
+      "handler": "bootstrap",
+      "path": "dotnet7_aot_on_provided_al2",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "dotnet7 aot (prov.al2023)",
+      "runtime": "provided.al2023",
       "handler": "bootstrap",
       "path": "dotnet7_aot_on_provided_al2",
       "architectures": ["x86_64", "arm64"]
