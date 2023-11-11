@@ -177,16 +177,10 @@ fn get_layer_name(runtime: &Runtime, region: &str) -> Option<Vec<String>> {
     match &runtime.layer {
         Some(layer) => {
             if runtime.architecture == "x86_64" {
-                return match &layer.x86_64 {
-                    Some(arn) => Some(vec![arn.replace("_REGION_", region)]),
-                    None => None,
-                };
+                return layer.x86_64.as_ref().map(|arn| vec![arn.replace("_REGION_", region)]);
             }
             if runtime.architecture == "arm64" {
-                return match &layer.arm64 {
-                    Some(arn) => Some(vec![arn.replace("_REGION_", region)]),
-                    None => None,
-                };
+                return layer.arm64.as_ref().map(|arn| vec![arn.replace("_REGION_", region)]);
             }
             None
         }
