@@ -30,6 +30,13 @@
       "architectures": ["x86_64", "arm64"]
     },
     {
+      "displayName": "nodejs20.x",
+      "runtime": "nodejs20.x",
+      "handler": "index.handler",
+      "path": "nodejs20x",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
       "displayName": "python3.7",
       "runtime": "python3.7",
       "handler": "index.handler",
