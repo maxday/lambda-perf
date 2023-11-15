@@ -2,7 +2,7 @@
 
 using namespace aws::lambda_runtime;
 
-static invocation_response handler(invocation_request)
+static invocation_response handler(invocation_request const&)
 {
     return invocation_response::success("Ok", "text/plain");
 }
