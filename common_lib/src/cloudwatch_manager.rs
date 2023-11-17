@@ -15,9 +15,7 @@ pub trait LogManager {
 }
 
 impl CloudWatchManager {
-    pub async fn new(
-        client: Option<CloudWatchLogsClient>,
-    ) -> CloudWatchManager {
+    pub async fn new(client: Option<CloudWatchLogsClient>) -> CloudWatchManager {
         let client = match client {
             Some(client) => client,
             None => {

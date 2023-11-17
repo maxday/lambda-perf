@@ -104,10 +104,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
 
     async fn create_function(&self, runtime: &Runtime) -> Result<(), Error> {
         match runtime.image {
-            Some(_) => {
-                self.create_image_function(runtime)
-                    .await
-            }
+            Some(_) => self.create_image_function(runtime).await,
             None => self.create_zip_function(runtime).await,
         }
     }

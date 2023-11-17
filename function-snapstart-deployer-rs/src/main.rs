@@ -1,11 +1,11 @@
 use std::time::Duration;
 
 use aws_lambda_events::event::sqs::SqsEventObj;
-use common_lib::cloudwatch_manager::{LogManager, CloudWatchManager};
+use common_lib::cloudwatch_manager::{CloudWatchManager, LogManager};
 use common_lib::invoker_sqs_manager::InvokerSQSManager;
 use common_lib::lambda_manager::{FunctionManager, LambdaManager};
-use common_lib::runtime::Runtime;
 use common_lib::retry_manager::RetryManager;
+use common_lib::runtime::Runtime;
 
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde::Serialize;
@@ -34,7 +34,8 @@ async fn main() -> Result<(), Error> {
     let invoker_queue_name =
         std::env::var("INVOKER_QUEUE_NAME").expect("INVOKER_QUEUE_NAME not set");
 
-    let invoker_sqs_manager = InvokerSQSManager::new(&account_id, &region, &invoker_queue_name, None).await;
+    let invoker_sqs_manager =
+        InvokerSQSManager::new(&account_id, &region, &invoker_queue_name, None).await;
 
     let lambda_manager = LambdaManager::new(None, &account_id, &region, &role_arn).await;
 
@@ -93,7 +94,7 @@ async fn process_event<'a>(
             .await?;
         info!("function created");
 
-        invoker_sqs_manager.send_message(runtime);
+        invoker_sqs_manager.send_message(runtime).await?;
     }
     Ok(Response { status_code: 200 })
 }

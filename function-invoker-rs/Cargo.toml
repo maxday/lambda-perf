@@ -1,0 +1,25 @@
+[package]
+name = "function-invoker-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aws_lambda_events = "0.10.0"
+lambda_runtime = "0.8.1"
+lambda_http = { version = "0.8.1", default-features = false, features = ["apigw_rest"] }
+serde = "1.0.179"
+serde_json = "1.0.104"
+tracing-subscriber = { version = "0.3.17", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+testcontainers = "0.15.0"
+async-trait = "0.1.74"
+aws-sdk-lambda = "0.34.0"
+aws-sdk-dynamodb = "0.34.0"
+aws-config = "0.56.1"
+tracing = { version = "0.1.40", features = ["log"] }
+aws-sdk-sqs = "0.34.0"
+rand = "0.8.5"
+aws-sdk-cloudwatchlogs = "0.34.0"
+
+common_lib = { path = "../common_lib" }
+

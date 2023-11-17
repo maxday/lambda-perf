@@ -183,6 +183,24 @@ functions:
           # maximumBatchingWindow: 30
           batchSize: 1
 
+  functionInvokerRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    package:
+      individually: true
+      artifact: target/lambda/function-invoker-rs/bootstrap-function-invoker-rs.zip
+    environment:
+      ACCOUNT_ID: ${aws:accountId}
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfInvoker
+              - Arn
+          batchSize: 1
+
 resources:
   Resources:
     lambdaPerfDeployer:

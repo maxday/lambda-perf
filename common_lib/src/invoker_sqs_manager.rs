@@ -1,4 +1,6 @@
 use aws_sdk_sqs::Client as SQSClient;
+use lambda_runtime::Error;
+use serde_json::json;
 
 use crate::runtime::Runtime;
 
@@ -22,14 +24,16 @@ impl InvokerSQSManager {
             }
         };
         let queue_url = InvokerSQSManager::build_queue_url(account_id, region, queue_name);
-        InvokerSQSManager {
-            client,
-            queue_url,
-        }
+        InvokerSQSManager { client, queue_url }
     }
-    pub fn send_message(&self, runtime: &Runtime) {
-        println!("sending for {:?}", runtime);
-        
+    pub async fn send_message(&self, runtime: &Runtime) -> Result<(), Error> {
+        self.client
+            .send_message()
+            .queue_url(&self.queue_url)
+            .message_body(json!(runtime).to_string())
+            .send()
+            .await?;
+        Ok(())
     }
     fn build_queue_url(account_id: &str, region: &str, queue_name: &str) -> String {
         format!(

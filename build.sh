@@ -6,3 +6,4 @@ zip -j target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-dep
 
 mv target/lambda/function-deployer-rs/bootstrap.zip target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip
 mv target/lambda/function-snapstart-deployer-rs/bootstrap.zip target/lambda/function-snapstart-deployer-rs/bootstrap-function-snapstart-deployer-rs.zip
+mv target/lambda/function-invoker-rs/bootstrap.zip target/lambda/function-invoker-rs/bootstrap-function-invoker-rs.zip
