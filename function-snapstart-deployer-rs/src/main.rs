@@ -57,7 +57,7 @@ async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Erro
                 .await?;
         }
         info!("function deleted");
-        
+
         retry
             .retry_async(|| async { lambda_manager.create_snapstart_function().await })
             .await?;
