@@ -1,17 +1,14 @@
 use std::time::Duration;
 
 use aws_lambda_events::event::sqs::SqsEventObj;
-use common_lib::Runtime;
-use lambda_manager::FunctionManager;
+use common_lib::cloudwatch_manager::LogManager;
+use common_lib::lambda_manager::FunctionManager;
+use common_lib::runtime::Runtime;
+use common_lib::{cloudwatch_manager, lambda_manager, retry_manager::RetryManager};
+
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde::Serialize;
 use tracing::info;
-
-use crate::{cloudwatch_manager::LogManager, retry_manager::RetryManager};
-mod cloudwatch_manager;
-mod lambda_manager;
-
-mod retry_manager;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]

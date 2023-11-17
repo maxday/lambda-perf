@@ -632,7 +632,15 @@ dependencies = [
 name = "common_lib"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
+ "aws-config",
+ "aws-sdk-cloudwatchlogs",
+ "aws-sdk-lambda",
+ "lambda_runtime",
+ "rand",
  "serde",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]

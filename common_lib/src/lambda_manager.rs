@@ -9,10 +9,12 @@ use aws_sdk_lambda::{
     },
     Client as LambdaClient,
 };
-use common_lib::Runtime;
+
 use lambda_runtime::Error;
 
 use tracing::info;
+
+use crate::runtime::Runtime;
 
 pub struct LambdaManager<'a> {
     pub client: LambdaClient,

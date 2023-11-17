@@ -1,7 +1,8 @@
 use async_trait::async_trait;
 use aws_sdk_cloudwatchlogs::Client as CloudWatchLogsClient;
-use common_lib::Runtime;
 use lambda_runtime::Error;
+
+use crate::runtime::Runtime;
 
 pub struct CloudWatchManager<'a> {
     pub client: CloudWatchLogsClient,

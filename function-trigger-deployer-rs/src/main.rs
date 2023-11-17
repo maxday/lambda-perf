@@ -2,7 +2,7 @@ use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::Value;
 use tracing::log::debug;
 
-use common_lib::Response;
+use common_lib::reponse::Response;
 
 mod lambda_manager;
 use lambda_manager::{LambdaManager, PermissionManager};

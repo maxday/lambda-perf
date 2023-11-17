@@ -1,4 +1,4 @@
-use common_lib::{Image, LayerInfo, Runtime};
+use common_lib::runtime::{Image, LayerInfo, Runtime};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]

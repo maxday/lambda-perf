@@ -1,7 +1,7 @@
 use crate::manifest::ManifestManager;
 use async_trait::async_trait;
 use aws_sdk_sqs::Client as SQSClient;
-use common_lib::Runtime;
+use common_lib::runtime::Runtime;
 use lambda_runtime::Error;
 use serde_json::json;
 
@@ -85,7 +85,7 @@ mod tests {
         sqs_manager::{QueueManager, SQSManager},
     };
 
-    use common_lib::{Image, Runtime};
+    use common_lib::runtime::{Image, Runtime};
 
     #[tokio::test]
     async fn test_build_sqs() {
