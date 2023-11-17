@@ -1,10 +1,11 @@
 use std::time::Duration;
 
 use aws_lambda_events::event::sqs::SqsEventObj;
-use common_lib::cloudwatch_manager::LogManager;
-use common_lib::lambda_manager::FunctionManager;
+use common_lib::cloudwatch_manager::{LogManager, CloudWatchManager};
+use common_lib::invoker_sqs_manager::InvokerSQSManager;
+use common_lib::lambda_manager::{FunctionManager, LambdaManager};
 use common_lib::runtime::Runtime;
-use common_lib::{cloudwatch_manager, lambda_manager, retry_manager::RetryManager};
+use common_lib::retry_manager::RetryManager;
 
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde::Serialize;
@@ -26,48 +27,73 @@ async fn main() -> Result<(), Error> {
         .with_ansi(false)
         .without_time()
         .init();
-    let func = service_fn(func);
-    lambda_runtime::run(func).await?;
-    Ok(())
-}
 
-async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Error> {
     let role_arn = std::env::var("ROLE_ARN").expect("ROLE_ARN not set");
     let account_id = std::env::var("ACCOUNT_ID").expect("ACCOUNT_ID not set");
     let region = std::env::var("AWS_REGION").expect("AWS_REGION not set");
+    let invoker_queue_name =
+        std::env::var("INVOKER_QUEUE_NAME").expect("INVOKER_QUEUE_NAME not set");
+
+    let invoker_sqs_manager = InvokerSQSManager::new(&account_id, &region, &invoker_queue_name, None).await;
+
+    let lambda_manager = LambdaManager::new(None, &account_id, &region, &role_arn).await;
+
+    let cloudwatch_manager = CloudWatchManager::new(None).await;
+
+    let lambda_manager_ref = &lambda_manager;
+    let cloudwatch_manager_ref = &cloudwatch_manager;
+    let invoker_sqs_manager_ref = &invoker_sqs_manager;
+
+    let handler_func_closure = |event: LambdaEvent<SqsEventObj<Runtime>>| async move {
+        process_event(
+            event,
+            lambda_manager_ref,
+            cloudwatch_manager_ref,
+            invoker_sqs_manager_ref,
+        )
+        .await
+    };
+
+    lambda_runtime::run(service_fn(handler_func_closure)).await?;
+    Ok(())
+}
+
+async fn process_event<'a>(
+    event: LambdaEvent<SqsEventObj<Runtime>>,
+    lambda_manager: &LambdaManager<'a>,
+    cloudwatch_manager: &CloudWatchManager,
+    invoker_sqs_manager: &InvokerSQSManager,
+) -> Result<Response, Error> {
     for record in event.payload.records.iter() {
         let runtime = &record.body;
         info!("processing runtime: {:?}", runtime);
-        let lambda_manager =
-            lambda_manager::LambdaManager::new(None, &account_id, &region, runtime, &role_arn)
-                .await;
-        let cloudwatch_manager = cloudwatch_manager::CloudWatchManager::new(None, runtime).await;
         info!("deleting function: {}", runtime.function_name());
         let retry = RetryManager::new(3, Duration::from_secs(1), Duration::from_secs(30));
         if retry
-            .retry_async(|| async { lambda_manager.delete_function().await })
+            .retry_async(|| async { lambda_manager.delete_function(runtime).await })
             .await?
         {
             info!("waiting for deletion");
             retry
-                .retry_async(|| async { lambda_manager.wait_for_deletion().await })
+                .retry_async(|| async { lambda_manager.wait_for_deletion(runtime).await })
                 .await?;
         }
         info!("function deleted");
-
         retry
-            .retry_async(|| async { lambda_manager.create_snapstart_function().await })
-            .await?;
-        info!("function created");
-
-        retry
-            .retry_async(|| async { cloudwatch_manager.delete_log_group().await })
+            .retry_async(|| async { cloudwatch_manager.delete_log_group(runtime).await })
             .await?;
         info!("log group deleted");
         retry
-            .retry_async(|| async { cloudwatch_manager.create_log_group().await })
+            .retry_async(|| async { cloudwatch_manager.create_log_group(runtime).await })
             .await?;
         info!("log group created");
+
+        retry
+            .retry_async(|| async { lambda_manager.create_snapstart_function(runtime).await })
+            .await?;
+        info!("function created");
+
+        invoker_sqs_manager.send_message(runtime);
     }
     Ok(Response { status_code: 200 })
 }

@@ -18,7 +18,7 @@ aws-sdk-lambda = "0.34.0"
 #aws-sdk-dynamodb = "0.34.0"
 #aws-config = "0.56.1"
 tracing = { version = "0.1.40", features = ["log"] }
-#aws-sdk-sqs = "0.34.0"
+aws-sdk-sqs = "0.34.0"
 #rand = "0.8.5"
 aws-sdk-cloudwatchlogs = "0.34.0"
 

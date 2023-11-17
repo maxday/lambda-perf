@@ -636,6 +636,7 @@ dependencies = [
  "aws-config",
  "aws-sdk-cloudwatchlogs",
  "aws-sdk-lambda",
+ "aws-sdk-sqs",
  "lambda_runtime",
  "rand",
  "serde",

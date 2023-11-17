@@ -18,7 +18,6 @@ use crate::runtime::Runtime;
 
 pub struct LambdaManager<'a> {
     pub client: LambdaClient,
-    pub runtime: &'a Runtime,
     pub role_arn: &'a str,
     pub account_id: &'a str,
     pub region: &'a str,
@@ -26,14 +25,14 @@ pub struct LambdaManager<'a> {
 
 #[async_trait]
 pub trait FunctionManager {
-    async fn delete_function(&self) -> Result<bool, Error>;
-    async fn wait_for_deletion(&self) -> Result<(), Error>;
-    async fn create_function(&self) -> Result<(), Error>;
-    async fn invoke_function(&self) -> Result<(), Error>;
-    async fn publish_version(&self) -> Result<(), Error>;
-    async fn create_snapstart_function(&self) -> Result<(), Error>;
-    async fn create_image_function(&self, image_uri: String) -> Result<(), Error>;
-    async fn create_zip_function(&self) -> Result<(), Error>;
+    async fn delete_function(&self, runtime: &Runtime) -> Result<bool, Error>;
+    async fn wait_for_deletion(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn create_function(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn invoke_function(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn create_image_function(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn create_zip_function(&self, runtime: &Runtime) -> Result<(), Error>;
 }
 
 impl<'a> LambdaManager<'a> {
@@ -41,7 +40,6 @@ impl<'a> LambdaManager<'a> {
         client: Option<LambdaClient>,
         account_id: &'a str,
         region: &'a str,
-        runtime: &'a Runtime,
         role_arn: &'a str,
     ) -> LambdaManager<'a> {
         let client = match client {
@@ -53,7 +51,6 @@ impl<'a> LambdaManager<'a> {
         };
         LambdaManager {
             client,
-            runtime,
             role_arn,
             account_id,
             region,
@@ -63,8 +60,8 @@ impl<'a> LambdaManager<'a> {
 
 #[async_trait]
 impl<'a> FunctionManager for LambdaManager<'a> {
-    async fn delete_function(&self) -> Result<bool, Error> {
-        let function_name = self.runtime.function_name();
+    async fn delete_function(&self, runtime: &Runtime) -> Result<bool, Error> {
+        let function_name = runtime.function_name();
         let res = self
             .client
             .delete_function()
@@ -82,18 +79,18 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             }
         }
     }
-    async fn wait_for_deletion(&self) -> Result<(), Error> {
+    async fn wait_for_deletion(&self, runtime: &Runtime) -> Result<(), Error> {
         let res = self
             .client
             .get_function()
-            .function_name(&self.runtime.function_name())
+            .function_name(runtime.function_name())
             .send()
             .await;
         match res {
             Ok(_) => {
                 info!("Waiting for function to be deleted");
                 thread::sleep(Duration::from_secs(10));
-                self.wait_for_deletion().await
+                self.wait_for_deletion(runtime).await
             }
             Err(e) => {
                 let e = e.into_service_error();
@@ -105,48 +102,49 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         }
     }
 
-    async fn create_function(&self) -> Result<(), Error> {
-        match self.runtime.image {
+    async fn create_function(&self, runtime: &Runtime) -> Result<(), Error> {
+        match runtime.image {
             Some(_) => {
-                self.create_image_function(self.runtime.image_name(self.account_id, self.region))
+                self.create_image_function(runtime)
                     .await
             }
-            None => self.create_zip_function().await,
+            None => self.create_zip_function(runtime).await,
         }
     }
 
-    async fn create_snapstart_function(&self) -> Result<(), Error> {
-        self.create_zip_function().await?;
+    async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error> {
+        self.create_zip_function(runtime).await?;
         for _ in 0..10 {
             thread::sleep(Duration::from_secs(10));
-            self.invoke_function().await?;
+            self.invoke_function(runtime).await?;
             thread::sleep(Duration::from_secs(10));
-            self.publish_version().await?;
+            self.publish_version(runtime).await?;
             thread::sleep(Duration::from_secs(10));
         }
         Ok(())
     }
 
-    async fn invoke_function(&self) -> Result<(), Error> {
+    async fn invoke_function(&self, runtime: &Runtime) -> Result<(), Error> {
         self.client
             .invoke()
-            .function_name(&self.runtime.function_name())
+            .function_name(runtime.function_name())
             .send()
             .await?;
         Ok(())
     }
 
-    async fn publish_version(&self) -> Result<(), Error> {
+    async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error> {
         self.client
             .publish_version()
-            .function_name(&self.runtime.function_name())
+            .function_name(runtime.function_name())
             .send()
             .await?;
         Ok(())
     }
 
-    async fn create_image_function(&self, image_uri: String) -> Result<(), Error> {
-        let function_name = self.runtime.function_name();
+    async fn create_image_function(&self, runtime: &Runtime) -> Result<(), Error> {
+        let function_name = runtime.function_name();
+        let image_uri = runtime.image_name(self.account_id, self.region);
         info!("Creating IMAGE function: {}", function_name);
         info!("Image URI: {}", image_uri);
         let package_type = PackageType::Image;
@@ -157,18 +155,18 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             .package_type(package_type)
             .code(
                 FunctionCodeBuilder::default()
-                    .image_uri(self.runtime.image_name(self.account_id, self.region))
+                    .image_uri(runtime.image_name(self.account_id, self.region))
                     .build(),
             )
             .image_config(
                 ImageConfig::builder()
-                    .command(self.runtime.handler.as_str())
+                    .command(runtime.handler.as_str())
                     .build(),
             )
             .role(self.role_arn)
-            .memory_size(self.runtime.memory_size)
-            .architectures(Architecture::from(self.runtime.architecture.as_str()));
-        if self.runtime.is_snapstart {
+            .memory_size(runtime.memory_size)
+            .architectures(Architecture::from(runtime.architecture.as_str()));
+        if runtime.is_snapstart {
             res = res.snap_start(
                 SnapStartBuilder::default()
                     .apply_on(PublishedVersions)
@@ -182,11 +180,11 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         }
     }
 
-    async fn create_zip_function(&self) -> Result<(), Error> {
-        let function_name = self.runtime.function_name();
+    async fn create_zip_function(&self, runtime: &Runtime) -> Result<(), Error> {
+        let function_name = runtime.function_name();
         info!("Creating ZIP function: {}", function_name);
         let package_type = PackageType::Zip;
-        let layers = get_layer_name(self.runtime, self.region);
+        let layers = get_layer_name(runtime, self.region);
         let res = self
             .client
             .create_function()
@@ -197,15 +195,15 @@ impl<'a> FunctionManager for LambdaManager<'a> {
                     .s3_bucket(format!("lambda-perf-{}", self.region))
                     .s3_key(format!(
                         "{}/code_{}.zip",
-                        self.runtime.path, self.runtime.architecture
+                        runtime.path, runtime.architecture
                     ))
                     .build(),
             )
             .role(self.role_arn)
-            .memory_size(self.runtime.memory_size)
-            .architectures(Architecture::from(self.runtime.architecture.as_str()))
-            .runtime(LambdaRuntime::from(self.runtime.runtime.as_str()))
-            .handler(self.runtime.handler.as_str())
+            .memory_size(runtime.memory_size)
+            .architectures(Architecture::from(runtime.architecture.as_str()))
+            .runtime(LambdaRuntime::from(runtime.runtime.as_str()))
+            .handler(runtime.handler.as_str())
             .set_layers(layers)
             .send()
             .await;

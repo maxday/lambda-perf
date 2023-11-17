@@ -4,22 +4,20 @@ use lambda_runtime::Error;
 
 use crate::runtime::Runtime;
 
-pub struct CloudWatchManager<'a> {
+pub struct CloudWatchManager {
     pub client: CloudWatchLogsClient,
-    pub runtime: &'a Runtime,
 }
 
 #[async_trait]
 pub trait LogManager {
-    async fn delete_log_group(&self) -> Result<(), Error>;
-    async fn create_log_group(&self) -> Result<(), Error>;
+    async fn delete_log_group(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn create_log_group(&self, runtime: &Runtime) -> Result<(), Error>;
 }
 
-impl<'a> CloudWatchManager<'a> {
+impl CloudWatchManager {
     pub async fn new(
         client: Option<CloudWatchLogsClient>,
-        runtime: &'a Runtime,
-    ) -> CloudWatchManager<'a> {
+    ) -> CloudWatchManager {
         let client = match client {
             Some(client) => client,
             None => {
@@ -27,14 +25,14 @@ impl<'a> CloudWatchManager<'a> {
                 CloudWatchLogsClient::new(&config)
             }
         };
-        CloudWatchManager { client, runtime }
+        CloudWatchManager { client }
     }
 }
 
 #[async_trait]
-impl<'a> LogManager for CloudWatchManager<'a> {
-    async fn delete_log_group(&self) -> Result<(), Error> {
-        let function_name = self.runtime.function_name();
+impl LogManager for CloudWatchManager {
+    async fn delete_log_group(&self, runtime: &Runtime) -> Result<(), Error> {
+        let function_name = runtime.function_name();
         let log_group_name = format!("/aws/lambda/{}", function_name);
         let res = self
             .client
@@ -53,8 +51,8 @@ impl<'a> LogManager for CloudWatchManager<'a> {
             }
         }
     }
-    async fn create_log_group(&self) -> Result<(), Error> {
-        let function_name = self.runtime.function_name();
+    async fn create_log_group(&self, runtime: &Runtime) -> Result<(), Error> {
+        let function_name = runtime.function_name();
         let log_group_name = format!("/aws/lambda/{}", function_name);
         self.client
             .create_log_group()
