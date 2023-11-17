@@ -82,10 +82,10 @@ provider:
       Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
       Action: "sqs:SendMessage"
-      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-function-deployer"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-deployer"
     - Effect: Allow
       Action: "sqs:SendMessage"
-      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-image-deployer"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-snapstart-deployer"
     - Effect: Allow
       Action: "sqs:SendMessage"
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker"
@@ -127,7 +127,7 @@ functions:
     handler: report-log-processor/app.handler
 
   functionTriggerDeployerRs:
-    runtime: provided.al2023
+    runtime: provided.al2
     architecture: arm64
     handler: bootstrap
     environment:
@@ -142,12 +142,12 @@ functions:
       artifact: target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-deployer-rs.zip
 
   functionDeployerRs:
-    runtime: provided.al2023
+    runtime: provided.al2
     architecture: arm64
     handler: bootstrap
     package:
       individually: true
-      artifact: target/lambda/function-image-deployer-rs/bootstrap-function-deployer-rs.zip
+      artifact: target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip
     environment:
       ACCOUNT_ID: ${aws:accountId}
       ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
@@ -162,12 +162,12 @@ functions:
           batchSize: 1
 
   functionSnapstartDeployerRs:
-    runtime: provided.al2023
+    runtime: provided.al2
     architecture: arm64
     handler: bootstrap
     package:
       individually: true
-      artifact: target/lambda/function-image-deployer-rs/bootstrap-function-snapstart-deployer-rs.zip
+      artifact: target/lambda/function-snapstart-deployer-rs/bootstrap-function-snapstart-deployer-rs.zip
     environment:
       ACCOUNT_ID: ${aws:accountId}
       ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}

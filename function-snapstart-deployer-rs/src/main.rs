@@ -57,6 +57,12 @@ async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Erro
                 .await?;
         }
         info!("function deleted");
+        
+        retry
+            .retry_async(|| async { lambda_manager.create_snapstart_function().await })
+            .await?;
+        info!("function created");
+
         retry
             .retry_async(|| async { cloudwatch_manager.delete_log_group().await })
             .await?;
@@ -65,11 +71,6 @@ async fn func(event: LambdaEvent<SqsEventObj<Runtime>>) -> Result<Response, Erro
             .retry_async(|| async { cloudwatch_manager.create_log_group().await })
             .await?;
         info!("log group created");
-
-        retry
-            .retry_async(|| async { lambda_manager.create_snapstart_function().await })
-            .await?;
-        info!("function created");
     }
     Ok(Response { status_code: 200 })
 }

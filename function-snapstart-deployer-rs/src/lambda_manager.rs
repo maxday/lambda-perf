@@ -115,11 +115,13 @@ impl<'a> FunctionManager for LambdaManager<'a> {
 
     async fn create_snapstart_function(&self) -> Result<(), Error> {
         self.create_zip_function().await?;
-        thread::sleep(Duration::from_secs(10));
-        self.invoke_function().await?;
-        thread::sleep(Duration::from_secs(10));
-        self.publish_version().await?;
-        thread::sleep(Duration::from_secs(10));
+        for _ in 0..10 {
+            thread::sleep(Duration::from_secs(10));
+            self.invoke_function().await?;
+            thread::sleep(Duration::from_secs(10));
+            self.publish_version().await?;
+            thread::sleep(Duration::from_secs(10));
+        }
         Ok(())
     }
 
