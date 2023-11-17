@@ -1,10 +1,10 @@
-use std::time::Duration;
+
 
 use aws_lambda_events::event::sqs::SqsEventObj;
-use common_lib::cloudwatch_manager::{CloudWatchManager, LogManager};
-use common_lib::invoker_sqs_manager::InvokerSQSManager;
-use common_lib::lambda_manager::{FunctionManager, LambdaManager};
-use common_lib::retry_manager::RetryManager;
+
+
+use common_lib::lambda_manager::{LambdaManager};
+
 use common_lib::runtime::Runtime;
 
 use lambda_runtime::{service_fn, Error, LambdaEvent};
@@ -43,7 +43,7 @@ async fn main() -> Result<(), Error> {
 
 async fn process_event<'a>(
     event: LambdaEvent<SqsEventObj<Runtime>>,
-    lambda_manager: &LambdaManager<'a>,
+    _lambda_manager: &LambdaManager<'a>,
 ) -> Result<Response, Error> {
     for record in event.payload.records.iter() {
         let runtime = &record.body;
