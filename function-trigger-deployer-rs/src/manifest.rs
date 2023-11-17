@@ -215,6 +215,6 @@ mod tests {
         assert_eq!(manifest.runtimes[0].architecture, "x86_64");
         assert_eq!(manifest.runtimes[0].memory_size, 128);
         assert!(manifest.runtimes[0].image.is_none());
-        assert_eq!(manifest.runtimes[0].is_snapstart, true);
+        assert!(manifest.runtimes[0].is_snapstart);
     }
 }

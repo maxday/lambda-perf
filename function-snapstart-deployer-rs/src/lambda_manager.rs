@@ -11,7 +11,7 @@ use aws_sdk_lambda::{
 };
 use common_lib::Runtime;
 use lambda_runtime::Error;
-use serde_json::json;
+
 use tracing::info;
 
 pub struct LambdaManager<'a> {
@@ -114,7 +114,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
     }
 
     async fn create_snapstart_function(&self) -> Result<(), Error> {
-        self.create_zip_function().await;
+        self.create_zip_function().await?;
         thread::sleep(Duration::from_secs(10));
         self.invoke_function().await?;
         thread::sleep(Duration::from_secs(10));
