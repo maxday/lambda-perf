@@ -7,7 +7,8 @@ use serde_json::json;
 
 pub struct SQSManager {
     pub client: SQSClient,
-    pub queue_url: String,
+    pub function_queue_url: String,
+    pub snapstart_queue_url: String,
     pub manifest_manager: ManifestManager,
 }
 
@@ -15,7 +16,8 @@ impl SQSManager {
     pub async fn new(
         account_id: &str,
         region: &str,
-        queue_name: &str,
+        function_queue_name: &str,
+        snapstart_queue_name: &str,
         manifest_manager: ManifestManager,
         client: Option<SQSClient>,
     ) -> Self {
@@ -26,10 +28,14 @@ impl SQSManager {
                 SQSClient::new(&config)
             }
         };
-        let queue_url = SQSManager::build_queue_url(account_id, region, queue_name);
+        let function_queue_url =
+            SQSManager::build_queue_url(account_id, region, function_queue_name);
+        let snapstart_queue_url =
+            SQSManager::build_queue_url(account_id, region, snapstart_queue_name);
         SQSManager {
             client,
-            queue_url,
+            function_queue_url,
+            snapstart_queue_url,
             manifest_manager,
         }
     }
@@ -57,9 +63,13 @@ impl QueueManager for SQSManager {
     async fn send_message(&self) -> Result<(), Error> {
         let messages = self.build_message();
         for message in messages {
+            let queue_url = match message.is_snapstart {
+                true => &self.snapstart_queue_url,
+                false => &self.function_queue_url,
+            };
             self.client
                 .send_message()
-                .queue_url(&self.queue_url)
+                .queue_url(queue_url)
                 .message_body(json!(message).to_string())
                 .send()
                 .await?;
@@ -80,8 +90,15 @@ mod tests {
     #[tokio::test]
     async fn test_build_sqs() {
         let manifest = ManifestManager::new("manifest.test.json");
-        let sqs_manager =
-            SQSManager::new("123456789", "us-east-1", "test_queue", manifest, None).await;
+        let sqs_manager = SQSManager::new(
+            "123456789",
+            "us-east-1",
+            "test_queue",
+            "snapstart_test_queue",
+            manifest,
+            None,
+        )
+        .await;
         let sqs_messages = sqs_manager.build_message();
         assert_eq!(sqs_messages.len(), 10);
 
@@ -96,6 +113,7 @@ mod tests {
                 handler: "index.handler".to_string(),
                 image: None,
                 layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -111,6 +129,7 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -124,6 +143,7 @@ mod tests {
                 handler: "index.handler".to_string(),
                 image: None,
                 layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -139,6 +159,7 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -151,7 +172,8 @@ mod tests {
                 display_name: "python3.7".to_string(),
                 handler: "index.handler".to_string(),
                 image: None,
-                layer: None
+                layer: None,
+                is_snapstart: false,
             }
         );
 
@@ -165,7 +187,8 @@ mod tests {
                 display_name: "nodejs18.x".to_string(),
                 handler: "index.handler".to_string(),
                 image: None,
-                layer: None
+                layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -180,7 +203,8 @@ mod tests {
                 image: Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
-                layer: None
+                layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -193,7 +217,8 @@ mod tests {
                 display_name: "nodejs18.x".to_string(),
                 handler: "index.handler".to_string(),
                 image: None,
-                layer: None
+                layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -209,6 +234,7 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 layer: None,
+                is_snapstart: false,
             }
         );
         assert_eq!(
@@ -222,6 +248,7 @@ mod tests {
                 handler: "index.handler".to_string(),
                 image: None,
                 layer: None,
+                is_snapstart: false,
             }
         );
     }

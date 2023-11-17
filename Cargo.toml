@@ -2,7 +2,8 @@
 
 members = [
     "function-trigger-deployer-rs",
-    "function-image-deployer-rs",
+    "function-deployer-rs",
+    "function-snapstart-deployer-rs",
 ]
 
 [profile.release]

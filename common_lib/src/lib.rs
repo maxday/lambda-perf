@@ -23,6 +23,8 @@ pub struct Runtime {
     pub memory_size: i32,
     pub image: Option<Image>,
     pub layer: Option<LayerInfo>,
+    #[serde(default)]
+    pub is_snapstart: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]

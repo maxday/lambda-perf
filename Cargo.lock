@@ -823,7 +823,30 @@ dependencies = [
 ]
 
 [[package]]
-name = "function-image-deployer-rs"
+name = "function-deployer-rs"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "aws-config",
+ "aws-sdk-cloudwatchlogs",
+ "aws-sdk-dynamodb",
+ "aws-sdk-lambda",
+ "aws-sdk-sqs",
+ "aws_lambda_events",
+ "common_lib",
+ "lambda_http",
+ "lambda_runtime",
+ "rand",
+ "serde",
+ "serde_json",
+ "testcontainers",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "function-snapstart-deployer-rs"
 version = "0.1.0"
 dependencies = [
  "async-trait",

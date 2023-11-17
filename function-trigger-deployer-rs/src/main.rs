@@ -33,7 +33,10 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     debug!("checking env variables");
     let table_name = std::env::var("TABLE_NAME").expect("TABLE_NAME not set");
     let log_processor_arn = std::env::var("LOG_PROCESSOR_ARN").expect("LOG_PROCESSOR_ARN not set");
-    let image_queue_name = std::env::var("IMAGE_QUEUE_NAME").expect("IMAGE_QUEUE_NAME not set");
+    let function_queue_name =
+        std::env::var("FUNCTION_QUEUE_NAME").expect("FUNCTION_QUEUE_NAME not set");
+    let snapstart_queue_name =
+        std::env::var("SNAPSTART_QUEUE_NAME").expect("SNAPSTART_QUEUE_NAME not set");
     let account_id = std::env::var("ACCOUNT_ID").expect("ACCOUNT_ID not set");
     let region = std::env::var("AWS_REGION").expect("AWS_REGION not set");
 
@@ -60,7 +63,8 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     let queue_manager = SQSManager::new(
         &account_id,
         &region,
-        &image_queue_name,
+        &function_queue_name,
+        &snapstart_queue_name,
         manifest_manager,
         None,
     )

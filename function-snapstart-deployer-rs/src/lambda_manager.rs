@@ -1,15 +1,17 @@
 use std::{thread, time::Duration};
 
 use async_trait::async_trait;
+use aws_sdk_lambda::types::SnapStartApplyOn::PublishedVersions;
 use aws_sdk_lambda::{
     types::{
-        builders::FunctionCodeBuilder, Architecture, ImageConfig, PackageType,
-        Runtime as LambdaRuntime,
+        builders::{FunctionCodeBuilder, SnapStartBuilder},
+        Architecture, ImageConfig, PackageType, Runtime as LambdaRuntime,
     },
     Client as LambdaClient,
 };
 use common_lib::Runtime;
 use lambda_runtime::Error;
+use serde_json::json;
 use tracing::info;
 
 pub struct LambdaManager<'a> {
@@ -25,6 +27,9 @@ pub trait FunctionManager {
     async fn delete_function(&self) -> Result<bool, Error>;
     async fn wait_for_deletion(&self) -> Result<(), Error>;
     async fn create_function(&self) -> Result<(), Error>;
+    async fn invoke_function(&self) -> Result<(), Error>;
+    async fn publish_version(&self) -> Result<(), Error>;
+    async fn create_snapstart_function(&self) -> Result<(), Error>;
     async fn create_image_function(&self, image_uri: String) -> Result<(), Error>;
     async fn create_zip_function(&self) -> Result<(), Error>;
 }
@@ -108,12 +113,40 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         }
     }
 
+    async fn create_snapstart_function(&self) -> Result<(), Error> {
+        self.create_zip_function().await;
+        thread::sleep(Duration::from_secs(10));
+        self.invoke_function().await?;
+        thread::sleep(Duration::from_secs(10));
+        self.publish_version().await?;
+        thread::sleep(Duration::from_secs(10));
+        Ok(())
+    }
+
+    async fn invoke_function(&self) -> Result<(), Error> {
+        self.client
+            .invoke()
+            .function_name(&self.runtime.function_name())
+            .send()
+            .await?;
+        Ok(())
+    }
+
+    async fn publish_version(&self) -> Result<(), Error> {
+        self.client
+            .publish_version()
+            .function_name(&self.runtime.function_name())
+            .send()
+            .await?;
+        Ok(())
+    }
+
     async fn create_image_function(&self, image_uri: String) -> Result<(), Error> {
         let function_name = self.runtime.function_name();
         info!("Creating IMAGE function: {}", function_name);
         info!("Image URI: {}", image_uri);
         let package_type = PackageType::Image;
-        let res = self
+        let mut res = self
             .client
             .create_function()
             .function_name(&function_name)
@@ -130,9 +163,15 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             )
             .role(self.role_arn)
             .memory_size(self.runtime.memory_size)
-            .architectures(Architecture::from(self.runtime.architecture.as_str()))
-            .send()
-            .await;
+            .architectures(Architecture::from(self.runtime.architecture.as_str()));
+        if self.runtime.is_snapstart {
+            res = res.snap_start(
+                SnapStartBuilder::default()
+                    .apply_on(PublishedVersions)
+                    .build(),
+            );
+        }
+        let res = res.send().await;
         match res {
             Ok(_) => Ok(()),
             Err(e) => Err(Box::new(e.into_service_error())),
@@ -177,105 +216,19 @@ fn get_layer_name(runtime: &Runtime, region: &str) -> Option<Vec<String>> {
     match &runtime.layer {
         Some(layer) => {
             if runtime.architecture == "x86_64" {
-                return layer.x86_64.as_ref().map(|arn| vec![arn.replace("_REGION_", region)]);
+                return layer
+                    .x86_64
+                    .as_ref()
+                    .map(|arn| vec![arn.replace("_REGION_", region)]);
             }
             if runtime.architecture == "arm64" {
-                return layer.arm64.as_ref().map(|arn| vec![arn.replace("_REGION_", region)]);
+                return layer
+                    .arm64
+                    .as_ref()
+                    .map(|arn| vec![arn.replace("_REGION_", region)]);
             }
             None
         }
         None => None,
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use common_lib::LayerInfo;
-
-    use super::*;
-
-    #[test]
-    fn test_get_layer_name_no_layer() {
-        let runtime = Runtime {
-            architecture: "arm64".to_string(),
-            memory_size: 128,
-            runtime: "nodejs18.x".to_string(),
-            path: "nodejs18x".to_string(),
-            display_name: "nodejs18.x".to_string(),
-            handler: "index.handler".to_string(),
-            image: None,
-            layer: None,
-        };
-        assert_eq!(get_layer_name(&runtime, "us-east-1"), None);
-    }
-
-    #[test]
-    fn test_get_layer_name_no_correct_arch_layer() {
-        let runtime = Runtime {
-            architecture: "arm64".to_string(),
-            memory_size: 128,
-            runtime: "nodejs18.x".to_string(),
-            path: "nodejs18x".to_string(),
-            display_name: "nodejs18.x".to_string(),
-            handler: "index.handler".to_string(),
-            image: None,
-            layer: Some(LayerInfo {
-                x86_64: Some(
-                    "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-x64:1".to_string(),
-                ),
-                arm64: None,
-            }),
-        };
-        assert_eq!(get_layer_name(&runtime, "us-east-1"), None);
-    }
-
-    #[test]
-    fn test_get_layer_name_correct_arch_layer_arm64() {
-        let runtime = Runtime {
-            architecture: "arm64".to_string(),
-            memory_size: 128,
-            runtime: "nodejs18.x".to_string(),
-            path: "nodejs18x".to_string(),
-            display_name: "nodejs18.x".to_string(),
-            handler: "index.handler".to_string(),
-            image: None,
-            layer: Some(LayerInfo {
-                x86_64: None,
-                arm64: Some(
-                    "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-arm:1".to_string(),
-                ),
-            }),
-        };
-        assert_eq!(
-            get_layer_name(&runtime, "us-east-1"),
-            Some(vec![String::from(
-                "arn:aws:lambda:us-east-1:226609089145:layer:bun-1_0_0-arm:1"
-            )])
-        );
-    }
-
-    #[test]
-    fn test_get_layer_name_correct_arch_layer_x86_64() {
-        let runtime = Runtime {
-            architecture: "x86_64".to_string(),
-            memory_size: 128,
-            runtime: "nodejs18.x".to_string(),
-            path: "nodejs18x".to_string(),
-            display_name: "nodejs18.x".to_string(),
-            handler: "index.handler".to_string(),
-            image: None,
-            layer: Some(LayerInfo {
-                x86_64: Some(
-                    "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-x64:1".to_string(),
-                ),
-                arm64: None,
-            }),
-        };
-        assert_eq!(
-            get_layer_name(&runtime, "us-east-1"),
-            Some(vec![String::from(
-                "arn:aws:lambda:us-east-1:226609089145:layer:bun-1_0_0-x64:1"
-            )])
-        );
     }
 }

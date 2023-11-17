@@ -22,6 +22,8 @@ pub struct InputRuntime {
     pub architectures: Vec<String>,
     pub image: Option<Image>,
     pub layer: Option<LayerInfo>,
+    #[serde(default)]
+    pub is_snapstart: bool,
 }
 
 pub struct ManifestManager {
@@ -53,6 +55,7 @@ impl ManifestManager {
                         memory_size: *memory_size,
                         image: None,
                         layer: runtime.layer.clone(),
+                        is_snapstart: runtime.is_snapstart,
                     };
                     runtimes.push(zip_runtime);
                     if runtime.image.is_some() {
@@ -65,6 +68,7 @@ impl ManifestManager {
                             memory_size: *memory_size,
                             image: runtime.image.clone(),
                             layer: None,
+                            is_snapstart: false,
                         };
                         runtimes.push(image_runtime);
                     }
@@ -192,5 +196,25 @@ mod tests {
             layer.x86_64,
             Some("arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-x64:1".to_string())
         )
+    }
+
+    #[test]
+    fn test_read_manifest_snapstart() {
+        let manifest = manifest::ManifestManager::new("manifest.test.snapstart.json");
+        let manifest = manifest.read_manifest();
+
+        assert_eq!(manifest.runtimes.len(), 1);
+
+        assert_eq!(manifest.runtimes[0].display_name, "java11 snapstart");
+        assert_eq!(manifest.runtimes[0].runtime, "java11");
+        assert_eq!(
+            manifest.runtimes[0].handler,
+            "io.github.maxday.Handler::handleRequest"
+        );
+        assert_eq!(manifest.runtimes[0].path, "java_11");
+        assert_eq!(manifest.runtimes[0].architecture, "x86_64");
+        assert_eq!(manifest.runtimes[0].memory_size, 128);
+        assert!(manifest.runtimes[0].image.is_none());
+        assert_eq!(manifest.runtimes[0].is_snapstart, true);
     }
 }

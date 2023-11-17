@@ -126,64 +126,28 @@ functions:
         - "!result-builder"
     handler: report-log-processor/app.handler
 
-  # functionInvoker:
-  #   package:
-  #     individually: true
-  #     patterns:
-  #       - "function-invoker"
-  #       - "!function-trigger-deployer"
-  #       - "!function-deployer"
-  #       - "!report-log-processor"
-  #       - "!result-builder"
-  #   handler: function-invoker/app.handler
-  #   events:
-  #     - sqs:
-  #         arn:
-  #           Fn::GetAtt:
-  #             - lambdaPerfInvoker
-  #             - Arn
-  #         batchSize: 1
-  
-  # functionTriggerDeployer:
-  #   package:
-  #     individually: true
-  #     patterns:
-  #       - "function-trigger-deployer"
-  #       - "!function-invoker"
-  #       - "!function-deployer"
-  #       - "!report-log-processor"
-  #       - "!result-builder"
-  #   handler: function-trigger-deployer/app.handler
-  #   environment:
-  #     FUNCTION_QUEUE_NAME: lambda-perf-function-deployer
-  #     CONTAINER_QUEUE_NAME: lambda-perf-container-deployer
-  #     ACCOUNT_ID: ${aws:accountId}
-  #     LOG_PROCESSOR_ARN: 
-  #       "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-  #   #events:
-  #   #  - schedule: cron(30 13 * * ? *)
-
   functionTriggerDeployerRs:
-    runtime: provided.al2
+    runtime: provided.al2023
     architecture: arm64
     handler: bootstrap
     environment:
       TABLE_NAME: report-log
       LOG_PROCESSOR_ARN: 
         "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-      IMAGE_QUEUE_NAME: lambda-perf-image-deployer
+      FUNCTION_QUEUE_NAME: lambda-perf-deployer
+      SNAPSTART_QUEUE_NAME: lambda-perf-snapstart-deployer
       ACCOUNT_ID: ${aws:accountId}
     package:
       individually: true
       artifact: target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-deployer-rs.zip
 
-  functionImageDeployerRs:
-    runtime: provided.al2
+  functionDeployerRs:
+    runtime: provided.al2023
     architecture: arm64
     handler: bootstrap
     package:
       individually: true
-      artifact: target/lambda/function-image-deployer-rs/bootstrap-function-image-deployer-rs.zip
+      artifact: target/lambda/function-image-deployer-rs/bootstrap-function-deployer-rs.zip
     environment:
       ACCOUNT_ID: ${aws:accountId}
       ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
@@ -191,87 +155,43 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt:
-              - lambdaPerfImageDeployer
+              - lambdaPerfDeployer
               - Arn
           # batchSize: 25
           # maximumBatchingWindow: 30
           batchSize: 1
 
-  # resultBuilder:
-  #   environment:
-  #     GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
-  #     LAMBDA_PERF_ENV: ${env:LAMBDA_PERF_ENV}
-  #   package:
-  #     individually: true
-  #     patterns:
-  #       - result-builder
-  #       - "!function-trigger-deployer"
-  #       - "!function-invoker"
-  #       - "!function-deployer"
-  #       - "!report-log-processor"
-  #   handler: result-builder/app.handler
-  #   #events:
-    #  - schedule: cron(0 14 * * ? *)
-
-  # functionDeployer:
-  #   package:
-  #     individually: true
-  #     patterns:
-  #       - "!function-trigger-deployer"
-  #       - "!function-invoker"
-  #       - "function-deployer"
-  #       - "!report-log-processor"
-  #       - "!result-builder"
-  #   handler: function-deployer/function.handler
-  #   environment:
-  #     ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
-  #     LOG_PROCESSOR_ARN: 
-  #       "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-  #     QUEUE_NAME: lambda-perf-invoker
-  #     ACCOUNT_ID: ${aws:accountId}
-    # events:
-    #   - sqs:
-    #       arn:
-    #         Fn::GetAtt:
-    #           - lambdaPerfFunctionDeployer
-    #           - Arn
-    #       batchSize: 1
-
-  # containerDeployer:
-  #   package:
-  #     individually: true
-  #     patterns:
-  #       - "!function-trigger-deployer"
-  #       - "!function-invoker"
-  #       - "function-deployer"
-  #       - "!report-log-processor"
-  #       - "!result-builder"
-  #   handler: function-deployer/container.handler
-  #   environment:
-  #     ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
-  #     LOG_PROCESSOR_ARN: 
-  #       "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-  #     QUEUE_NAME: lambda-perf-invoker
-  #     ACCOUNT_ID: ${aws:accountId}
-    # events:
-    #   - sqs:
-    #       arn:
-    #         Fn::GetAtt:
-    #           - lambdaPerfContainerDeployer
-    #           - Arn
-    #       batchSize: 1
+  functionSnapstartDeployerRs:
+    runtime: provided.al2023
+    architecture: arm64
+    handler: bootstrap
+    package:
+      individually: true
+      artifact: target/lambda/function-image-deployer-rs/bootstrap-function-snapstart-deployer-rs.zip
+    environment:
+      ACCOUNT_ID: ${aws:accountId}
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfSnapstartDeployer
+              - Arn
+          # batchSize: 25
+          # maximumBatchingWindow: 30
+          batchSize: 1
 
 resources:
   Resources:
-    lambdaPerfFunctionDeployer:
+    lambdaPerfDeployer:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "lambda-perf-function-deployer"
+        QueueName: "lambda-perf-deployer"
         VisibilityTimeout: 900
-    lambdaPerfImageDeployer:
+    lambdaPerfSnapstartDeployer:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "lambda-perf-image-deployer"
+        QueueName: "lambda-perf-snapstart-deployer"
         VisibilityTimeout: 900
     lambdaPerfInvoker:
       Type: "AWS::SQS::Queue"
