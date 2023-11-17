@@ -1,6 +1,6 @@
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::Value;
-use tracing::log::debug;
+use tracing::log::info;
 
 use common_lib::reponse::Response;
 
@@ -19,7 +19,7 @@ use manifest::ManifestManager;
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
+        .with_max_level(tracing::Level::INFO)
         .with_target(false)
         .with_ansi(false)
         .without_time()
@@ -30,7 +30,7 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
-    debug!("checking env variables");
+    info!("checking env variables");
     let table_name = std::env::var("TABLE_NAME").expect("TABLE_NAME not set");
     let log_processor_arn = std::env::var("LOG_PROCESSOR_ARN").expect("LOG_PROCESSOR_ARN not set");
     let function_queue_name =
@@ -42,20 +42,20 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
 
     let db_manager = DynamoDBManager::new(table_name, None).await;
 
-    debug!("deleting table");
+    info!("deleting table");
     db_manager.delete().await?;
     db_manager.wait_for_deletion().await?;
 
-    debug!("creating the table");
+    info!("creating the table");
     db_manager.create().await?;
     db_manager.wait_for_created().await?;
 
     let lambda_manager = LambdaManager::new(log_processor_arn, None).await;
 
-    debug!("removing permission");
+    info!("removing permission");
     lambda_manager.remove_permission().await?;
 
-    debug!("adding permission");
+    info!("adding permission");
     lambda_manager.add_permission().await?;
 
     let manifest_manager = ManifestManager::new("manifest.json");
@@ -70,7 +70,7 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     )
     .await;
 
-    tracing::info!("sending messages");
+    info!("sending messages");
     queue_manager.send_message().await?;
 
     Ok(Response::success())

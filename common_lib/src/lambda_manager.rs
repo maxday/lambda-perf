@@ -1,7 +1,9 @@
+use std::time::{SystemTime, UNIX_EPOCH};
 use std::{thread, time::Duration};
 
 use async_trait::async_trait;
 use aws_sdk_lambda::types::SnapStartApplyOn::PublishedVersions;
+use aws_sdk_lambda::types::builders::EnvironmentBuilder;
 use aws_sdk_lambda::{
     types::{
         builders::{FunctionCodeBuilder, SnapStartBuilder},
@@ -28,6 +30,7 @@ pub trait FunctionManager {
     async fn delete_function(&self, runtime: &Runtime) -> Result<bool, Error>;
     async fn wait_for_deletion(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_function(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn update_function_configuration(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn invoke_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error>;
@@ -111,10 +114,14 @@ impl<'a> FunctionManager for LambdaManager<'a> {
 
     async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error> {
         self.create_zip_function(runtime).await?;
-        for _ in 0..10 {
+        for i in 0..10 {
             thread::sleep(Duration::from_secs(10));
+            info!("Invoking function #{}", i);
             self.invoke_function(runtime).await?;
             thread::sleep(Duration::from_secs(10));
+            self.update_function_configuration(runtime).await?;
+            thread::sleep(Duration::from_secs(10));
+            info!("Publishing function #{}", i);
             self.publish_version(runtime).await?;
             thread::sleep(Duration::from_secs(10));
         }
@@ -122,20 +129,37 @@ impl<'a> FunctionManager for LambdaManager<'a> {
     }
 
     async fn invoke_function(&self, runtime: &Runtime) -> Result<(), Error> {
-        self.client
+        let res = self.client
             .invoke()
             .function_name(runtime.function_name())
             .send()
             .await?;
+        info!("Result: {:?}", res);
+        Ok(())
+    }
+
+    // print timestamp in ms
+
+
+    async fn update_function_configuration(&self, runtime: &Runtime) -> Result<(), Error> {
+        let current_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards").as_millis();
+        let res = self.client
+            .update_function_configuration()
+            .function_name(runtime.function_name())
+            .environment(EnvironmentBuilder::default().variables("current_time", current_time.to_string()).build())
+            .send()
+            .await?;
+        info!("Result: {:?}", res);
         Ok(())
     }
 
     async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error> {
-        self.client
+        let res = self.client
             .publish_version()
             .function_name(runtime.function_name())
             .send()
             .await?;
+        info!("Result: {:?}", res);
         Ok(())
     }
 

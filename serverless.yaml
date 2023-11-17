@@ -158,9 +158,8 @@ functions:
             Fn::GetAtt:
               - lambdaPerfDeployer
               - Arn
-          # batchSize: 25
-          # maximumBatchingWindow: 30
-          batchSize: 1
+          batchSize: 25
+          maximumBatchingWindow: 30
 
   functionSnapstartDeployerRs:
     runtime: provided.al2
@@ -179,8 +178,6 @@ functions:
             Fn::GetAtt:
               - lambdaPerfSnapstartDeployer
               - Arn
-          # batchSize: 25
-          # maximumBatchingWindow: 30
           batchSize: 1
 
   functionInvokerRs:
@@ -199,7 +196,8 @@ functions:
             Fn::GetAtt:
               - lambdaPerfInvoker
               - Arn
-          batchSize: 1
+          batchSize: 25
+          maximumBatchingWindow: 30
 
 resources:
   Resources:

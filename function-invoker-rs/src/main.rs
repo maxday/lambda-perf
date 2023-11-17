@@ -47,7 +47,7 @@ async fn process_event<'a>(
 ) -> Result<Response, Error> {
     for record in event.payload.records.iter() {
         let runtime = &record.body;
-        info!("processing runtime: {:?}", runtime);
+        info!("processing runtime: {}", runtime.function_name());
     }
     Ok(Response { status_code: 200 })
 }
