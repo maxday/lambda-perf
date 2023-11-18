@@ -196,8 +196,9 @@ functions:
             Fn::GetAtt:
               - lambdaPerfInvoker
               - Arn
-          batchSize: 25
-          maximumBatchingWindow: 30
+          batchSize: 1
+          #batchSize: 25
+          #maximumBatchingWindow: 30
 
 resources:
   Resources:

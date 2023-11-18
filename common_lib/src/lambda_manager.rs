@@ -127,7 +127,9 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         if let Some(versions) = result.versions {
             for version in versions {
                 if let Some(arn) = version.function_arn() {
-                    arns.push(arn.to_string());
+                    if !arn.contains("$LATEST") {
+                        arns.push(arn.to_string());
+                    }
                 }
             }
         }
@@ -136,17 +138,16 @@ impl<'a> FunctionManager for LambdaManager<'a> {
 
     async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error> {
         self.create_zip_function(runtime).await?;
+        thread::sleep(Duration::from_secs(5));
         for i in 0..10 {
-            thread::sleep(Duration::from_secs(10));
             info!("Invoking function #{}", i);
             self.invoke_function(&runtime.function_name()).await?;
-            thread::sleep(Duration::from_secs(10));
             self.update_function_configuration(&runtime.function_name())
                 .await?;
-            thread::sleep(Duration::from_secs(10));
+            thread::sleep(Duration::from_secs(5));
             info!("Publishing function #{}", i);
             self.publish_version(runtime).await?;
-            thread::sleep(Duration::from_secs(10));
+            thread::sleep(Duration::from_secs(5));
         }
         Ok(())
     }
@@ -235,7 +236,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         info!("Creating ZIP function: {}", function_name);
         let package_type = PackageType::Zip;
         let layers = get_layer_name(runtime, self.region);
-        let res = self
+        let mut res = self
             .client
             .create_function()
             .function_name(&function_name)
@@ -254,9 +255,15 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             .architectures(Architecture::from(runtime.architecture.as_str()))
             .runtime(LambdaRuntime::from(runtime.runtime.as_str()))
             .handler(runtime.handler.as_str())
-            .set_layers(layers)
-            .send()
-            .await;
+            .set_layers(layers);
+        if runtime.is_snapstart {
+            res = res.snap_start(
+                SnapStartBuilder::default()
+                    .apply_on(PublishedVersions)
+                    .build(),
+            );
+        }
+        let res = res.send().await;
         match res {
             Ok(_) => Ok(()),
             Err(e) => Err(Box::new(e.into_service_error())),

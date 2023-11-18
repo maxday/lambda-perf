@@ -67,6 +67,7 @@ async fn invoke_snapstart<'a>(
     for i in 0..10 {
         info!("snapstart run #: {}", i);
         if let Some(arn) = arns.get(i) {
+            info!("arn = {}", arn);
             retry
                 .retry_async(|| async { lambda_manager.update_function_configuration(arn).await })
                 .await?;
@@ -96,6 +97,7 @@ async fn invoke<'a>(
             })
             .await?;
         info!("function updated to ensure cold start");
+        thread::sleep(Duration::from_secs(5));
         retry
             .retry_async(|| async {
                 lambda_manager
