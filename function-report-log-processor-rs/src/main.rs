@@ -1,9 +1,9 @@
-use std::{collections::HashMap, time::SystemTime};
 
-use aws_lambda_events::{cloudwatch_logs::LogsEvent, dynamodb};
-use chrono::prelude::{DateTime, Utc};
+
+use aws_lambda_events::{cloudwatch_logs::LogsEvent};
+
 use common_lib::{
-    dynamodb_manager::{self, DynamoDBManager, TableManager},
+    dynamodb_manager::{DynamoDBManager, TableManager},
     manifest::{Manifest, ManifestManager},
     report_log::{ReportLog, ReportLogData},
 };
