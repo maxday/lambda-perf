@@ -167,7 +167,7 @@ functions:
     handler: bootstrap
     package:
       individually: true
-      artifact: target/lambda/function-snapstart-deployer-rs/bootstrap-function-snapstart-deployer-rs.zip
+      artifact: target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip
     environment:
       ACCOUNT_ID: ${aws:accountId}
       ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}

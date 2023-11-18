@@ -2,8 +2,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use std::{thread, time::Duration};
 
 use async_trait::async_trait;
-use aws_sdk_lambda::types::SnapStartApplyOn::PublishedVersions;
 use aws_sdk_lambda::types::builders::EnvironmentBuilder;
+use aws_sdk_lambda::types::SnapStartApplyOn::PublishedVersions;
 use aws_sdk_lambda::{
     types::{
         builders::{FunctionCodeBuilder, SnapStartBuilder},
@@ -106,6 +106,9 @@ impl<'a> FunctionManager for LambdaManager<'a> {
     }
 
     async fn create_function(&self, runtime: &Runtime) -> Result<(), Error> {
+        if runtime.is_snapstart {
+            return self.create_snapstart_function(runtime).await;
+        }
         match runtime.image {
             Some(_) => self.create_image_function(runtime).await,
             None => self.create_zip_function(runtime).await,
@@ -129,7 +132,8 @@ impl<'a> FunctionManager for LambdaManager<'a> {
     }
 
     async fn invoke_function(&self, runtime: &Runtime) -> Result<(), Error> {
-        let res = self.client
+        let res = self
+            .client
             .invoke()
             .function_name(runtime.function_name())
             .send()
@@ -140,13 +144,20 @@ impl<'a> FunctionManager for LambdaManager<'a> {
 
     // print timestamp in ms
 
-
     async fn update_function_configuration(&self, runtime: &Runtime) -> Result<(), Error> {
-        let current_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards").as_millis();
-        let res = self.client
+        let current_time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Time went backwards")
+            .as_millis();
+        let res = self
+            .client
             .update_function_configuration()
             .function_name(runtime.function_name())
-            .environment(EnvironmentBuilder::default().variables("current_time", current_time.to_string()).build())
+            .environment(
+                EnvironmentBuilder::default()
+                    .variables("current_time", current_time.to_string())
+                    .build(),
+            )
             .send()
             .await?;
         info!("Result: {:?}", res);
@@ -154,7 +165,8 @@ impl<'a> FunctionManager for LambdaManager<'a> {
     }
 
     async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error> {
-        let res = self.client
+        let res = self
+            .client
             .publish_version()
             .function_name(runtime.function_name())
             .send()

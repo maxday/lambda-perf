@@ -1,9 +1,6 @@
-
-
 use aws_lambda_events::event::sqs::SqsEventObj;
 
-
-use common_lib::lambda_manager::{LambdaManager};
+use common_lib::lambda_manager::LambdaManager;
 
 use common_lib::runtime::Runtime;
 

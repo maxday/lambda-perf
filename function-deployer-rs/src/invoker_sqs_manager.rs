@@ -1,8 +1,7 @@
 use aws_sdk_sqs::Client as SQSClient;
+use common_lib::runtime::Runtime;
 use lambda_runtime::Error;
 use serde_json::json;
-
-use crate::runtime::Runtime;
 
 pub struct InvokerSQSManager {
     pub client: SQSClient,
