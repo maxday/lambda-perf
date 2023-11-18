@@ -30,8 +30,8 @@ pub trait FunctionManager {
     async fn delete_function(&self, runtime: &Runtime) -> Result<bool, Error>;
     async fn wait_for_deletion(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_function(&self, runtime: &Runtime) -> Result<(), Error>;
-    async fn update_function_configuration(&self, function_name: &String) -> Result<(), Error>;
-    async fn invoke_function(&self, function_name: &String) -> Result<(), Error>;
+    async fn update_function_configuration(&self, function_name: &str) -> Result<(), Error>;
+    async fn invoke_function(&self, function_name: &str) -> Result<(), Error>;
     async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_image_function(&self, runtime: &Runtime) -> Result<(), Error>;
@@ -151,7 +151,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         Ok(())
     }
 
-    async fn invoke_function(&self, function_name: &String) -> Result<(), Error> {
+    async fn invoke_function(&self, function_name: &str) -> Result<(), Error> {
         let res = self
             .client
             .invoke()
@@ -162,7 +162,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         Ok(())
     }
 
-    async fn update_function_configuration(&self, function_name: &String) -> Result<(), Error> {
+    async fn update_function_configuration(&self, function_name: &str) -> Result<(), Error> {
         let current_time = SystemTime::now();
         let current_time = format!("{:?}", current_time);
         let res = self
