@@ -1,6 +1,8 @@
 FROM public.ecr.aws/lambda/java:21 as builder
 WORKDIR /tmpBuild
-RUN yum install -y unzip
+RUN dnf -y update
+RUN dnf -y install zip
+RUN dnf -y install findutils
 RUN  curl -k -L -v -X GET https://services.gradle.org/distributions/gradle-8.3-bin.zip > gradle-8.3-bin.zip
 RUN unzip -d /opt/gradle gradle-8.3-bin.zip
 
