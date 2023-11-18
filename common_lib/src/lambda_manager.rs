@@ -1,4 +1,4 @@
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::SystemTime;
 use std::{thread, time::Duration};
 
 use async_trait::async_trait;
@@ -142,20 +142,16 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         Ok(())
     }
 
-    // print timestamp in ms
-
     async fn update_function_configuration(&self, runtime: &Runtime) -> Result<(), Error> {
-        let current_time = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time went backwards")
-            .as_millis();
+        let current_time = SystemTime::now();
+        let current_time = format!("{:?}", current_time);
         let res = self
             .client
             .update_function_configuration()
             .function_name(runtime.function_name())
             .environment(
                 EnvironmentBuilder::default()
-                    .variables("current_time", current_time.to_string())
+                    .variables("current_time", current_time)
                     .build(),
             )
             .send()
