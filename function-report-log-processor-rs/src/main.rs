@@ -1,4 +1,4 @@
-use std::{alloc::System, collections::HashMap, time::SystemTime};
+use std::{collections::HashMap, time::SystemTime};
 
 use aws_lambda_events::cloudwatch_logs::LogsEvent;
 use chrono::prelude::{DateTime, Utc};
@@ -60,7 +60,7 @@ impl ReportLog {
     fn new(log_group: &str, manifest: &Manifest) -> Self {
         let from_lambda = log_group.replace("/aws/lambda/", "");
         let function_name = from_lambda.replace("lambda-perf-", "");
-        let tokens = function_name.split("-").collect::<Vec<&str>>();
+        let tokens = function_name.split('-').collect::<Vec<&str>>();
         if tokens.len() != 4 {
             panic!("Could not parse function name");
         }
@@ -131,7 +131,7 @@ impl ReportLogData {
         }
     }
     fn iso8601(system_time: &std::time::SystemTime) -> String {
-        let dt: DateTime<Utc> = system_time.clone().into();
+        let dt: DateTime<Utc> = (*system_time).into();
         format!("{}", dt.format("%+"))
     }
     fn init_duration(dict: &HashMap<&str, &str>) -> String {
