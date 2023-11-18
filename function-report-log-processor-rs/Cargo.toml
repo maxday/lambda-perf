@@ -22,4 +22,7 @@ rand = "0.8.5"
 aws-sdk-cloudwatchlogs = "0.34.0"
 
 common_lib = { path = "../common_lib" }
+base64 = "0.21.5"
+regex = "1.10.2"
+chrono = "0.4.31"
 

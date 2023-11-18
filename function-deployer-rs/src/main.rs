@@ -36,8 +36,8 @@ async fn main() -> Result<(), Error> {
     let role_arn = std::env::var("ROLE_ARN").expect("ROLE_ARN not set");
     let account_id = std::env::var("ACCOUNT_ID").expect("ACCOUNT_ID not set");
     let region = std::env::var("AWS_REGION").expect("AWS_REGION not set");
-    let report_log_processor_arn = std::env::var("REPORT_LOG_PROCESSOR_ARN")
-        .expect("REPORT_LOG_PROCESSOR_ARN not set");
+    let report_log_processor_arn =
+        std::env::var("REPORT_LOG_PROCESSOR_ARN").expect("REPORT_LOG_PROCESSOR_ARN not set");
     let invoker_queue_name =
         std::env::var("INVOKER_QUEUE_NAME").expect("INVOKER_QUEUE_NAME not set");
 
@@ -102,10 +102,13 @@ async fn process_event<'a>(
         info!("function created");
 
         retry
-            .retry_async(|| async { cloudwatch_manager.create_log_subscription_filter(runtime).await })
+            .retry_async(|| async {
+                cloudwatch_manager
+                    .create_log_subscription_filter(runtime)
+                    .await
+            })
             .await?;
         info!("log subscription filter created");
-
 
         invoker_sqs_manager.send_message(runtime).await?;
     }

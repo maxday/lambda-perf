@@ -5,7 +5,7 @@ use lambda_runtime::Error;
 
 pub struct CloudWatchManager {
     client: CloudWatchLogsClient,
-    report_log_processor_arn: String
+    report_log_processor_arn: String,
 }
 
 #[async_trait]
@@ -16,7 +16,10 @@ pub trait LogManager {
 }
 
 impl CloudWatchManager {
-    pub async fn new(client: Option<CloudWatchLogsClient>, report_log_processor_arn: String) -> CloudWatchManager {
+    pub async fn new(
+        client: Option<CloudWatchLogsClient>,
+        report_log_processor_arn: String,
+    ) -> CloudWatchManager {
         let client = match client {
             Some(client) => client,
             None => {
@@ -24,7 +27,10 @@ impl CloudWatchManager {
                 CloudWatchLogsClient::new(&config)
             }
         };
-        CloudWatchManager { client, report_log_processor_arn }
+        CloudWatchManager {
+            client,
+            report_log_processor_arn,
+        }
     }
 }
 
@@ -62,12 +68,14 @@ impl LogManager for CloudWatchManager {
     }
 
     async fn create_log_subscription_filter(&self, runtime: &Runtime) -> Result<(), Error> {
-        self.client.put_subscription_filter()
-        .destination_arn(&self.report_log_processor_arn)
-        .filter_name(&format!("report-log-from-{}", runtime.function_name()))
-        .filter_pattern("REPORT")
-        .log_group_name(format!("/aws/lambda/{}", runtime.function_name()))
-        .send().await?;
+        self.client
+            .put_subscription_filter()
+            .destination_arn(&self.report_log_processor_arn)
+            .filter_name(&format!("report-log-from-{}", runtime.function_name()))
+            .filter_pattern("REPORT")
+            .log_group_name(format!("/aws/lambda/{}", runtime.function_name()))
+            .send()
+            .await?;
         Ok(())
     }
 }

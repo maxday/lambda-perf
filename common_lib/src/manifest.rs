@@ -1,5 +1,6 @@
-use common_lib::runtime::{Image, LayerInfo, Runtime};
 use serde::Deserialize;
+
+use crate::runtime::{Image, LayerInfo, Runtime};
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -39,9 +40,9 @@ impl ManifestManager {
 
     pub fn read_manifest(&self) -> Manifest {
         let manifest =
-            std::fs::read_to_string(&self.file_name).expect("Could not read manifest.json");
+            std::fs::read_to_string(&self.file_name).expect("Could not read the manifest file");
         let manifest: InputManifest =
-            serde_json::from_str(&manifest).expect("Could not parse manifest.json");
+            serde_json::from_str(&manifest).expect("Could not parse the manifest file");
         let mut runtimes = Vec::<Runtime>::new();
         for memory_size in manifest.memory_sizes.iter() {
             for runtime in manifest.runtimes.iter() {

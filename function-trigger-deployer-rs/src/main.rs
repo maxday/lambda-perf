@@ -2,7 +2,7 @@ use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::Value;
 use tracing::log::info;
 
-use common_lib::reponse::Response;
+use common_lib::{manifest::ManifestManager, reponse::Response};
 
 mod lambda_manager;
 use lambda_manager::{LambdaManager, PermissionManager};
@@ -12,9 +12,6 @@ use sqs_manager::{QueueManager, SQSManager};
 
 pub mod dynamodb_manager;
 use dynamodb_manager::{DynamoDBManager, TableManager};
-
-mod manifest;
-use manifest::ManifestManager;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -32,7 +29,8 @@ async fn main() -> Result<(), Error> {
 async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     info!("checking env variables");
     let table_name = std::env::var("TABLE_NAME").expect("TABLE_NAME not set");
-    let report_log_processor_arn = std::env::var("REPORT_LOG_PROCESSOR_ARN").expect("REPORT_LOG_PROCESSOR_ARN not set");
+    let report_log_processor_arn =
+        std::env::var("REPORT_LOG_PROCESSOR_ARN").expect("REPORT_LOG_PROCESSOR_ARN not set");
     let function_queue_name =
         std::env::var("FUNCTION_QUEUE_NAME").expect("FUNCTION_QUEUE_NAME not set");
     let snapstart_queue_name =

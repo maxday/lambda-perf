@@ -69,7 +69,11 @@ async fn invoke_snapstart<'a>(
         if let Some(arn) = arns.get(i) {
             info!("arn = {}", arn);
             retry
-                .retry_async(|| async { lambda_manager.update_function_configuration(&runtime.function_name()).await })
+                .retry_async(|| async {
+                    lambda_manager
+                        .update_function_configuration(&runtime.function_name())
+                        .await
+                })
                 .await?;
             info!("function updated to ensure cold start");
             thread::sleep(Duration::from_secs(5));
