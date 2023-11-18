@@ -187,6 +187,25 @@
       "architectures": ["x86_64"]
     },
     {
+      "displayName": "java21",
+      "runtime": "java21",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java21",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "java21 snapstart",
+      "runtime": "java21",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java21_snapstart",
+      "snapStart": {
+        "SnapStart": {
+          "ApplyOn": "PublishedVersions"
+        }
+      },
+      "architectures": ["x86_64"]
+    },
+    {
       "displayName": "quarkus (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
