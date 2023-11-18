@@ -2,16 +2,17 @@ use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::Value;
 use tracing::log::info;
 
-use common_lib::{manifest::ManifestManager, reponse::Response};
+use common_lib::{
+    dynamodb_manager::{DynamoDBManager, TableManager},
+    manifest::ManifestManager,
+    reponse::Response,
+};
 
 mod lambda_manager;
 use lambda_manager::{LambdaManager, PermissionManager};
 
 mod sqs_manager;
 use sqs_manager::{QueueManager, SQSManager};
-
-pub mod dynamodb_manager;
-use dynamodb_manager::{DynamoDBManager, TableManager};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {

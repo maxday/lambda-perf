@@ -3,12 +3,15 @@ use std::{thread, time::Duration};
 use async_trait::async_trait;
 use aws_sdk_dynamodb::{
     types::{
-        self, AttributeDefinition, BillingMode, KeySchemaElement, KeyType, ScalarAttributeType,
+        self, AttributeDefinition, AttributeValue, BillingMode, KeySchemaElement, KeyType,
+        ScalarAttributeType,
     },
     Client as DynamoDbClient,
 };
 
 use lambda_runtime::Error;
+
+use crate::report_log::{ReportLog, ReportLogData};
 
 #[async_trait]
 pub trait TableManager {
@@ -16,6 +19,11 @@ pub trait TableManager {
     async fn delete(&self) -> Result<(), Error>;
     async fn wait_for_deletion(&self) -> Result<(), Error>;
     async fn wait_for_created(&self) -> Result<(), Error>;
+    async fn insert_report_log(
+        &self,
+        report_log: &ReportLog,
+        report_log_data: &ReportLogData,
+    ) -> Result<(), Error>;
 }
 pub struct DynamoDBManager {
     pub client: DynamoDbClient,
@@ -123,6 +131,42 @@ impl TableManager for DynamoDBManager {
         }
         Ok(())
     }
+
+    async fn insert_report_log(
+        &self,
+        report_log: &ReportLog,
+        report_log_data: &ReportLogData,
+    ) -> Result<(), Error> {
+        let memory_size = AttributeValue::N(report_log.memory_size.to_string());
+        let package_type = AttributeValue::S(report_log.package_type.to_string());
+        let display_name = AttributeValue::S(report_log.display_name.to_string());
+        let architecture = AttributeValue::S(report_log.architecture.to_string());
+
+        let request_id = AttributeValue::S(report_log_data.request_id.to_string());
+        let billed_duratation = AttributeValue::N(report_log_data.billed_duration.to_string());
+        let billed_restore_duration =
+            AttributeValue::N(report_log_data.billed_restore_duration.to_string());
+        let duration = AttributeValue::N(report_log_data.duration.to_string());
+        let init_duration = AttributeValue::N(report_log_data.init_duration.to_string());
+        let max_memory_used = AttributeValue::N(report_log_data.max_memory_used.to_string());
+
+        self.client
+            .put_item()
+            .table_name(&self.table_name)
+            .item("requestId", request_id)
+            .item("architecture", architecture)
+            .item("billedDuratation", billed_duratation)
+            .item("billedRestoreDuration", billed_restore_duration)
+            .item("displayName", display_name)
+            .item("duration", duration)
+            .item("initDuration", init_duration)
+            .item("maxMemoryUsed", max_memory_used)
+            .item("memorySize", memory_size)
+            .item("packageType", package_type)
+            .send()
+            .await?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -133,13 +177,13 @@ mod tests {
     use aws_sdk_dynamodb::{Client, Config};
     use std::io::Result;
     use testcontainers::{self, clients};
+
     mod custom_container;
-    use custom_container::dynamo_test;
 
     #[tokio::test]
     async fn test_create_table() -> Result<()> {
         let docker = clients::Cli::default();
-        let node = docker.run(dynamo_test::DynamoDb);
+        let node = docker.run(custom_container::DynamoDb);
         let port = node.get_host_port_ipv4(8000);
         let client = build_custom_client(port).await;
         let dynamodb_manager =
