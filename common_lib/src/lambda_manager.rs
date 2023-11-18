@@ -30,12 +30,13 @@ pub trait FunctionManager {
     async fn delete_function(&self, runtime: &Runtime) -> Result<bool, Error>;
     async fn wait_for_deletion(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_function(&self, runtime: &Runtime) -> Result<(), Error>;
-    async fn update_function_configuration(&self, runtime: &Runtime) -> Result<(), Error>;
-    async fn invoke_function(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn update_function_configuration(&self, function_name: &String) -> Result<(), Error>;
+    async fn invoke_function(&self, function_name: &String) -> Result<(), Error>;
     async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_image_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_zip_function(&self, runtime: &Runtime) -> Result<(), Error>;
+    async fn list_versions_by_function(&self, runtime: &Runtime) -> Result<Vec<String>, Error>;
 }
 
 impl<'a> LambdaManager<'a> {
@@ -115,14 +116,33 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         }
     }
 
+    async fn list_versions_by_function(&self, runtime: &Runtime) -> Result<Vec<String>, Error> {
+        let mut arns = vec![];
+        let result = self
+            .client
+            .list_versions_by_function()
+            .function_name(runtime.function_name())
+            .send()
+            .await?;
+        if let Some(versions) = result.versions {
+            for version in versions {
+                if let Some(arn) = version.function_arn() {
+                    arns.push(arn.to_string());
+                }
+            }
+        }
+        Ok(arns)
+    }
+
     async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error> {
         self.create_zip_function(runtime).await?;
         for i in 0..10 {
             thread::sleep(Duration::from_secs(10));
             info!("Invoking function #{}", i);
-            self.invoke_function(runtime).await?;
+            self.invoke_function(&runtime.function_name()).await?;
             thread::sleep(Duration::from_secs(10));
-            self.update_function_configuration(runtime).await?;
+            self.update_function_configuration(&runtime.function_name())
+                .await?;
             thread::sleep(Duration::from_secs(10));
             info!("Publishing function #{}", i);
             self.publish_version(runtime).await?;
@@ -131,24 +151,24 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         Ok(())
     }
 
-    async fn invoke_function(&self, runtime: &Runtime) -> Result<(), Error> {
+    async fn invoke_function(&self, function_name: &String) -> Result<(), Error> {
         let res = self
             .client
             .invoke()
-            .function_name(runtime.function_name())
+            .function_name(function_name)
             .send()
             .await?;
         info!("Result: {:?}", res);
         Ok(())
     }
 
-    async fn update_function_configuration(&self, runtime: &Runtime) -> Result<(), Error> {
+    async fn update_function_configuration(&self, function_name: &String) -> Result<(), Error> {
         let current_time = SystemTime::now();
         let current_time = format!("{:?}", current_time);
         let res = self
             .client
             .update_function_configuration()
-            .function_name(runtime.function_name())
+            .function_name(function_name)
             .environment(
                 EnvironmentBuilder::default()
                     .variables("current_time", current_time)
@@ -157,6 +177,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             .send()
             .await?;
         info!("Result: {:?}", res);
+
         Ok(())
     }
 

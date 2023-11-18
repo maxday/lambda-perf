@@ -1,3 +1,4 @@
+use std::thread;
 use std::time::Duration;
 
 use aws_lambda_events::event::sqs::SqsEventObj;
@@ -49,19 +50,60 @@ async fn process_event<'a>(
         let retry = RetryManager::new(3, Duration::from_secs(1), Duration::from_secs(30));
         let runtime = &record.body;
         info!("processing runtime: {}", runtime.function_name());
-        for i in 0..10 {
-            info!("run #: {}", i);
+        match runtime.is_snapstart {
+            true => invoke_snapstart(runtime, &retry, lambda_manager).await,
+            false => invoke(runtime, &retry, lambda_manager).await,
+        }?;
+    }
+    Ok(Response { status_code: 200 })
+}
+
+async fn invoke_snapstart<'a>(
+    runtime: &Runtime,
+    retry: &RetryManager,
+    lambda_manager: &LambdaManager<'a>,
+) -> Result<(), Error> {
+    let arns = lambda_manager.list_versions_by_function(runtime).await?;
+    for i in 0..10 {
+        info!("snapstart run #: {}", i);
+        if let Some(arn) = arns.get(i) {
             retry
-                .retry_async(|| async {
-                    lambda_manager.update_function_configuration(runtime).await
-                })
+                .retry_async(|| async { lambda_manager.update_function_configuration(arn).await })
                 .await?;
             info!("function updated to ensure cold start");
+            thread::sleep(Duration::from_secs(5));
             retry
-                .retry_async(|| async { lambda_manager.invoke_function(runtime).await })
+                .retry_async(|| async { lambda_manager.invoke_function(arn).await })
                 .await?;
             info!("function invoked");
         }
     }
-    Ok(Response { status_code: 200 })
+    Ok(())
+}
+
+async fn invoke<'a>(
+    runtime: &Runtime,
+    retry: &RetryManager,
+    lambda_manager: &LambdaManager<'a>,
+) -> Result<(), Error> {
+    for i in 0..10 {
+        info!("run #: {}", i);
+        retry
+            .retry_async(|| async {
+                lambda_manager
+                    .update_function_configuration(&runtime.function_name())
+                    .await
+            })
+            .await?;
+        info!("function updated to ensure cold start");
+        retry
+            .retry_async(|| async {
+                lambda_manager
+                    .invoke_function(&runtime.function_name())
+                    .await
+            })
+            .await?;
+        info!("function invoked");
+    }
+    Ok(())
 }
