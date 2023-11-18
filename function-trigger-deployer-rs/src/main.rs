@@ -32,7 +32,7 @@ async fn main() -> Result<(), Error> {
 async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     info!("checking env variables");
     let table_name = std::env::var("TABLE_NAME").expect("TABLE_NAME not set");
-    let log_processor_arn = std::env::var("LOG_PROCESSOR_ARN").expect("LOG_PROCESSOR_ARN not set");
+    let report_log_processor_arn = std::env::var("REPORT_LOG_PROCESSOR_ARN").expect("REPORT_LOG_PROCESSOR_ARN not set");
     let function_queue_name =
         std::env::var("FUNCTION_QUEUE_NAME").expect("FUNCTION_QUEUE_NAME not set");
     let snapstart_queue_name =
@@ -50,7 +50,7 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     db_manager.create().await?;
     db_manager.wait_for_created().await?;
 
-    let lambda_manager = LambdaManager::new(log_processor_arn, None).await;
+    let lambda_manager = LambdaManager::new(report_log_processor_arn, None).await;
 
     info!("removing permission");
     lambda_manager.remove_permission().await?;

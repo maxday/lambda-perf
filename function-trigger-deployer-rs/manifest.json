@@ -2,14 +2,6 @@
   "memorySizes": [128],
   "runtimes": [
     {
-      "displayName": "java 11 snapstart",
-      "runtime": "java11",
-      "handler": "io.github.maxday.Handler::handleRequest",
-      "path": "java11_snapstart",
-      "architectures": ["x86_64"],
-      "isSnapstart": true
-    },
-    {
       "displayName": "nodejs18.x",
       "runtime": "nodejs18.x",
       "handler": "index.handler",

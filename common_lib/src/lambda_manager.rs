@@ -115,7 +115,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             None => self.create_zip_function(runtime).await,
         }
     }
-
+    
     async fn list_versions_by_function(&self, runtime: &Runtime) -> Result<Vec<String>, Error> {
         let mut arns = vec![];
         let result = self

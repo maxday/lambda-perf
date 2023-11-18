@@ -4,7 +4,7 @@ use lambda_runtime::Error;
 
 pub struct LambdaManager {
     pub client: LambdaClient,
-    pub log_processor_arn: String,
+    pub report_log_processor_arn: String,
     pub statement_id: String,
 }
 
@@ -15,7 +15,7 @@ pub trait PermissionManager {
 }
 
 impl LambdaManager {
-    pub async fn new(log_processor_arn: String, client: Option<LambdaClient>) -> Self {
+    pub async fn new(report_log_processor_arn: String, client: Option<LambdaClient>) -> Self {
         let client = match client {
             Some(client) => client,
             None => {
@@ -25,7 +25,7 @@ impl LambdaManager {
         };
         LambdaManager {
             client,
-            log_processor_arn,
+            report_log_processor_arn,
             statement_id: "invokePermission".to_string(),
         }
     }
@@ -37,7 +37,7 @@ impl PermissionManager for LambdaManager {
         match self
             .client
             .remove_permission()
-            .function_name(&self.log_processor_arn)
+            .function_name(&self.report_log_processor_arn)
             .statement_id(&self.statement_id)
             .send()
             .await
@@ -56,7 +56,7 @@ impl PermissionManager for LambdaManager {
     async fn add_permission(&self) -> Result<(), Error> {
         self.client
             .add_permission()
-            .function_name(&self.log_processor_arn)
+            .function_name(&self.report_log_processor_arn)
             .statement_id(&self.statement_id)
             .action("lambda:InvokeFunction")
             .principal("logs.amazonaws.com")
