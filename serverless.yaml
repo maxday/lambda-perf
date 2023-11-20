@@ -159,7 +159,7 @@ functions:
             Fn::GetAtt:
               - lambdaPerfDeployer
               - Arn
-          batchSize: 25
+          batchSize: 5
           maximumBatchingWindow: 30
 
   functionSnapstartDeployerRs:
@@ -181,7 +181,8 @@ functions:
             Fn::GetAtt:
               - lambdaPerfSnapstartDeployer
               - Arn
-          batchSize: 1
+          batchSize: 5
+          maximumBatchingWindow: 30
 
   functionInvokerRs:
     runtime: provided.al2
@@ -199,9 +200,23 @@ functions:
             Fn::GetAtt:
               - lambdaPerfInvoker
               - Arn
-          batchSize: 1
-          #batchSize: 25
-          #maximumBatchingWindow: 30
+          batchSize: 5
+          maximumBatchingWindow: 30
+  
+  
+  resultBuilder:
+    environment:
+      GH_AUTH_TOKEN: toto
+      LAMBDA_PERF_ENV: stagging
+    package:
+      individually: true
+      patterns:
+        - result-builder
+        - "!function-trigger-deployer"
+        - "!function-invoker"
+        - "!function-deployer"
+        - "!report-log-processor"
+    handler: result-builder/app.handler
 
 resources:
   Resources:

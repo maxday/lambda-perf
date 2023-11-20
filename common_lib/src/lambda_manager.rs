@@ -16,6 +16,7 @@ use lambda_runtime::Error;
 
 use tracing::info;
 
+use crate::retry_manager::RetryManager;
 use crate::runtime::Runtime;
 
 pub struct LambdaManager<'a> {
@@ -37,6 +38,7 @@ pub trait FunctionManager {
     async fn create_image_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_zip_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn list_versions_by_function(&self, runtime: &Runtime) -> Result<Vec<String>, Error>;
+    async fn snapshot(&self, runtime: &Runtime, i: i32) -> Result<(), Error>;
 }
 
 impl<'a> LambdaManager<'a> {
@@ -136,18 +138,28 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         Ok(arns)
     }
 
+    async fn snapshot(&self, runtime: &Runtime, i: i32) -> Result<(), Error> {
+        info!("Invoking function #{}", i);
+        self.invoke_function(&runtime.function_name()).await?;
+        self.update_function_configuration(&runtime.function_name())
+            .await?;
+        thread::sleep(Duration::from_secs(5));
+        info!("Publishing function #{}", i);
+        self.publish_version(runtime).await?;
+        thread::sleep(Duration::from_secs(5));
+        Ok(())
+    }
+
     async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error> {
         self.create_zip_function(runtime).await?;
         thread::sleep(Duration::from_secs(5));
+        let retry = RetryManager::new(3, Duration::from_secs(10), Duration::from_secs(30));
         for i in 0..10 {
-            info!("Invoking function #{}", i);
-            self.invoke_function(&runtime.function_name()).await?;
-            self.update_function_configuration(&runtime.function_name())
-                .await?;
-            thread::sleep(Duration::from_secs(5));
-            info!("Publishing function #{}", i);
-            self.publish_version(runtime).await?;
-            thread::sleep(Duration::from_secs(5));
+            retry
+            .retry_async(|| async {
+                self.snapshot(runtime, i).await
+            })
+            .await?;
         }
         Ok(())
     }

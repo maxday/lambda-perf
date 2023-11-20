@@ -83,31 +83,31 @@ const buildJsonFromData = (data) => {
     generatedAt: new Date(),
   };
   const runtimeData = [];
-  const packageTypes = ["zip", "container"];
+  const packageTypes = ["zip", "image"];
   for (const packageType of packageTypes) {
     const packateTypeFilteredData = data.filter(
       (item) => item.packageType.S === packageType
     );
-    const runtimes = [
+    let runtimes = [
       ...new Set(packateTypeFilteredData.map((item) => item.lambda.S)),
     ];
     for (const runtime of runtimes) {
       const filteredData = data.filter((e) => e.lambda.S === runtime) || [];
       const initDurations = filteredData.map((e) =>
-        parseFloat(e.initDuration.S, 10)
+        parseFloat(e.initDuration.N, 10)
       );
       const averageMemoryUsed = formatMaxThreeDigits(
-        computeMean(filteredData.map((e) => parseFloat(e.maxMemoryUsed.S, 10)))
+        computeMean(filteredData.map((e) => parseFloat(e.maxMemoryUsed.N, 10)))
       );
       const averageDuration = formatMaxThreeDigits(
-        computeMean(filteredData.map((e) => parseFloat(e.duration.S, 10)))
+        computeMean(filteredData.map((e) => parseFloat(e.duration.N, 10)))
       );
       const averageColdStartDuration = formatMaxThreeDigits(
         computeMean(initDurations)
       );
 
       const displayName = filteredData[0].displayName.S;
-      const memorySize = parseInt(filteredData[0].memorySize.S, 10);
+      const memorySize = parseInt(filteredData[0].memorySize.N, 10);
       const architecture = filteredData[0].architecture.S;
 
       runtimeData.push({
