@@ -36,24 +36,24 @@ jobs:
         run: |
           creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }})
           echo $creds_json > /tmp/creds_json
-      # - name: Install Rust toolchain
-      #   uses: dtolnay/rust-toolchain@stable
-      # - name: Install Zig toolchain
-      #   uses: korandoru/setup-zig@v1
-      #   with:
-      #     zig-version: 0.10.0
-      # - name: Install Cargo Lambda
-      #   uses: jaxxstorm/action-install-gh-release@v1.9.0
-      #   with:
-      #     repo: cargo-lambda/cargo-lambda
-      #     platform: linux
-      #     arch: x86_64
-      # - name: install dependencies
-      #   run: |
-      #     cd ../result-builder && yarn install
-      #     ./build.sh
-      # - name: install Serverless Framework
-      #   run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install Zig toolchain
+        uses: korandoru/setup-zig@v1
+        with:
+          zig-version: 0.10.0
+      - name: Install Cargo Lambda
+        uses: jaxxstorm/action-install-gh-release@v1.9.0
+        with:
+          repo: cargo-lambda/cargo-lambda
+          platform: linux
+          arch: x86_64
+      - name: install dependencies
+        run: |
+          cd ../result-builder && yarn install
+          ./build.sh
+      - name: install Serverless Framework
+        run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
       - name: deploy
         env:
           AWS_REGION: ${{ inputs.region }}
