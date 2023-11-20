@@ -206,8 +206,8 @@ functions:
   
   resultBuilder:
     environment:
-      GH_AUTH_TOKEN: toto
-      LAMBDA_PERF_ENV: stagging
+      GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
+      LAMBDA_PERF_ENV: ${env:LAMBDA_PERF_ENV}
     package:
       individually: true
       patterns:

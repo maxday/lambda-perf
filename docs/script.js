@@ -19,7 +19,6 @@ const animate = async (dataManager) => {
       await load(dataManager);
     }
     const data = dataManager.fetchData;
-    console.log(data);
     document.getElementById("lastUpdate").innerHTML = data.metadata.generatedAt;
     const promiseArray = [];
     let i = 0;
@@ -27,7 +26,6 @@ const animate = async (dataManager) => {
     const filteredData = data.runtimeData.filter(
       (r) => r.m == memorySize && r.a === architecture && r.p === packageType
     );
-    console.log("filteredData", filteredData[0]);
     for (runtime of filteredData) {
       promiseArray.push(drawLang(i, runtime));
       ++i;
