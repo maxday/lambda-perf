@@ -50,8 +50,8 @@ jobs:
           arch: x86_64
       - name: install dependencies
         run: |
-          cd ../result-builder && yarn install
-          ./build.sh
+          cd ./result-builder && yarn install
+          cd .. && ./build.sh
       - name: install Serverless Framework
         run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
       - name: deploy
@@ -65,3 +65,6 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=$(cat /tmp/creds_json | jq .Credentials.SecretAccessKey| tr -d '"')
           export AWS_SESSION_TOKEN=$(cat /tmp/creds_json | jq .Credentials.SessionToken|tr -d '"')
           sls deploy --force
+
+
+
