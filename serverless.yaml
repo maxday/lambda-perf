@@ -186,7 +186,7 @@ functions:
               - lambdaPerfSnapstartDeployer
               - Arn
           batchSize: 8
-          maximumBatchingWindow: 30
+          maximumBatchingWindow: 120
 
   functionInvokerRs:
     runtime: provided.al2
