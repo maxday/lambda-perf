@@ -53,9 +53,9 @@ jobs:
           ARCHITECTURE: ${{ inputs.architecture }}
           AWS_REGION: ${{ inputs.region }}
           ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_MFA_ARN: ${{ secrets.AWS_MFA_ARN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.RESTRICTED_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RESTRICTED_AWS_SECRET_ACCESS_KEY }}
+          AWS_MFA_ARN: ${{ secrets.RESTRICTED_AWS_MFA_ARN }}
         run: |
           creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }})
           export AWS_ACCESS_KEY_ID=$(echo "$creds_json" | jq .Credentials.AccessKeyId |tr -d '"')
