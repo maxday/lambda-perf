@@ -31,31 +31,29 @@ jobs:
         env:
           AWS_MFA_ARN: ${{ secrets.AWS_MFA_ARN }}
           AWS_REGION: ${{ inputs.region }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.X_AK }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.X_ASK }}
         run: |
           creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }})
-          export AWS_ACCESS_KEY_ID=$(echo "$creds_json" | jq .Credentials.AccessKeyId |tr -d '"')
-          export AWS_SECRET_ACCESS_KEY=$(echo "$creds_json" | jq .Credentials.SecretAccessKey| tr -d '"')
-          export AWS_SESSION_TOKEN=$(echo "$creds_json" | jq .Credentials.SessionToken|tr -d '"')
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-      - name: Install Zig toolchain
-        uses: korandoru/setup-zig@v1
-        with:
-          zig-version: 0.10.0
-      - name: Install Cargo Lambda
-        uses: jaxxstorm/action-install-gh-release@v1.9.0
-        with:
-          repo: cargo-lambda/cargo-lambda
-          platform: linux
-          arch: x86_64
-      - name: install dependencies
-        run: |
-          cd ../result-builder && yarn install
-          ./build.sh
-      - name: install Serverless Framework
-        run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
+          echo $creds_json > /tmp/creds_json
+      # - name: Install Rust toolchain
+      #   uses: dtolnay/rust-toolchain@stable
+      # - name: Install Zig toolchain
+      #   uses: korandoru/setup-zig@v1
+      #   with:
+      #     zig-version: 0.10.0
+      # - name: Install Cargo Lambda
+      #   uses: jaxxstorm/action-install-gh-release@v1.9.0
+      #   with:
+      #     repo: cargo-lambda/cargo-lambda
+      #     platform: linux
+      #     arch: x86_64
+      # - name: install dependencies
+      #   run: |
+      #     cd ../result-builder && yarn install
+      #     ./build.sh
+      # - name: install Serverless Framework
+      #   run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
       - name: deploy
         env:
           AWS_REGION: ${{ inputs.region }}
@@ -63,4 +61,7 @@ jobs:
           GH_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
           LAMBDA_PERF_ENV: ${{ inputs.lambdaPerfEnv }}
         run: |
+          export AWS_ACCESS_KEY_ID=$(cat /tmp/creds_json | jq .Credentials.AccessKeyId |tr -d '"')
+          export AWS_SECRET_ACCESS_KEY=$(cat /tmp/creds_json | jq .Credentials.SecretAccessKey| tr -d '"')
+          export AWS_SESSION_TOKEN=$(cat /tmp/creds_json | jq .Credentials.SessionToken|tr -d '"')
           sls deploy --force
