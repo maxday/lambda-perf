@@ -6,6 +6,8 @@ provider:
   memorySize: 128
   runtime: nodejs18.x
   region: ${env:AWS_REGION}
+  deploymentBucket:
+    name: lambda-perf-${env:AWS_REGION}
   iam:
     role:
       name: lambda-perf-${sls:stage}-role-${aws:region}

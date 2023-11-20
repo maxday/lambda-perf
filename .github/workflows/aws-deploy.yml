@@ -29,10 +29,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: AWS Authentication
         env:
-          AWS_MFA_ARN: ${{ secrets.X_ARN }}
+          AWS_MFA_ARN: ${{ secrets.RESTRICTED_AWS_MFA_ARN }}
           AWS_REGION: ${{ inputs.region }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.X_AK }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.X_ASK }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.RESTRICTED_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RESTRICTED_AWS_SECRET_ACCESS_KEY }}
         run: |
           creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }})
           echo $creds_json > /tmp/creds_json
