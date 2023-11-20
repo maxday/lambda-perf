@@ -151,9 +151,15 @@ impl TableManager for DynamoDBManager {
         let max_memory_used = AttributeValue::N(report_log_data.max_memory_used.to_string());
         let insert_date = AttributeValue::S(report_log_data.insert_date.to_string());
 
-        let lambda_name = format!("lambda-perf-{}-{}-{}-{}", report_log.path, report_log.package_type, report_log.memory_size, report_log.architecture);
+        let lambda_name = format!(
+            "lambda-perf-{}-{}-{}-{}",
+            report_log.path,
+            report_log.package_type,
+            report_log.memory_size,
+            report_log.architecture
+        );
         let lambda_name = AttributeValue::S(lambda_name);
-        
+
         self.client
             .put_item()
             .table_name(&self.table_name)

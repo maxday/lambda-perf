@@ -1,6 +1,4 @@
-
-
-use aws_lambda_events::{cloudwatch_logs::LogsEvent};
+use aws_lambda_events::cloudwatch_logs::LogsEvent;
 
 use common_lib::{
     dynamodb_manager::{DynamoDBManager, TableManager},

@@ -156,10 +156,8 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         let retry = RetryManager::new(3, Duration::from_secs(10), Duration::from_secs(30));
         for i in 0..10 {
             retry
-            .retry_async(|| async {
-                self.snapshot(runtime, i).await
-            })
-            .await?;
+                .retry_async(|| async { self.snapshot(runtime, i).await })
+                .await?;
         }
         Ok(())
     }
