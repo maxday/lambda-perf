@@ -142,7 +142,7 @@ functions:
       individually: true
       artifact: target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-deployer-rs.zip
     events:
-      - schedule: cron(0 13 * * ? *)
+      - schedule: cron(0 11 * * ? *)
 
   functionDeployerRs:
     runtime: provided.al2
