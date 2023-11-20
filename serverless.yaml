@@ -217,6 +217,8 @@ functions:
         - "!function-deployer"
         - "!report-log-processor"
     handler: result-builder/app.handler
+    events:
+      - schedule: cron(0 14 * * ? *)
 
 resources:
   Resources:
