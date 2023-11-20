@@ -27,13 +27,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install Zig toolchain
+        uses: korandoru/setup-zig@v1
+        with:
+          zig-version: 0.10.0
+      - name: Install Cargo Lambda
+        uses: jaxxstorm/action-install-gh-release@v1.9.0
+        with:
+          repo: cargo-lambda/cargo-lambda
+          platform: linux
+          arch: x86_64
       - name: install dependencies
         run: |
-          cd function-deployer && yarn install
-          cd ../function-invoker && yarn install
-          cd ../function-trigger-invoker && yarn install
           cd ../result-builder && yarn install
-          cd ../report-log-processor && yarn install
+          ./build.sh
       - name: install Serverless Framework
         run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
       - name: deploy
