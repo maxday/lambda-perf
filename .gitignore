@@ -6,8 +6,15 @@ container-uploader/*.zip
 
 s3-uploader/node_modules
 s3-uploader/runtimes/rust_on_provided_al2/target
+s3-uploader/runtimes/rust_on_provided_al2023/target
 s3-uploader/runtimes/dotnetcore31/src/obj
 s3-uploader/runtimes/dotnet6/src/obj
+s3-uploader/runtimes/java21/.gradle
+s3-uploader/runtimes/java21/build
+s3-uploader/runtimes/java21/bin
+s3-uploader/runtimes/java21_snapstart/.gradle
+s3-uploader/runtimes/java21_snapstart/build
+s3-uploader/runtimes/java21_snapstart/bin
 s3-uploader/runtimes/java11/.gradle
 s3-uploader/runtimes/java11/bin
 s3-uploader/runtimes/java8/.gradle
