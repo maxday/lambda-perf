@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash, thread, time::Duration};
+use std::{thread, time::Duration};
 
 use async_trait::async_trait;
 use aws_config::BehaviorVersion;
@@ -14,7 +14,6 @@ use lambda_runtime::Error;
 
 use crate::{
     report_log::{ReportLog, ReportLogData},
-    runtime,
 };
 
 #[async_trait]
@@ -191,7 +190,7 @@ mod tests {
     use super::*;
     use aws_sdk_dynamodb::config::{Credentials, Region};
     use aws_sdk_dynamodb::{Client, Config};
-    use serde_json::json;
+    
     use std::io::Result;
     use testcontainers::{self, clients};
 
