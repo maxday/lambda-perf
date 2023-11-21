@@ -4,29 +4,25 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serde = "1.0.179"
+serde = "1.0.192"
+serde_json = "1.0.108"
 
-#serde = "1.0.179"
-serde_json = "1.0.104"
-#tracing-subscriber = { version = "0.3.17", features = ["json"] }
-
-testcontainers = "0.15.0"
 async-trait = "0.1.74"
 
-tracing = { version = "0.1.40", features = ["log"] }
-aws-sdk-sqs = "0.34.0"
-#rand = "0.8.5"
-aws-sdk-cloudwatchlogs = "0.34.0"
-
 # TODO: stop using error from lambda_runtime
-lambda_runtime = "0.8.1"
-#aws-config = "0.56.1"
-
-# TODO check if we can get rid of it
+lambda_runtime = "0.8.3"
 tokio = { version = "1", features = ["full"] }
 rand = "0.8.5"
 regex = "1.10.2"
 chrono = "0.4.31"
-aws-sdk-dynamodb = "0.39.0"
+
+tracing = { version = "0.1.40", features = ["log"] }
+
 aws-config = "1.0.0"
 aws-sdk-lambda = "0.39.0"
+aws-sdk-sqs = "0.39.0"
+aws-sdk-dynamodb = "0.39.0"
+aws-sdk-cloudwatchlogs = "0.39.0"
+
+[dev-dependencies]
+testcontainers = "0.15.0"
