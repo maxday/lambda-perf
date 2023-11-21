@@ -28,7 +28,7 @@ pub struct Image {
 }
 
 impl Runtime {
-    fn package_type(&self) -> String {
+    pub fn package_type(&self) -> String {
         match self.image {
             Some(_) => "image".to_string(),
             None => "zip".to_string(),

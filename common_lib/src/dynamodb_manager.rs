@@ -1,6 +1,7 @@
-use std::{thread, time::Duration};
+use std::{collections::HashMap, hash, thread, time::Duration};
 
 use async_trait::async_trait;
+use aws_config::BehaviorVersion;
 use aws_sdk_dynamodb::{
     types::{
         self, AttributeDefinition, AttributeValue, BillingMode, KeySchemaElement, KeyType,
@@ -11,7 +12,11 @@ use aws_sdk_dynamodb::{
 
 use lambda_runtime::Error;
 
-use crate::report_log::{ReportLog, ReportLogData};
+use crate::{
+    manifest::{self, ManifestManager},
+    perf_data::{Metadata, PerfData, RuntimeData, SingleInvocation},
+    report_log::{ReportLog, ReportLogData}, runtime,
+};
 
 #[async_trait]
 pub trait TableManager {
@@ -35,7 +40,7 @@ impl DynamoDBManager {
         let client = match client {
             Some(client) => client,
             None => {
-                let config = aws_config::from_env().load().await;
+                let config = aws_config::defaults(BehaviorVersion::latest()).load().await;
                 DynamoDbClient::new(&config)
             }
         };
@@ -49,12 +54,12 @@ impl TableManager for DynamoDBManager {
         let key_schema_hash = KeySchemaElement::builder()
             .attribute_name("requestId".to_string())
             .key_type(KeyType::Hash)
-            .build();
+            .build()?;
 
         let attribute_name = AttributeDefinition::builder()
             .attribute_name("requestId".to_string())
             .attribute_type(ScalarAttributeType::S)
-            .build();
+            .build()?;
 
         self.client
             .create_table()
@@ -187,6 +192,7 @@ mod tests {
     use super::*;
     use aws_sdk_dynamodb::config::{Credentials, Region};
     use aws_sdk_dynamodb::{Client, Config};
+    use serde_json::json;
     use std::io::Result;
     use testcontainers::{self, clients};
 
