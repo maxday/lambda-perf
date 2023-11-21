@@ -64,13 +64,21 @@ const updateFileToPreventCaching = async (authToken, owner, repo) => {
   }
 };
 
-const fetchData = async (client, table) => {
+const fetchData = async (client, table, startKey) => {
   const params = {
     TableName: table,
   };
+  if (startKey) {
+    params.ExclusiveStartKey = startKey;
+  }
+
   try {
     const command = new ScanCommand(params);
     const result = await client.send(command);
+    if (result.LastEvaluatedKey) {
+      const data = await fetchData(client, table, result.LastEvaluatedKey);
+      return [...result.Items, ...data];
+    }
     return result.Items;
   } catch (e) {
     console.error(e);
