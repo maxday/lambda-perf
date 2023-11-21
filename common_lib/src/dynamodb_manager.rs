@@ -13,8 +13,6 @@ use aws_sdk_dynamodb::{
 use lambda_runtime::Error;
 
 use crate::{
-    manifest::{self, ManifestManager},
-    perf_data::{Metadata, PerfData, RuntimeData, SingleInvocation},
     report_log::{ReportLog, ReportLogData},
     runtime,
 };
