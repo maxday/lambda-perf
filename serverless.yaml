@@ -185,8 +185,10 @@ functions:
             Fn::GetAtt:
               - lambdaPerfSnapstartDeployer
               - Arn
-          batchSize: 8
+          batchSize: 2
           maximumBatchingWindow: 120
+          maximumConcurrency: 2
+
 
   functionInvokerRs:
     runtime: provided.al2
