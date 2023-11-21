@@ -1,10 +1,13 @@
 service: lambda-perf
+configValidationMode: error
 
 provider:
   name: aws
   memorySize: 128
   runtime: nodejs18.x
   region: ${env:AWS_REGION}
+  deploymentBucket:
+    name: lambda-perf-${env:AWS_REGION}
   iam:
     role:
       name: lambda-perf-${sls:stage}-role-${aws:region}
@@ -71,6 +74,9 @@ provider:
       Action: "dynamodb:CreateTable"
       Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
+      Action: "dynamodb:DescribeTable"
+      Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
+    - Effect: Allow
       Action: "dynamodb:Scan"
       Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/report-log"
     - Effect: Allow
@@ -81,65 +87,129 @@ provider:
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-deployer"
     - Effect: Allow
       Action: "sqs:SendMessage"
+      Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-snapstart-deployer"
+    - Effect: Allow
+      Action: "sqs:SendMessage"
       Resource: "arn:aws:sqs:${aws:region}:${aws:accountId}:lambda-perf-invoker"
+    - Effect: Allow
+      Action: "ecr:GetRepositoryPolicy"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+    - Effect: Allow
+      Action: "ecr:SetRepositoryPolicy"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+    - Effect: Allow
+      Action: "ecr:BatchGetImage"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+    - Effect: Allow
+      Action: "ecr:GetDownloadUrlForLayer"
+      Resource: "arn:aws:ecr:${aws:region}:${aws:accountId}:repository/lambda-perf"
+
 
 package:
   patterns:
     - "!app"
     - "!s3-uploader"
+    - "!container-uploader"
+    - "!target"
     - "!docs"
     - "!data"
     - "!README.md"
 
 functions:
   
-  reportLogProcessor:
+  functionReportLogProcessorRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    environment:
+      TABLE_NAME: report-log
     package:
       individually: true
-      patterns:
-        - report-log-processor
-        - "!function-trigger-deployer"
-        - "!function-invoker"
-        - "!function-deployer"
-        - "!result-builder"
-    handler: report-log-processor/app.handler
+      artifact: target/lambda/function-report-log-processor-rs/bootstrap-function-report-log-processor-rs.zip
 
-  functionInvoker:
+  functionTriggerDeployerRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    environment:
+      TABLE_NAME: report-log
+      REPORT_LOG_PROCESSOR_ARN: 
+        "Fn::GetAtt": [ FunctionReportLogProcessorRsLambdaFunction, Arn ]
+      FUNCTION_QUEUE_NAME: lambda-perf-deployer
+      SNAPSTART_QUEUE_NAME: lambda-perf-snapstart-deployer
+      ACCOUNT_ID: ${aws:accountId}
     package:
       individually: true
-      patterns:
-        - "function-invoker"
-        - "!function-trigger-deployer"
-        - "!function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-invoker/app.handler
+      artifact: target/lambda/function-trigger-deployer-rs/bootstrap-function-trigger-deployer-rs.zip
+    events:
+      - schedule: cron(0 11 * * ? *)
+
+  functionDeployerRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    package:
+      individually: true
+      artifact: target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip
+    environment:
+      ACCOUNT_ID: ${aws:accountId}
+      REPORT_LOG_PROCESSOR_ARN: 
+        "Fn::GetAtt": [ FunctionReportLogProcessorRsLambdaFunction, Arn ]
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+      INVOKER_QUEUE_NAME: lambda-perf-invoker
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfDeployer
+              - Arn
+          batchSize: 5
+          maximumBatchingWindow: 30
+
+  functionSnapstartDeployerRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    package:
+      individually: true
+      artifact: target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip
+    environment:
+      ACCOUNT_ID: ${aws:accountId}
+      REPORT_LOG_PROCESSOR_ARN: 
+        "Fn::GetAtt": [ FunctionReportLogProcessorRsLambdaFunction, Arn ]
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
+      INVOKER_QUEUE_NAME: lambda-perf-invoker
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - lambdaPerfSnapstartDeployer
+              - Arn
+          batchSize: 2
+          maximumBatchingWindow: 120
+          maximumConcurrency: 2
+
+
+  functionInvokerRs:
+    runtime: provided.al2
+    architecture: arm64
+    handler: bootstrap
+    package:
+      individually: true
+      artifact: target/lambda/function-invoker-rs/bootstrap-function-invoker-rs.zip
+    environment:
+      ACCOUNT_ID: ${aws:accountId}
+      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
     events:
       - sqs:
           arn:
             Fn::GetAtt:
               - lambdaPerfInvoker
               - Arn
-          batchSize: 1
+          batchSize: 5
+          maximumBatchingWindow: 30
   
-  functionTriggerDeployer:
-    package:
-      individually: true
-      patterns:
-        - "function-trigger-deployer"
-        - "!function-invoker"
-        - "!function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-trigger-deployer/app.handler
-    environment:
-      QUEUE_NAME: lambda-perf-deployer
-      ACCOUNT_ID: ${aws:accountId}
-      LOG_PROCESSOR_ARN: 
-        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-    events:
-      - schedule: cron(30 13 * * ? *)
-
+  
   resultBuilder:
     environment:
       GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
@@ -156,36 +226,17 @@ functions:
     events:
       - schedule: cron(0 14 * * ? *)
 
-  functionDeployer:
-    package:
-      individually: true
-      patterns:
-        - "!function-trigger-deployer"
-        - "!function-invoker"
-        - "function-deployer"
-        - "!report-log-processor"
-        - "!result-builder"
-    handler: function-deployer/app.handler
-    environment:
-      ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
-      LOG_PROCESSOR_ARN: 
-        "Fn::GetAtt": [ ReportLogProcessorLambdaFunction, Arn ]
-      QUEUE_NAME: lambda-perf-invoker
-      ACCOUNT_ID: ${aws:accountId}
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - lambdaPerfDeployer
-              - Arn
-          batchSize: 1
-
 resources:
   Resources:
     lambdaPerfDeployer:
       Type: "AWS::SQS::Queue"
       Properties:
         QueueName: "lambda-perf-deployer"
+        VisibilityTimeout: 900
+    lambdaPerfSnapstartDeployer:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "lambda-perf-snapstart-deployer"
         VisibilityTimeout: 900
     lambdaPerfInvoker:
       Type: "AWS::SQS::Queue"

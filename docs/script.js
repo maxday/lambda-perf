@@ -4,7 +4,7 @@ const dataManager = {
 
 const load = async (dataManager) => {
   const request = await fetch(
-    "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.6372531564050385"
+    "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.74517472310426456"
   );
   const json = await request.json();
   dataManager.fetchData = json;
@@ -14,6 +14,7 @@ const animate = async (dataManager) => {
   try {
     const memorySize = getCurrentMemorySize();
     const architecture = getCurrentArchitecture();
+    const packageType = getCurrentPackageType();
     if (!dataManager.fetchData) {
       await load(dataManager);
     }
@@ -21,21 +22,13 @@ const animate = async (dataManager) => {
     document.getElementById("lastUpdate").innerHTML = data.metadata.generatedAt;
     const promiseArray = [];
     let i = 0;
-    data.runtimeData.sort(
-      (a, b) => a.averageColdStartDuration - b.averageColdStartDuration
+    data.runtimeData.sort((a, b) => a.acd - b.acd);
+    const filteredData = data.runtimeData.filter(
+      (r) => r.m == memorySize && r.a === architecture && r.p === packageType
     );
-    for (runtime of data.runtimeData.filter(
-      (r) => r.memorySize == memorySize && r.architecture === architecture
-    )) {
+    for (runtime of filteredData) {
       promiseArray.push(drawLang(i, runtime));
       ++i;
-    }
-    // todo remove after backward compatibility
-    if (promiseArray.length === 0) {
-      for (runtime of data.runtimeData) {
-        promiseArray.push(drawLang(i, runtime));
-        ++i;
-      }
     }
     await Promise.all(promiseArray);
   } catch (e) {
@@ -71,6 +64,16 @@ const getCurrentArchitecture = () => {
   return "x86_64";
 };
 
+const getCurrentPackageType = () => {
+  const buttons = document.getElementsByClassName("packageTypeBtn");
+  for (btn of buttons) {
+    if (btn.classList.contains("bg-success")) {
+      return btn.id;
+    }
+  }
+  return "zip";
+};
+
 const replayAnimation = async (dataManager) => {
   document.getElementById("runtimes").innerHTML = "";
   await animate(dataManager);
@@ -85,6 +88,7 @@ const setupFilterEvent = (className, dataManager) => {
 const loaded = async (dataManager) => {
   setupFilterEvent(".memorySizeBtn", dataManager);
   setupFilterEvent(".architectureBtn", dataManager);
+  setupFilterEvent(".packageTypeBtn", dataManager);
   document
     .getElementById("replayAnimationBtn")
     .addEventListener("click", (dataManager) => replayAnimation(dataManager));
@@ -102,23 +106,21 @@ const drawLang = async (idx, data) => {
   const averageColdStartDuration = newElement.getElementsByClassName(
     "averageColdStartDuration"
   )[0];
-  averageColdStartDuration.innerHTML = `${formatData(
-    runtime.averageColdStartDuration
-  )}ms`;
+  averageColdStartDuration.innerHTML = `${formatData(data.acd)}ms`;
 
   const averageMemoryUsed =
     newElement.getElementsByClassName("averageMemoryUsed")[0];
-  averageMemoryUsed.innerHTML = `${runtime.averageMemoryUsed}MB`;
+  averageMemoryUsed.innerHTML = `${data.mu}MB`;
 
   const averageDuration =
     newElement.getElementsByClassName("averageDuration")[0];
-  averageDuration.innerHTML = `${formatData(runtime.averageDuration)}ms`;
+  averageDuration.innerHTML = `${formatData(data.ad)}ms`;
 
   const runtimeName = newElement.getElementsByClassName("runtimeName")[0];
-  runtimeName.innerHTML = `${runtime.displayName}`;
+  runtimeName.innerHTML = `${data.d}`;
 
-  for (let i = 0; i < data.initDurations.length; ++i) {
-    await sleep(data.initDurations[i]);
+  for (let i = 0; i < data.i.length; ++i) {
+    await sleep(data.i[i]);
     addSquare(coldStartElement);
   }
 };
