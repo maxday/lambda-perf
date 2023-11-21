@@ -231,6 +231,7 @@ mod tests {
         let conf = Config::builder()
             .endpoint_url(format!("http://localhost:{}", port))
             .credentials_provider(local_credentials)
+            .behavior_version_latest()
             .region(Region::new("test-region"))
             .build();
         Client::from_conf(conf)
