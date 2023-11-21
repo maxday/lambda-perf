@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use aws_config::BehaviorVersion;
 use aws_sdk_lambda::Client as LambdaClient;
 use lambda_runtime::Error;
 
@@ -19,7 +20,7 @@ impl LambdaManager {
         let client = match client {
             Some(client) => client,
             None => {
-                let config = aws_config::from_env().load().await;
+                let config = aws_config::defaults(BehaviorVersion::latest()).load().await;
                 LambdaClient::new(&config)
             }
         };

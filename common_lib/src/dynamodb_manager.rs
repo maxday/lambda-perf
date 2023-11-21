@@ -12,9 +12,7 @@ use aws_sdk_dynamodb::{
 
 use lambda_runtime::Error;
 
-use crate::{
-    report_log::{ReportLog, ReportLogData},
-};
+use crate::report_log::{ReportLog, ReportLogData};
 
 #[async_trait]
 pub trait TableManager {
@@ -190,7 +188,7 @@ mod tests {
     use super::*;
     use aws_sdk_dynamodb::config::{Credentials, Region};
     use aws_sdk_dynamodb::{Client, Config};
-    
+
     use std::io::Result;
     use testcontainers::{self, clients};
 

@@ -1,3 +1,4 @@
+use aws_config::BehaviorVersion;
 use aws_sdk_sqs::Client as SQSClient;
 use common_lib::runtime::Runtime;
 use lambda_runtime::Error;
@@ -18,7 +19,7 @@ impl InvokerSQSManager {
         let client = match client {
             Some(client) => client,
             None => {
-                let config = aws_config::from_env().load().await;
+                let config = aws_config::defaults(BehaviorVersion::latest()).load().await;
                 SQSClient::new(&config)
             }
         };

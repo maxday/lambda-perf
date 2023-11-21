@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use aws_config::BehaviorVersion;
 use aws_sdk_cloudwatchlogs::Client as CloudWatchLogsClient;
 use common_lib::runtime::Runtime;
 use lambda_runtime::Error;
@@ -23,7 +24,7 @@ impl CloudWatchManager {
         let client = match client {
             Some(client) => client,
             None => {
-                let config = aws_config::from_env().load().await;
+                let config = aws_config::defaults(BehaviorVersion::latest()).load().await;
                 CloudWatchLogsClient::new(&config)
             }
         };

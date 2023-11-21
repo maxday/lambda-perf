@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aws_lambda_events = "0.10.0"
+aws_lambda_events = "0.12.1"
 lambda_runtime = "0.8.3"
 
 serde = "1.0.192"
@@ -17,9 +17,9 @@ tracing-subscriber = { version = "0.3.18", features = ["json"] }
 
 tokio = { version = "1", features = ["full"] }
 
-aws-config = "0.56.1"
-aws-sdk-sqs = "0.34.0"
-aws-sdk-cloudwatchlogs = "0.34.0"
+aws-config = "1.0.0"
+aws-sdk-sqs = "0.39.0"
+aws-sdk-cloudwatchlogs = "0.39.0"
 
 common_lib = { path = "../common_lib" }
 
