@@ -3,17 +3,11 @@ use aws_lambda_events::cloudwatch_logs::LogsEvent;
 use common_lib::{
     dynamodb_manager::{DynamoDBManager, TableManager},
     manifest::{Manifest, ManifestManager},
+    reponse::Response,
     report_log::{ReportLog, ReportLogData},
 };
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::Serialize;
 use tracing::info;
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct Response {
-    status_code: u32,
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -60,5 +54,5 @@ async fn process_event(
             .insert_report_log(&report_log, &report_log_data)
             .await?;
     }
-    Ok(Response { status_code: 200 })
+    Ok(Response::success())
 }

@@ -5,18 +5,12 @@ use aws_lambda_events::event::sqs::SqsEventObj;
 
 use common_lib::lambda_manager::{FunctionManager, LambdaManager};
 
+use common_lib::reponse::Response;
 use common_lib::retry_manager::RetryManager;
 use common_lib::runtime::Runtime;
 
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::Serialize;
 use tracing::info;
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct Response {
-    status_code: u32,
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -56,7 +50,7 @@ async fn process_event<'a>(
             false => invoke(runtime, &retry, lambda_manager).await,
         }?;
     }
-    Ok(Response { status_code: 200 })
+    Ok(Response::success())
 }
 
 async fn invoke_snapstart<'a>(

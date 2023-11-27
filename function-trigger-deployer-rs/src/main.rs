@@ -4,15 +4,12 @@ use tracing::log::info;
 
 use common_lib::{
     dynamodb_manager::{DynamoDBManager, TableManager},
+    lambda_permission_manager::{LambdaPermissionManager, PermissionManager},
     manifest::ManifestManager,
     reponse::Response,
+    sqs_manager::{QueueManager, SQSManager},
 };
-
-mod lambda_manager;
-use lambda_manager::{LambdaManager, PermissionManager};
-
-mod sqs_manager;
-use sqs_manager::{QueueManager, SQSManager};
+use common_lib::{lambda_manager::LambdaManager, retry_manager::RetryManager};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -52,13 +49,13 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     db_manager.create().await?;
     db_manager.wait_for_created().await?;
 
-    let lambda_manager = LambdaManager::new(report_log_processor_arn, None).await;
+    let lambda_permission_manager = PermissionManager::new(report_log_processor_arn, None).await;
 
     info!("removing permission");
-    lambda_manager.remove_permission().await?;
+    lambda_permission_manager.remove_permission().await?;
 
     info!("adding permission");
-    lambda_manager.add_permission().await?;
+    lambda_permission_manager.add_permission().await?;
 
     let manifest_manager = ManifestManager::new("manifest.json");
 
