@@ -9,7 +9,7 @@ use common_lib::{
     reponse::Response,
     sqs_manager::{QueueManager, SQSManager},
 };
-use common_lib::{lambda_manager::LambdaManager, retry_manager::RetryManager};
+
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
