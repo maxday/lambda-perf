@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -48,5 +49,9 @@ impl Runtime {
             "{}.dkr.ecr.{}.amazonaws.com/lambda-perf:{}-{}",
             account_id, region, self.path, self.architecture
         )
+    }
+
+    pub fn json(&self) -> String {
+        json!(&self).to_string()
     }
 }

@@ -818,14 +818,9 @@ name = "function-deployer-rs"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "aws-config",
- "aws-sdk-cloudwatchlogs",
- "aws-sdk-sqs",
  "aws_lambda_events",
  "common_lib",
  "lambda_runtime",
- "serde",
- "serde_json",
  "tokio",
  "tracing",
  "tracing-subscriber",
@@ -864,9 +859,6 @@ name = "function-trigger-deployer-rs"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "aws-config",
- "aws-sdk-lambda",
- "aws-sdk-sqs",
  "common_lib",
  "lambda_runtime",
  "serde",

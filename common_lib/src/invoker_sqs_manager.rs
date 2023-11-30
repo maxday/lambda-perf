@@ -1,8 +1,8 @@
 use aws_config::BehaviorVersion;
 use aws_sdk_sqs::Client as SQSClient;
-use common_lib::runtime::Runtime;
 use lambda_runtime::Error;
-use serde_json::json;
+
+use crate::runtime::Runtime;
 
 pub struct InvokerSQSManager {
     pub client: SQSClient,
@@ -30,7 +30,7 @@ impl InvokerSQSManager {
         self.client
             .send_message()
             .queue_url(&self.queue_url)
-            .message_body(json!(runtime).to_string())
+            .message_body(runtime.json())
             .send()
             .await?;
         Ok(())

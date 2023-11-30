@@ -1,26 +1,15 @@
 use std::time::Duration;
 
 use aws_lambda_events::event::sqs::SqsEventObj;
-use cloudwatch_manager::CloudWatchManager;
+use common_lib::cloudwatch_manager::{CloudWatchManager, LogManager};
+use common_lib::invoker_sqs_manager::InvokerSQSManager;
+use common_lib::reponse::Response;
 use common_lib::runtime::Runtime;
 use common_lib::{lambda_manager::FunctionManager, retry_manager::RetryManager};
 
 use common_lib::lambda_manager::LambdaManager;
-use invoker_sqs_manager::InvokerSQSManager;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
-use serde::Serialize;
 use tracing::info;
-
-use crate::cloudwatch_manager::LogManager;
-
-mod cloudwatch_manager;
-mod invoker_sqs_manager;
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct Response {
-    status_code: u32,
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -113,5 +102,5 @@ async fn process_event<'a>(
 
         invoker_sqs_manager.send_message(runtime).await?;
     }
-    Ok(Response { status_code: 200 })
+    Ok(Response::success())
 }

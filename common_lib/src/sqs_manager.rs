@@ -1,9 +1,10 @@
 use async_trait::async_trait;
 use aws_config::BehaviorVersion;
 use aws_sdk_sqs::Client as SQSClient;
-use common_lib::{manifest::ManifestManager, runtime::Runtime};
 use lambda_runtime::Error;
 use serde_json::json;
+
+use crate::{manifest::ManifestManager, runtime::Runtime};
 
 pub struct SQSManager {
     pub client: SQSClient,
@@ -81,7 +82,7 @@ impl QueueManager for SQSManager {
 #[cfg(test)]
 mod tests {
 
-    use common_lib::runtime::Image;
+    use crate::runtime::Image;
 
     use super::*;
 

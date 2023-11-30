@@ -3,19 +3,19 @@ use aws_config::BehaviorVersion;
 use aws_sdk_lambda::Client as LambdaClient;
 use lambda_runtime::Error;
 
-pub struct LambdaManager {
+pub struct PermissionManager {
     pub client: LambdaClient,
     pub report_log_processor_arn: String,
     pub statement_id: String,
 }
 
 #[async_trait]
-pub trait PermissionManager {
+pub trait LambdaPermissionManager {
     async fn remove_permission(&self) -> Result<(), Error>;
     async fn add_permission(&self) -> Result<(), Error>;
 }
 
-impl LambdaManager {
+impl PermissionManager {
     pub async fn new(report_log_processor_arn: String, client: Option<LambdaClient>) -> Self {
         let client = match client {
             Some(client) => client,
@@ -24,7 +24,7 @@ impl LambdaManager {
                 LambdaClient::new(&config)
             }
         };
-        LambdaManager {
+        PermissionManager {
             client,
             report_log_processor_arn,
             statement_id: "invokePermission".to_string(),
@@ -33,7 +33,7 @@ impl LambdaManager {
 }
 
 #[async_trait]
-impl PermissionManager for LambdaManager {
+impl LambdaPermissionManager for PermissionManager {
     async fn remove_permission(&self) -> Result<(), Error> {
         match self
             .client
