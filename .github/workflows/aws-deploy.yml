@@ -48,10 +48,13 @@ jobs:
           repo: cargo-lambda/cargo-lambda
           platform: linux
           arch: x86_64
+      - name: test
+        run: cargo test
+      - name: build
+        run: ./build.sh
       - name: install dependencies
         run: |
           cd ./result-builder && yarn install
-          cd .. && ./build.sh
       - name: install Serverless Framework
         run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
       - name: deploy
