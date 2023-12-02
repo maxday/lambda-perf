@@ -38,14 +38,14 @@ impl ReportLog {
         let result = manifest
             .runtimes
             .iter()
-            .find(|runtime| runtime.path == path);
+            .find(|runtime| runtime.path() == path);
         match result {
             Some(found_runtime) => ReportLog {
                 path: path.to_string(),
                 package_type: package_type.to_string(),
                 memory_size: memory_size.to_string(),
                 architecture: architecture.to_string(),
-                display_name: found_runtime.display_name.to_string(),
+                display_name: found_runtime.display_name().to_string(),
             },
             None => {
                 panic!("Could not find the display name in the manisfest file");

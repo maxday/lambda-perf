@@ -147,7 +147,7 @@ exports.handler = async (_, context) => {
   const IS_PRODUCTION = process.env.LAMBDA_PERF_ENV === "production";
   try {
     const dynamoDbClient = new DynamoDBClient({ region: REGION });
-    const data = await fetchData(dynamoDbClient, TABLE);
+    const data = await fetchData(dynamoDbClient, TABLE, null);
     const json = buildJsonFromData(data);
     const today = new Date().toISOString().split("T")[0];
     const content = JSON.stringify(json, null, "").replace(/[\r\n]+/gm, "");
