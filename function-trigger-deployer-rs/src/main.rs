@@ -10,6 +10,7 @@ use common_lib::{
     sqs_manager::{QueueManager, SQSManager},
 };
 
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     tracing_subscriber::fmt()
