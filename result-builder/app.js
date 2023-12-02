@@ -154,8 +154,8 @@ exports.handler = async (_, context) => {
     if (IS_PRODUCTION) {
       console.log("production env detected, pushing to GitHub");
       await updateFileToPreventCaching(GH_AUTH_TOKEN, OWNER, REPO);
-      await commitFile(content, today, GH_AUTH_TOKEN, OWNER, REPO);
-      await commitFile(content, "last", GH_AUTH_TOKEN, OWNER, REPO);
+      await commitFile(content, today + "-" + REGION, GH_AUTH_TOKEN, OWNER, REPO);
+      await commitFile(content, "last-"+REGION, GH_AUTH_TOKEN, OWNER, REPO);
     } else {
       console.log("non-production env detected, output the content:");
       console.log(content);

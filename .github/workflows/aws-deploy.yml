@@ -7,13 +7,6 @@ on:
         type: string
         description: MFA Code
         required: true
-      region:
-        description: 'region on which you want to deploy'
-        type: choice
-        options:
-          - eu-west-1
-          - us-east-1
-        required: true
       lambdaPerfEnv:
         description: 'environment on which you want to deploy'
         type: choice
@@ -23,19 +16,39 @@ on:
         required: true
 
 jobs:
-  deploy:
+  setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - name: AWS Authentication
         env:
+          AWS_REGION: "us-east-1"
           AWS_MFA_ARN: ${{ secrets.RESTRICTED_AWS_MFA_ARN }}
-          AWS_REGION: ${{ inputs.region }}
           AWS_ACCESS_KEY_ID: ${{ secrets.RESTRICTED_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.RESTRICTED_AWS_SECRET_ACCESS_KEY }}
+          # We set the duration-seconds to 30min because we upload this as an artifact and we don't want someone to be able to use it
         run: |
-          creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }})
-          echo $creds_json > /tmp/creds_json
+          creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }} --duration-seconds 1800)
+          mkdir /tmp/creds
+          echo $creds_json > /tmp/creds/creds_json
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: creds_json
+          path: /tmp/creds/
+          retention-days: 1
+  deploy:
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix:
+        region: [ "us-east-1","us-west-1", "eu-west-1", "eu-central-1" ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download tmp credentials
+        uses: actions/download-artifact@v3
+        with:
+          name: creds_json
+          path: /tmp/creds/
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Install Zig toolchain
@@ -59,14 +72,14 @@ jobs:
         run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
       - name: deploy
         env:
-          AWS_REGION: ${{ inputs.region }}
+          AWS_REGION: ${{ matrix.region }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           GH_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
           LAMBDA_PERF_ENV: ${{ inputs.lambdaPerfEnv }}
         run: |
-          export AWS_ACCESS_KEY_ID=$(cat /tmp/creds_json | jq .Credentials.AccessKeyId |tr -d '"')
-          export AWS_SECRET_ACCESS_KEY=$(cat /tmp/creds_json | jq .Credentials.SecretAccessKey| tr -d '"')
-          export AWS_SESSION_TOKEN=$(cat /tmp/creds_json | jq .Credentials.SessionToken|tr -d '"')
+          export AWS_ACCESS_KEY_ID=$(cat /tmp/creds/creds_json | jq .Credentials.AccessKeyId |tr -d '"')
+          export AWS_SECRET_ACCESS_KEY=$(cat /tmp/creds/creds_json | jq .Credentials.SecretAccessKey| tr -d '"')
+          export AWS_SESSION_TOKEN=$(cat /tmp/creds/creds_json | jq .Credentials.SessionToken|tr -d '"')
           sls deploy --force
 
 
