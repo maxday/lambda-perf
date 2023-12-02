@@ -53,7 +53,7 @@ const getFromS3 = async (
   const codeFilename = `code_${architecture}.zip`;
 
   const getObjectParams = {
-    Bucket: `snapoleon-lambda-perf-${region}`,
+    Bucket: `lambda-perf-${region}`,
     Key: `${path}/${codeFilename}`,
   };
   const command = new GetObjectCommand(getObjectParams);
