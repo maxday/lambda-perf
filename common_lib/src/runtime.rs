@@ -1,4 +1,4 @@
-use aws_sdk_lambda::types::Runtime as LambdaRuntime;
+use aws_sdk_lambda::types::{PackageType, Runtime as LambdaRuntime};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
@@ -63,17 +63,17 @@ impl Image {
 }
 
 impl Runtime {
-    pub fn package_type(&self) -> String {
+    pub fn package_type(&self) -> PackageType {
         match self.image {
-            Some(_) => "image".to_string(),
-            None => "zip".to_string(),
+            Some(_) => PackageType::Image,
+            None => PackageType::Zip,
         }
     }
     pub fn function_name(&self) -> String {
         format!(
             "lambda-perf-{}-{}-{}-{}",
             self.path,
-            self.package_type(),
+            self.package_type().as_str().to_lowercase(),
             self.memory_size,
             self.architecture
         )
@@ -165,7 +165,7 @@ mod tests {
             None,
             false,
         );
-        assert_eq!(test_runtime.package_type(), "zip");
+        assert_eq!(test_runtime.package_type(), PackageType::Zip);
         assert!(!test_runtime.has_image());
     }
 
@@ -219,7 +219,7 @@ mod tests {
             None,
             false,
         );
-        assert_eq!(test_runtime.package_type(), "image");
+        assert_eq!(test_runtime.package_type(), PackageType::Image);
         assert!(test_runtime.has_image());
     }
 
