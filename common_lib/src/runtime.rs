@@ -18,6 +18,7 @@ pub struct Runtime {
 }
 
 impl Runtime {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         display_name: String,
         runtime: String,
@@ -165,7 +166,7 @@ mod tests {
             false,
         );
         assert_eq!(test_runtime.package_type(), "zip");
-        assert_eq!(test_runtime.has_image(), false);
+        assert!(!test_runtime.has_image());
     }
 
     #[test]
@@ -219,7 +220,7 @@ mod tests {
             false,
         );
         assert_eq!(test_runtime.package_type(), "image");
-        assert_eq!(test_runtime.has_image(), true);
+        assert!(test_runtime.has_image());
     }
 
     #[test]
@@ -273,7 +274,7 @@ mod tests {
             None,
             true,
         );
-        assert_eq!(test_runtime.is_snapstart(), true);
+        assert!(test_runtime.is_snapstart());
     }
 
     #[test]
@@ -289,7 +290,7 @@ mod tests {
             None,
             false,
         );
-        assert_eq!(test_runtime.is_snapstart(), false);
+        assert!(!test_runtime.is_snapstart());
     }
 
     #[test]

@@ -99,7 +99,7 @@ mod tests {
         assert_eq!(manifest.runtimes[0].path(), "nodejs18x");
         assert_eq!(manifest.runtimes[0].architecture(), "x86_64");
         assert_eq!(manifest.runtimes[0].memory_size(), 128);
-        assert_eq!(false, manifest.runtimes[0].has_image());
+        assert!(!manifest.runtimes[0].has_image());
 
         assert_eq!(manifest.runtimes[1].display_name(), "nodejs18.x");
         assert_eq!(manifest.runtimes[1].runtime(), LambdaRuntime::Nodejs18x);
@@ -119,7 +119,7 @@ mod tests {
         assert_eq!(manifest.runtimes[2].path(), "nodejs18x");
         assert_eq!(manifest.runtimes[2].architecture(), "arm64");
         assert_eq!(manifest.runtimes[2].memory_size(), 128);
-        assert_eq!(false, manifest.runtimes[2].has_image());
+        assert!(!manifest.runtimes[2].has_image());
 
         assert_eq!(manifest.runtimes[3].display_name(), "nodejs18.x");
         assert_eq!(manifest.runtimes[3].runtime(), LambdaRuntime::Nodejs18x);
@@ -139,7 +139,7 @@ mod tests {
         assert_eq!(manifest.runtimes[4].path(), "python37");
         assert_eq!(manifest.runtimes[4].architecture(), "x86_64");
         assert_eq!(manifest.runtimes[4].memory_size(), 128);
-        assert_eq!(false, manifest.runtimes[4].has_image());
+        assert!(!manifest.runtimes[4].has_image());
 
         assert_eq!(manifest.runtimes[5].display_name(), "nodejs18.x");
         assert_eq!(manifest.runtimes[5].runtime(), LambdaRuntime::Nodejs18x);
@@ -147,7 +147,7 @@ mod tests {
         assert_eq!(manifest.runtimes[5].path(), "nodejs18x");
         assert_eq!(manifest.runtimes[5].architecture(), "x86_64");
         assert_eq!(manifest.runtimes[5].memory_size(), 256);
-        assert_eq!(false, manifest.runtimes[5].has_image());
+        assert!(!manifest.runtimes[5].has_image());
 
         assert_eq!(manifest.runtimes[6].display_name(), "nodejs18.x");
         assert_eq!(manifest.runtimes[6].runtime(), LambdaRuntime::Nodejs18x);
@@ -167,7 +167,7 @@ mod tests {
         assert_eq!(manifest.runtimes[7].path(), "nodejs18x");
         assert_eq!(manifest.runtimes[7].architecture(), "arm64");
         assert_eq!(manifest.runtimes[7].memory_size(), 256);
-        assert_eq!(false, manifest.runtimes[7].has_image());
+        assert!(!manifest.runtimes[7].has_image());
 
         assert_eq!(manifest.runtimes[8].display_name(), "nodejs18.x");
         assert_eq!(manifest.runtimes[8].runtime(), LambdaRuntime::Nodejs18x);
@@ -187,7 +187,7 @@ mod tests {
         assert_eq!(manifest.runtimes[9].path(), "python37");
         assert_eq!(manifest.runtimes[9].architecture(), "x86_64");
         assert_eq!(manifest.runtimes[9].memory_size(), 256);
-        assert_eq!(false, manifest.runtimes[9].has_image());
+        assert!(!manifest.runtimes[9].has_image());
     }
 
     #[test]
@@ -203,7 +203,7 @@ mod tests {
         assert_eq!(manifest.runtimes[0].path(), "bun_layer");
         assert_eq!(manifest.runtimes[0].architecture(), "x86_64");
         assert_eq!(manifest.runtimes[0].memory_size(), 128);
-        assert_eq!(false, manifest.runtimes[0].has_image());
+        assert!(!manifest.runtimes[0].has_image());
 
         let layer = manifest.runtimes[0].get_layer_name("us-east-1");
         assert_eq!(
@@ -230,7 +230,7 @@ mod tests {
         assert_eq!(manifest.runtimes[0].path(), "java_11");
         assert_eq!(manifest.runtimes[0].architecture(), "x86_64");
         assert_eq!(manifest.runtimes[0].memory_size(), 128);
-        assert_eq!(false, manifest.runtimes[0].has_image());
+        assert!(!manifest.runtimes[0].has_image());
         assert!(manifest.runtimes[0].is_snapstart());
     }
 }
