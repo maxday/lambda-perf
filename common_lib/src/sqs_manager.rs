@@ -64,7 +64,7 @@ impl QueueManager for SQSManager {
     async fn send_message(&self) -> Result<(), Error> {
         let messages = self.build_message();
         for message in messages {
-            let queue_url = match message.is_snapstart {
+            let queue_url = match message.is_snapstart() {
                 true => &self.snapstart_queue_url,
                 false => &self.function_queue_url,
             };
@@ -103,152 +103,152 @@ mod tests {
 
         assert_eq!(
             sqs_messages[0],
-            Runtime {
-                architecture: "x86_64".to_string(),
-                memory_size: 128,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: None,
-                layer: None,
-                is_snapstart: false,
-            }
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "x86_64".to_string(),
+                128,
+                None,
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[1],
-            Runtime {
-                architecture: "x86_64".to_string(),
-                memory_size: 128,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: Some(Image {
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "x86_64".to_string(),
+                128,
+                Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
-                layer: None,
-                is_snapstart: false,
-            }
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[2],
-            Runtime {
-                architecture: "arm64".to_string(),
-                memory_size: 128,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: None,
-                layer: None,
-                is_snapstart: false,
-            }
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "arm64".to_string(),
+                128,
+                None,
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[3],
-            Runtime {
-                architecture: "arm64".to_string(),
-                memory_size: 128,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: Some(Image {
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "arm64".to_string(),
+                128,
+                Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
-                layer: None,
-                is_snapstart: false,
-            }
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[4],
-            Runtime {
-                architecture: "x86_64".to_string(),
-                memory_size: 128,
-                runtime: "python3.7".to_string(),
-                path: "python37".to_string(),
-                display_name: "python3.7".to_string(),
-                handler: "index.handler".to_string(),
-                image: None,
-                layer: None,
-                is_snapstart: false,
-            }
+            Runtime::new(
+                "python3.7".to_string(),
+                "python3.7".to_string(),
+                "index.handler".to_string(),
+                "python37".to_string(),
+                "x86_64".to_string(),
+                128,
+                None,
+                None,
+                false,
+            )
         );
 
         assert_eq!(
             sqs_messages[5],
-            Runtime {
-                architecture: "x86_64".to_string(),
-                memory_size: 256,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: None,
-                layer: None,
-                is_snapstart: false,
-            }
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "x86_64".to_string(),
+                256,
+                None,
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[6],
-            Runtime {
-                architecture: "x86_64".to_string(),
-                memory_size: 256,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: Some(Image {
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "x86_64".to_string(),
+                256,
+                Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
-                layer: None,
-                is_snapstart: false,
-            }
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[7],
-            Runtime {
-                architecture: "arm64".to_string(),
-                memory_size: 256,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: None,
-                layer: None,
-                is_snapstart: false,
-            }
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "arm64".to_string(),
+                256,
+                None,
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[8],
-            Runtime {
-                architecture: "arm64".to_string(),
-                memory_size: 256,
-                runtime: "nodejs18.x".to_string(),
-                path: "nodejs18x".to_string(),
-                display_name: "nodejs18.x".to_string(),
-                handler: "index.handler".to_string(),
-                image: Some(Image {
+            Runtime::new(
+                "nodejs18.x".to_string(),
+                "nodejs18.x".to_string(),
+                "index.handler".to_string(),
+                "nodejs18x".to_string(),
+                "arm64".to_string(),
+                256,
+                Some(Image {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
-                layer: None,
-                is_snapstart: false,
-            }
+                None,
+                false,
+            )
         );
         assert_eq!(
             sqs_messages[9],
-            Runtime {
-                architecture: "x86_64".to_string(),
-                memory_size: 256,
-                runtime: "python3.7".to_string(),
-                path: "python37".to_string(),
-                display_name: "python3.7".to_string(),
-                handler: "index.handler".to_string(),
-                image: None,
-                layer: None,
-                is_snapstart: false,
-            }
+            Runtime::new(
+                "python3.7".to_string(),
+                "python3.7".to_string(),
+                "index.handler".to_string(),
+                "python37".to_string(),
+                "x86_64".to_string(),
+                256,
+                None,
+                None,
+                false,
+            )
         );
     }
 

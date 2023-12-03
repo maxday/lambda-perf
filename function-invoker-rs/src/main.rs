@@ -45,7 +45,7 @@ async fn process_event<'a>(
         let retry = RetryManager::new(3, Duration::from_secs(1), Duration::from_secs(30));
         let runtime = &record.body;
         info!("processing runtime: {}", runtime.function_name());
-        match runtime.is_snapstart {
+        match runtime.is_snapstart() {
             true => invoke_snapstart(runtime, &retry, lambda_manager).await,
             false => invoke(runtime, &retry, lambda_manager).await,
         }?;

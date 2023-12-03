@@ -8,7 +8,7 @@ use aws_sdk_lambda::types::SnapStartApplyOn::PublishedVersions;
 use aws_sdk_lambda::{
     types::{
         builders::{FunctionCodeBuilder, SnapStartBuilder},
-        Architecture, ImageConfig, PackageType, Runtime as LambdaRuntime,
+        Architecture, ImageConfig, PackageType,
     },
     Client as LambdaClient,
 };
@@ -110,12 +110,13 @@ impl<'a> FunctionManager for LambdaManager<'a> {
     }
 
     async fn create_function(&self, runtime: &Runtime) -> Result<(), Error> {
-        if runtime.is_snapstart {
+        if runtime.is_snapstart() {
             return self.create_snapstart_function(runtime).await;
         }
-        match runtime.image {
-            Some(_) => self.create_image_function(runtime).await,
-            None => self.create_zip_function(runtime).await,
+        if runtime.has_image() {
+            self.create_image_function(runtime).await
+        } else {
+            self.create_zip_function(runtime).await
         }
     }
 
@@ -220,15 +221,11 @@ impl<'a> FunctionManager for LambdaManager<'a> {
                     .image_uri(runtime.image_name(self.account_id, self.region))
                     .build(),
             )
-            .image_config(
-                ImageConfig::builder()
-                    .command(runtime.handler.as_str())
-                    .build(),
-            )
+            .image_config(ImageConfig::builder().command(runtime.handler()).build())
             .role(self.role_arn)
-            .memory_size(runtime.memory_size)
-            .architectures(Architecture::from(runtime.architecture.as_str()));
-        if runtime.is_snapstart {
+            .memory_size(runtime.memory_size())
+            .architectures(Architecture::from(runtime.architecture()));
+        if runtime.is_snapstart() {
             res = res.snap_start(
                 SnapStartBuilder::default()
                     .apply_on(PublishedVersions)
@@ -246,7 +243,7 @@ impl<'a> FunctionManager for LambdaManager<'a> {
         let function_name = runtime.function_name();
         info!("Creating ZIP function: {}", function_name);
         let package_type = PackageType::Zip;
-        let layers = get_layer_name(runtime, self.region);
+        let layers = runtime.get_layer_name(self.region);
         let mut res = self
             .client
             .create_function()
@@ -255,19 +252,16 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             .code(
                 FunctionCodeBuilder::default()
                     .s3_bucket(format!("lambda-perf-{}", self.region))
-                    .s3_key(format!(
-                        "{}/code_{}.zip",
-                        runtime.path, runtime.architecture
-                    ))
+                    .s3_key(runtime.build_s3_key())
                     .build(),
             )
             .role(self.role_arn)
-            .memory_size(runtime.memory_size)
-            .architectures(Architecture::from(runtime.architecture.as_str()))
-            .runtime(LambdaRuntime::from(runtime.runtime.as_str()))
-            .handler(runtime.handler.as_str())
+            .memory_size(runtime.memory_size())
+            .architectures(Architecture::from(runtime.architecture()))
+            .runtime(runtime.runtime())
+            .handler(runtime.handler())
             .set_layers(layers);
-        if runtime.is_snapstart {
+        if runtime.is_snapstart() {
             res = res.snap_start(
                 SnapStartBuilder::default()
                     .apply_on(PublishedVersions)
@@ -279,26 +273,5 @@ impl<'a> FunctionManager for LambdaManager<'a> {
             Ok(_) => Ok(()),
             Err(e) => Err(Box::new(e.into_service_error())),
         }
-    }
-}
-
-fn get_layer_name(runtime: &Runtime, region: &str) -> Option<Vec<String>> {
-    match &runtime.layer {
-        Some(layer) => {
-            if runtime.architecture == "x86_64" {
-                return layer
-                    .x86_64
-                    .as_ref()
-                    .map(|arn| vec![arn.replace("_REGION_", region)]);
-            }
-            if runtime.architecture == "arm64" {
-                return layer
-                    .arm64
-                    .as_ref()
-                    .map(|arn| vec![arn.replace("_REGION_", region)]);
-            }
-            None
-        }
-        None => None,
     }
 }
