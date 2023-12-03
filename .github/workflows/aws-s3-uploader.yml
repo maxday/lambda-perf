@@ -7,13 +7,6 @@ on:
         type: string
         description: MFA Code
         required: true
-      region:
-        description: 'region on which you want to deploy'
-        type: choice
-        options:
-          - eu-west-1
-          - us-east-1
-        required: true
       architecture:
         description: 'architecture'
         type: choice
@@ -37,9 +30,29 @@ jobs:
             echo "runner=self-hosted" >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
+      - name: AWS Authentication
+        env:
+          AWS_REGION: "us-east-1"
+          AWS_MFA_ARN: ${{ secrets.RESTRICTED_AWS_MFA_ARN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.RESTRICTED_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RESTRICTED_AWS_SECRET_ACCESS_KEY }}
+          # We set the duration-seconds to 30min because we upload this as an artifact because we don't want someone to be able to use it
+        run: |
+          creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }} --duration-seconds 1800)
+          mkdir /tmp/creds
+          echo $creds_json > /tmp/creds/creds_json
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: creds_json
+          path: /tmp/creds/
+          retention-days: 1
   build-upload:
     needs: setup
     runs-on: ${{ needs.setup.outputs.runner }}
+    strategy:
+      matrix:
+        region: [ "us-east-1", "us-west-1", "eu-west-1", "eu-central-1" ]
     steps:
       - uses: actions/checkout@v3
       - name: Delete huge unnecessary folders
@@ -51,15 +64,14 @@ jobs:
       - name: build and deploy
         env:
           ARCHITECTURE: ${{ inputs.architecture }}
-          AWS_REGION: ${{ inputs.region }}
+          AWS_REGION: ${{ matrix.region }}
           AWS_ACCESS_KEY_ID: ${{ secrets.RESTRICTED_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.RESTRICTED_AWS_SECRET_ACCESS_KEY }}
           AWS_MFA_ARN: ${{ secrets.RESTRICTED_AWS_MFA_ARN }}
         run: |
-          creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }})
-          export AWS_ACCESS_KEY_ID=$(echo "$creds_json" | jq .Credentials.AccessKeyId |tr -d '"')
-          export AWS_SECRET_ACCESS_KEY=$(echo "$creds_json" | jq .Credentials.SecretAccessKey| tr -d '"')
-          export AWS_SESSION_TOKEN=$(echo "$creds_json" | jq .Credentials.SessionToken|tr -d '"')
+          export AWS_ACCESS_KEY_ID=$(cat /tmp/creds/creds_json | jq .Credentials.AccessKeyId |tr -d '"')
+          export AWS_SECRET_ACCESS_KEY=$(cat /tmp/creds/creds_json | jq .Credentials.SecretAccessKey| tr -d '"')
+          export AWS_SESSION_TOKEN=$(cat /tmp/creds/creds_json | jq .Credentials.SessionToken|tr -d '"')
 
           cd s3-uploader
           yarn install

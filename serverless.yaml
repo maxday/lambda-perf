@@ -133,7 +133,7 @@ functions:
     handler: bootstrap
     environment:
       TABLE_NAME: report-log
-      REPORT_LOG_PROCESSOR_ARN: 
+      REPORT_LOG_PROCESSOR_ARN:
         "Fn::GetAtt": [ FunctionReportLogProcessorRsLambdaFunction, Arn ]
       FUNCTION_QUEUE_NAME: lambda-perf-deployer
       SNAPSTART_QUEUE_NAME: lambda-perf-snapstart-deployer
@@ -153,7 +153,7 @@ functions:
       artifact: target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip
     environment:
       ACCOUNT_ID: ${aws:accountId}
-      REPORT_LOG_PROCESSOR_ARN: 
+      REPORT_LOG_PROCESSOR_ARN:
         "Fn::GetAtt": [ FunctionReportLogProcessorRsLambdaFunction, Arn ]
       ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
       INVOKER_QUEUE_NAME: lambda-perf-invoker
@@ -175,7 +175,7 @@ functions:
       artifact: target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip
     environment:
       ACCOUNT_ID: ${aws:accountId}
-      REPORT_LOG_PROCESSOR_ARN: 
+      REPORT_LOG_PROCESSOR_ARN:
         "Fn::GetAtt": [ FunctionReportLogProcessorRsLambdaFunction, Arn ]
       ROLE_ARN: arn:aws:iam::${aws:accountId}:role/lambda-perf-${sls:stage}-role-${aws:region}
       INVOKER_QUEUE_NAME: lambda-perf-invoker

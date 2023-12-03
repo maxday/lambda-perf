@@ -2,9 +2,9 @@ const dataManager = {
   fetchData: null,
 };
 
-const load = async (dataManager) => {
+const load = async (dataManager, region) => {
   const request = await fetch(
-    "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.13698292777671695"
+    "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last-" + region +".json?0.9507391202122124"
   );
   const json = await request.json();
   dataManager.fetchData = json;
@@ -13,11 +13,10 @@ const load = async (dataManager) => {
 const animate = async (dataManager) => {
   try {
     const memorySize = getCurrentMemorySize();
+    const region = getCurrentRegion();
     const architecture = getCurrentArchitecture();
     const packageType = getCurrentPackageType();
-    if (!dataManager.fetchData) {
-      await load(dataManager);
-    }
+    await load(dataManager, region);
     const data = dataManager.fetchData;
     document.getElementById("lastUpdate").innerHTML = data.metadata.generatedAt;
     const promiseArray = [];
@@ -54,6 +53,16 @@ const getCurrentMemorySize = () => {
   return 128;
 };
 
+const getCurrentRegion = () => {
+  const buttons = document.getElementsByClassName("regionBtn");
+  for (btn of buttons) {
+    if (btn.classList.contains("bg-success")) {
+      return btn.id;
+    }
+  }
+  return "us-east-1";
+};
+
 const getCurrentArchitecture = () => {
   const buttons = document.getElementsByClassName("architectureBtn");
   for (btn of buttons) {
@@ -87,6 +96,7 @@ const setupFilterEvent = (className, dataManager) => {
 };
 const loaded = async (dataManager) => {
   setupFilterEvent(".memorySizeBtn", dataManager);
+  setupFilterEvent(".regionBtn", dataManager);
   setupFilterEvent(".architectureBtn", dataManager);
   setupFilterEvent(".packageTypeBtn", dataManager);
   document
