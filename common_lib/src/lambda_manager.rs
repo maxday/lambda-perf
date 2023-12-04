@@ -161,6 +161,8 @@ impl<'a> FunctionManager for LambdaManager<'a> {
                 .retry_async(|| async { self.snapshot(runtime, i).await })
                 .await?;
         }
+        // wait for one full minute before sending a message to the SNS queue to invoke it
+        thread::sleep(Duration::from_secs(60));
         Ok(())
     }
 
