@@ -36,7 +36,7 @@ jobs:
           AWS_MFA_ARN: ${{ secrets.RESTRICTED_AWS_MFA_ARN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.RESTRICTED_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.RESTRICTED_AWS_SECRET_ACCESS_KEY }}
-          # We set the duration-seconds to 30min because we upload this as an artifact because we don't want someone to be able to use it
+          # We set the duration-seconds to 30min because we upload this as an artifact and we don't want someone to be able to use it
         run: |
           creds_json=$(aws sts get-session-token --serial-number ${AWS_MFA_ARN} --token-code ${{ inputs.mfaCode }} --duration-seconds 1800)
           mkdir /tmp/creds
@@ -55,6 +55,11 @@ jobs:
         region: [ "us-east-1", "eu-west-1" ]
     steps:
       - uses: actions/checkout@v3
+      - name: Download tmp credentials
+        uses: actions/download-artifact@v3
+        with:
+          name: creds_json
+          path: /tmp/creds/
       - name: Delete huge unnecessary folders
         run: |
           rm -rf /opt/hostedtoolcache
