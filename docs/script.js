@@ -21,8 +21,8 @@ const animate = async (dataManager) => {
     document.getElementById("lastUpdate").innerHTML = data.metadata.generatedAt;
     const promiseArray = [];
     let i = 0;
-    data.runtimeData.sort((a, b) => a.acd - b.acd);
-    const filteredData = data.runtimeData.filter(
+    data.region.runtimeData.sort((a, b) => a.acd - b.acd);
+    const filteredData = data.region.runtimeData.filter(
       (r) => r.m == memorySize && r.a === architecture && r.p === packageType
     );
     for (runtime of filteredData) {
