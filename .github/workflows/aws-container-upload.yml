@@ -50,7 +50,7 @@ jobs:
   build-upload:
     strategy:
       matrix:
-        region: [ "us-east-1","us-west-1", "eu-west-1", "eu-central-1" ]
+        region: [ "us-east-1", "eu-west-1" ]
     needs: setup
     runs-on: ${{ needs.setup.outputs.runner }}
     steps:

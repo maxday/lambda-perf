@@ -145,12 +145,19 @@ exports.handler = async (_, context) => {
   const REGION = process.env.AWS_REGION;
   const GH_AUTH_TOKEN = process.env.GH_AUTH_TOKEN;
   const IS_PRODUCTION = process.env.LAMBDA_PERF_ENV === "production";
+  // retrieve from manifest.json the "regions" field to get the list of regions that the stack is deployed into
+  const regions = ["eu-west-1", "us-east-1"]
   try {
-    const dynamoDbClient = new DynamoDBClient({ region: REGION });
-    const data = await fetchData(dynamoDbClient, TABLE);
-    const json = buildJsonFromData(data);
+  let json = {}
+    for (region of regions) {
+        const dynamoDbClient = new DynamoDBClient({ region: region });
+        const data = await fetchData(dynamoDbClient, TABLE);
+        json[region] = buildJsonFromData(data);
+    }
     const today = new Date().toISOString().split("T")[0];
     const content = JSON.stringify(json, null, "").replace(/[\r\n]+/gm, "");
+
+
     if (IS_PRODUCTION) {
       console.log("production env detected, pushing to GitHub");
       await updateFileToPreventCaching(GH_AUTH_TOKEN, OWNER, REPO);
