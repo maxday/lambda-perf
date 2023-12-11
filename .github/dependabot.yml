@@ -1,24 +1,24 @@
 version: 2
 updates:
   # app
-  - package-ecosystem: "npm"
-    directory: "function-deployer"
+  - package-ecosystem: "cargo"
+    directory: "common_lib"
     schedule:
       interval: "monthly"
-  - package-ecosystem: "npm"
-    directory: "function-invoker"
+  - package-ecosystem: "cargo"
+    directory: "function-deployer-rs"
     schedule:
       interval: "monthly"
-  - package-ecosystem: "npm"
-    directory: "report-log-processor"
+  - package-ecosystem: "cargo"
+    directory: "function-invoker-rs"
     schedule:
       interval: "monthly"
-  - package-ecosystem: "npm"
-    directory: "function-trigger-invoker"
+  - package-ecosystem: "cargo"
+    directory: "function-report-log-processor-rs"
     schedule:
       interval: "monthly"
-  - package-ecosystem: "npm"
-    directory: "function-trigger-deployer"
+  - package-ecosystem: "cargo"
+    directory: "function-trigger-deployer-rs"
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
@@ -27,6 +27,10 @@ updates:
       interval: "monthly"
   - package-ecosystem: "npm"
     directory: "s3-uploader"
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "container-uploader"
     schedule:
       interval: "monthly"
 

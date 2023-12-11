@@ -6,7 +6,10 @@
       "runtime": "provided.al2",
       "handler": "SimpleLambdaHandler",
       "path": "swift58_on_provided_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     },
     {
       "displayName": "nodejs14.x",
@@ -20,56 +23,80 @@
       "runtime": "nodejs16.x",
       "handler": "index.handler",
       "path": "nodejs16x",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/nodejs:16"
+      }
     },
     {
       "displayName": "nodejs18.x",
       "runtime": "nodejs18.x",
       "handler": "index.handler",
       "path": "nodejs18x",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/nodejs:18"
+      }
     },
     {
       "displayName": "nodejs20.x",
       "runtime": "nodejs20.x",
       "handler": "index.handler",
       "path": "nodejs20x",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/nodejs:20"
+      }
     },
     {
       "displayName": "python3.7",
       "runtime": "python3.7",
       "handler": "index.handler",
       "path": "python37",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.7"
+      }
     },
     {
       "displayName": "python3.8",
       "runtime": "python3.8",
       "handler": "index.handler",
       "path": "python38",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.8"
+      }
     },
     {
       "displayName": "python3.9",
       "runtime": "python3.9",
       "handler": "index.handler",
       "path": "python39",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.9"
+      }
     },
     {
       "displayName": "python3.10",
       "runtime": "python3.10",
       "handler": "index.handler",
       "path": "python310",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.10"
+      }
     },
     {
       "displayName": "python3.11",
       "runtime": "python3.11",
       "handler": "index.handler",
       "path": "python311",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.11"
+      }
     },
     {
       "displayName": "python3.12",
@@ -83,95 +110,127 @@
       "runtime": "dotnet6",
       "handler": "LambdaPerf::LambdaPerf.Function::Handler",
       "path": "dotnet6",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/dotnet:6"
+      }
     },
     {
       "displayName": "dotnet7 aot (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "dotnet7_aot_on_provided_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     },
     {
       "displayName": "go1.x",
       "runtime": "go1.x",
       "handler": "main",
       "path": "go1x",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/go:1"
+      }
     },
     {
       "displayName": "java11",
       "runtime": "java11",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java11",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/java:11"
+      }
     },
     {
       "displayName": "java8",
       "runtime": "java8",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java8",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/java:8"
+      }
     },
     {
       "displayName": "java8.al2",
       "runtime": "java8.al2",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java8_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/java:8.al2"
+      }
     },
     {
       "displayName": "ruby2.7",
       "runtime": "ruby2.7",
       "handler": "index.handler",
       "path": "ruby27",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/ruby:2.7"
+      }
     },
     {
       "displayName": "ruby3.2",
       "runtime": "ruby3.2",
       "handler": "index.handler",
       "path": "ruby32",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/ruby:3.2"
+      }
     },
     {
       "displayName": "go (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "go_on_provided_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     },
     {
       "displayName": "go (prov.al2023)",
       "runtime": "provided.al2023",
       "handler": "bootstrap",
       "path": "go_on_provided_al2023",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
     },
     {
       "displayName": "rust (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "rust_on_provided_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     },
     {
       "displayName": "rust (prov.al2023)",
       "runtime": "provided.al2023",
       "handler": "bootstrap",
       "path": "rust_on_provided_al2023",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
     },
     {
       "displayName": "java11 snapstart",
       "runtime": "java11",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java11_snapstart",
-      "snapStart": {
-        "SnapStart": {
-          "ApplyOn": "PublishedVersions"
-        }
-      },
+      "isSnapstart": true,
       "architectures": ["x86_64"]
     },
     {
@@ -179,18 +238,35 @@
       "runtime": "java17",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java17",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/java:17"
+      }
     },
     {
       "displayName": "java17 snapstart",
       "runtime": "java17",
       "handler": "io.github.maxday.Handler::handleRequest",
       "path": "java17_snapstart",
-      "snapStart": {
-        "SnapStart": {
-          "ApplyOn": "PublishedVersions"
-        }
-      },
+      "isSnapstart": true,
+      "architectures": ["x86_64"]
+    },
+    {
+      "displayName": "java21",
+      "runtime": "java21",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java21",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/java:21"
+      }
+    },
+    {
+      "displayName": "java21 snapstart",
+      "runtime": "java21",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java21_snapstart",
+      "isSnapstart": true,
       "architectures": ["x86_64"]
     },
     {
@@ -198,28 +274,40 @@
       "runtime": "provided.al2",
       "handler": "bootstrap",
       "path": "quarkus_native_on_provided_al2",
-      "architectures": ["x86_64"]
+      "architectures": ["x86_64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     },
     {
       "displayName": "graalvm java17 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "com.xavierbouclet.OkHandler",
       "path": "graalvm_java17_on_provided_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     },
     {
       "displayName": "c++ 11 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "handler",
       "path": "cpp11_on_provided_al2",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     },
     {
       "displayName": "c++ 11 (prov.al2023)",
       "runtime": "provided.al2023",
       "handler": "handler",
       "path": "cpp11_on_provided_al2023",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
     },
     {
       "displayName": "bun layer(prov.al2)",
@@ -236,7 +324,10 @@
       "runtime": "provided.al2",
       "handler": "index.hello",
       "path": "bun",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
     }
   ]
 }

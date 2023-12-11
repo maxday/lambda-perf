@@ -38,6 +38,8 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `java11 + snapstart`
 - `java17`
 - `java17 + snapstart`
+- `java21`
+- `java21 + snapstart`
 - `ruby2.7`
 - `ruby3.2`
 

@@ -64,13 +64,21 @@ const updateFileToPreventCaching = async (authToken, owner, repo) => {
   }
 };
 
-const fetchData = async (client, table) => {
+const fetchData = async (client, table, startKey) => {
   const params = {
     TableName: table,
   };
+  if (startKey) {
+    params.ExclusiveStartKey = startKey;
+  }
+
   try {
     const command = new ScanCommand(params);
     const result = await client.send(command);
+    if (result.LastEvaluatedKey) {
+      const data = await fetchData(client, table, result.LastEvaluatedKey);
+      return [...result.Items, ...data];
+    }
     return result.Items;
   } catch (e) {
     console.error(e);
@@ -83,37 +91,45 @@ const buildJsonFromData = (data) => {
     generatedAt: new Date(),
   };
   const runtimeData = [];
-  const runtimes = [...new Set(data.map((item) => item.lambda.S))];
+  const packageTypes = ["zip", "image"];
+  for (const packageType of packageTypes) {
+    const packateTypeFilteredData = data.filter(
+      (item) => item.packageType.S === packageType
+    );
+    let runtimes = [
+      ...new Set(packateTypeFilteredData.map((item) => item.lambda.S)),
+    ];
+    for (const runtime of runtimes) {
+      const filteredData = data.filter((e) => e.lambda.S === runtime) || [];
+      const initDurations = filteredData.map((e) =>
+        parseFloat(e.initDuration.N, 10)
+      );
+      const averageMemoryUsed = formatMaxThreeDigits(
+        computeMean(filteredData.map((e) => parseFloat(e.maxMemoryUsed.N, 10)))
+      );
+      const averageDuration = formatMaxThreeDigits(
+        computeMean(filteredData.map((e) => parseFloat(e.duration.N, 10)))
+      );
+      const averageColdStartDuration = formatMaxThreeDigits(
+        computeMean(initDurations)
+      );
 
-  for (const runtime of runtimes) {
-    const filteredData = data.filter((e) => e.lambda.S === runtime) || [];
-    const initDurations = filteredData.map((e) =>
-      parseFloat(e.initDuration.S, 10)
-    );
-    const averageMemoryUsed = formatMaxThreeDigits(
-      computeMean(filteredData.map((e) => parseFloat(e.maxMemoryUsed.S, 10)))
-    );
-    const averageDuration = formatMaxThreeDigits(
-      computeMean(filteredData.map((e) => parseFloat(e.duration.S, 10)))
-    );
-    const averageColdStartDuration = formatMaxThreeDigits(
-      computeMean(initDurations)
-    );
+      const displayName = filteredData[0].displayName.S;
+      const memorySize = parseInt(filteredData[0].memorySize.N, 10);
+      const architecture = filteredData[0].architecture.S;
 
-    const displayName = filteredData[0].displayName.S;
-    const memorySize = parseInt(filteredData[0].memorySize.S, 10);
-    const architecture = filteredData[0].architecture.S;
-
-    runtimeData.push({
-      runtime,
-      displayName,
-      initDurations,
-      memorySize,
-      architecture,
-      averageMemoryUsed,
-      averageDuration,
-      averageColdStartDuration,
-    });
+      runtimeData.push({
+        r: runtime,
+        p: packageType,
+        d: displayName,
+        i: initDurations,
+        m: memorySize,
+        a: architecture,
+        mu: averageMemoryUsed,
+        ad: averageDuration,
+        acd: averageColdStartDuration,
+      });
+    }
   }
   return { metadata, runtimeData };
 };
@@ -134,7 +150,7 @@ exports.handler = async (_, context) => {
     const data = await fetchData(dynamoDbClient, TABLE);
     const json = buildJsonFromData(data);
     const today = new Date().toISOString().split("T")[0];
-    const content = JSON.stringify(json, null, "\t");
+    const content = JSON.stringify(json, null, "").replace(/[\r\n]+/gm, "");
     if (IS_PRODUCTION) {
       console.log("production env detected, pushing to GitHub");
       await updateFileToPreventCaching(GH_AUTH_TOKEN, OWNER, REPO);
