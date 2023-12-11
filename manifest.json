@@ -103,7 +103,10 @@
       "runtime": "python3.12",
       "handler": "index.handler",
       "path": "python312",
-      "architectures": ["x86_64", "arm64"]
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.12"
+      }
     },
     {
       "displayName": "dotnet6",
