@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AWSProjectType>Lambda</AWSProjectType>
+    <AssemblyName>bootstrap</AssemblyName>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <PublishAot>true</PublishAot>
+    <EventSourceSupport>false</EventSourceSupport>
+		<UseSystemResourceKeys>true</UseSystemResourceKeys>
+		<InvariantGlobalization>true</InvariantGlobalization>
+    <StripSymbols>true</StripSymbols>
+    <OptimizationPreference>Speed</OptimizationPreference>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.10.0" />
+    <PackageReference Include="Amazon.Lambda.Core" Version="2.2.0" />
+    <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!--The runtime directives file allows the compiler to know what types and assemblies to not trim out of the final binary, even if they don't appear to be used.-->
+    <RdXmlFile Include="rd.xml" />
+  </ItemGroup>
+</Project>
