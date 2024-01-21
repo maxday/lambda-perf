@@ -1,14 +1,5 @@
-const dataManager = {
-  fetchData: null,
-};
+import { dataManager, getCurrentMemorySize, getCurrentArchitecture, getCurrentPackageType, setupFilterEvent, load, formatData } from './shared.js';
 
-const load = async (dataManager) => {
-  const request = await fetch(
-    "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.057112075338791035"
-  );
-  const json = await request.json();
-  dataManager.fetchData = json;
-};
 
 const animate = async (dataManager) => {
   try {
@@ -26,7 +17,7 @@ const animate = async (dataManager) => {
     const filteredData = data.runtimeData.filter(
       (r) => r.m == memorySize && r.a === architecture && r.p === packageType
     );
-    for (runtime of filteredData) {
+    for (const runtime of filteredData) {
       promiseArray.push(drawLang(i, runtime));
       ++i;
     }
@@ -44,51 +35,11 @@ const updateFilter = async (e, className, dataManager) => {
   await replayAnimation(dataManager);
 };
 
-const getCurrentMemorySize = () => {
-  const buttons = document.getElementsByClassName("memorySizeBtn");
-  for (btn of buttons) {
-    if (btn.classList.contains("bg-success")) {
-      return btn.id;
-    }
-  }
-  return 128;
-};
 
-const getCurrentArchitecture = () => {
-  const buttons = document.getElementsByClassName("architectureBtn");
-  for (btn of buttons) {
-    if (btn.classList.contains("bg-success")) {
-      return btn.id;
-    }
-  }
-  return "x86_64";
-};
-
-const getCurrentPackageType = () => {
-  const buttons = document.getElementsByClassName("packageTypeBtn");
-  for (btn of buttons) {
-    if (btn.classList.contains("bg-success")) {
-      return btn.id;
-    }
-  }
-  return "zip";
-};
-
-const replayAnimation = async (dataManager) => {
-  document.getElementById("runtimes").innerHTML = "";
-  await animate(dataManager);
-};
-
-const setupFilterEvent = (className, dataManager) => {
-  const btnMemorySize = document.querySelectorAll(className);
-  btnMemorySize.forEach((el) =>
-    el.addEventListener("click", (e) => updateFilter(e, className, dataManager))
-  );
-};
 const loaded = async (dataManager) => {
-  setupFilterEvent(".memorySizeBtn", dataManager);
-  setupFilterEvent(".architectureBtn", dataManager);
-  setupFilterEvent(".packageTypeBtn", dataManager);
+  setupFilterEvent(".memorySizeBtn", dataManager, updateFilter);
+  setupFilterEvent(".architectureBtn", dataManager, updateFilter);
+  setupFilterEvent(".packageTypeBtn", dataManager, updateFilter);
   document
     .getElementById("replayAnimationBtn")
     .addEventListener("click", (dataManager) => replayAnimation(dataManager));
@@ -131,8 +82,6 @@ const addSquare = (parent) => {
   parent.appendChild(span);
 };
 
-const formatData = (data) =>
-  typeof data === "number" ? data.toFixed(2) : data;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -141,3 +90,9 @@ document.addEventListener(
   (dataManager) => loaded(dataManager),
   false
 );
+
+
+export const replayAnimation = async dataManager => {
+  document.getElementById("runtimes").innerHTML = "";
+  await animate(dataManager);
+};
