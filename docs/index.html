@@ -24,7 +24,9 @@
   <title>Lambda Cold Starts analysis</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/custom.css" rel="stylesheet">
-  <script src="script.js"></script>
+  <script src="script.js" type="module"></script>
+  <script src="shared.js" type="module"></script>
+
   <script defer data-domain="maxday.github.io/lambda-perf" src="https://plausible.io/js/script.js"></script>
 </head>
 
@@ -34,6 +36,7 @@
     <p class="lead">Visualize 10 Cold Starts for each runtime, updated daily.
       <br /><a href="https://www.youtube.com/watch?v=Idys2BAmqIU">[How to deploy a Rust Lambda function?]</a>
       <br /><a href="https://github.com/maxday/lambda-perf">[How does it work?]</a>
+      <br /><a href="/docs/chart.html">📈 Chart visualization</a>
     </p>
     <p class="align-left">
       <button type="button" id="replayAnimationBtn" class="btn btn-secondary">
