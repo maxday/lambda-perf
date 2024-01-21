@@ -69,3 +69,23 @@ hr {
 .badge:empty {
     display: inline-block;
 }
+
+.chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart {
+    width: 100%;
+    max-height: 400px;
+}
+
+
+
+@media (min-width: 768px) {
+    .chart {
+        min-height: 1000px;
+        max-width: 90vw;
+    }    
+}    
