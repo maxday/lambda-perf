@@ -13,7 +13,7 @@ jobs:
       - name: Print docker version
         run: docker --version
       - name: Test context
-        run: docker context use desktop-linux
+        run: docker context use default
       - name: test build arm
         run: cd s3-uploader && ./runtimes/rust_on_provided_al2023/build.sh rust_on_provided_al2023 arm64
 
