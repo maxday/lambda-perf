@@ -12,8 +12,8 @@ jobs:
         run: brew install docker docker-compose
       - name: Print docker version
         run: docker --version
-      - name: Create symlink
-        run: sudo ln -s "$HOME/.docker/run/docker.sock" /var/run/docker.sock
+      - name: Test context
+        run: docker context use desktop-linux
       - name: test build arm
         run: cd s3-uploader && ./runtimes/rust_on_provided_al2023/build.sh rust_on_provided_al2023 arm64
 
