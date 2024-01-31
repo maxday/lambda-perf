@@ -9,11 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install docker
-        run: brew install docker --cask
-      - name: Open docker
-        run: open /Applications/Docker.app
-      - name: Wait for docker to start
-        run: sleep 30
+        run: brew install docker docker-compose
+      - name: Print docker version
+        run: docker --version
       - name: test build arm
         run: cd s3-uploader && ./runtimes/rust_on_provided_al2023/build.sh rust_on_provided_al2023 arm64
 
