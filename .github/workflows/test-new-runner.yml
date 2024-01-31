@@ -8,8 +8,10 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v3
+      - name: Install docker
+        run: brew install docker --cask
       - name: Install docker-machine
-        run: brew install docker-machine docker --cask
+        run: brew install docker-machine
       - name: Check docker version
         run: docker --version
       - name: Create default docker-machine
