@@ -13,7 +13,7 @@ jobs:
       - name: Print docker version
         run: docker --version
       - name: Create symlink
-        run: ls -l /var/run/docker.sock
+        run: find / -name "*docker.sock*"
       - name: List context
         run: docker context ls
       # - name: test build arm
