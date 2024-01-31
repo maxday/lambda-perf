@@ -8,8 +8,7 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v3
-      - name: Install docker
-        uses: douglascamata/setup-docker-macos-action
+      - uses: douglascamata/setup-docker-macos-action@v1-alpha.11
       - name: Build
         run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker build .
       # - name: test build arm
