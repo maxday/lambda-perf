@@ -14,8 +14,6 @@ jobs:
         run: open /Applications/Docker.app
       - name: Wait for docker to start
         run: sleep 30
-      - name: Create default docker-machine
-        run: docker-machine create default
       - name: test build arm
         run: cd s3-uploader && ./runtimes/rust_on_provided_al2023/build.sh rust_on_provided_al2023 arm64
 
