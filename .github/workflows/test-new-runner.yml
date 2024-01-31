@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install docker
-        run: brew install docker docker-compose
+        run: brew install docker --cask
       - name: Print docker version
         run: docker --version
       - name: Test context
