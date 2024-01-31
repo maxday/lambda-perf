@@ -14,6 +14,8 @@ jobs:
         run: docker --version
       - name: List context
         run: docker context ls
+      - name: Build
+        run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker build .
       # - name: test build arm
       #   run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker buildx build .
       # /Applications/Docker.app/Contents/MacOS/com.docker.socket
