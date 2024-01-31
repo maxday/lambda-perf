@@ -10,12 +10,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install docker
         run: brew install docker --cask
-      - name: Install virtualbox
-        run: brew install virtualbox --cask
-      - name: Install docker-machine
-        run: brew install docker-machine
-      - name: Check docker version
-        run: docker --version
+      - name: Open docker
+        run: open /Applications/Docker.app
+      - name: Wait for docker to start
+        run: sleep 30
       - name: Create default docker-machine
         run: docker-machine create default
       - name: test build arm
