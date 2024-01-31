@@ -1,5 +1,4 @@
 FROM public.ecr.aws/lambda/provided:al2023 as builder
-ARG ARCH
 WORKDIR /usr/src/app
 RUN dnf -y update
 RUN dnf -y install openssl openssl-devel
@@ -15,7 +14,7 @@ RUN rm -rf ./src
 COPY src ./src
 RUN touch -a -m ./src/lib.rs
 RUN pip3 install cargo-lambda
-RUN /root/.cargo/bin/cargo lambda build --release --${ARCH}
+RUN /root/.cargo/bin/cargo lambda build --release --arm64
 RUN zip -j /tmp/code.zip target/lambda/lambda-perf/bootstrap
 
 FROM scratch

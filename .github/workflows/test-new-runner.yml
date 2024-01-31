@@ -15,7 +15,7 @@ jobs:
       - name: Test context
         run: docker context use default
       - name: test build arm
-        run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker buildx build . --build-arg ARCH=arm64 -t maxday/rust_on_provided_al2023
+        run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker buildx build . -t maxday/rust_on_provided_al2023
 
 
 
