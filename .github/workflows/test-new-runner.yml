@@ -11,11 +11,13 @@ jobs:
       - name: Install docker
         run: brew install docker --cask
       - name: Print docker version
-        run: DOCKER_BUILDKIT=0 docker --version
+        run: docker --version
       - name: Test context
-        run: DOCKER_BUILDKIT=0 docker context use default
+        run: docker context use default
+      - name: Install plugin buildx
+        run: docker plugin install buildx
       - name: buildx
-        run: DOCKER_BUILDKIT=0 docker buildx create --platform linux/arm64,linux/arm/v8 maxday_builder
+        run: docker buildx create --platform linux/arm64,linux/arm/v8 maxday_builder
       - name: test build arm
         run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker buildx build .
 
