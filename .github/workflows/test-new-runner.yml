@@ -14,6 +14,8 @@ jobs:
         run: docker --version
       - name: Test context
         run: docker context use default
+      - name: buildx
+        run: docker buildx create --name mybuilder --use
       - name: test build arm
         run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker buildx build .
 
