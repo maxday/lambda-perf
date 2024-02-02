@@ -1,5 +1,6 @@
 {
   "configuration": "Release",
+  "environment-variables" : "SSL_CERT_FILE=/tmp/noop",
   "framework": "net8.0",
   "function-runtime": "provided.al2023",
   "function-memory-size": 256,
