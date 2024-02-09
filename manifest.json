@@ -351,6 +351,16 @@
       "image": {
         "baseImage": "public.ecr.aws/lambda/provided:al2"
       }
+    },
+    {
+      "displayName": "llrt (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "index.hello",
+      "path": "bun",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
     }
   ]
 }
