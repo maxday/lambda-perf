@@ -10,17 +10,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install docker
         run: brew install docker --cask
-      - name: Install colima
-        run: brew install colima
-      - name: Start colima
-        run: colima start
-      - name: Run docker ps
-        run: docker ps
-      - name: Build
-        run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker build .
-      # - name: test build arm
-      #   run: cd s3-uploader/runtimes/rust_on_provided_al2023 && docker buildx build .
-      # /Applications/Docker.app/Contents/MacOS/com.docker.socket
+      - name: Hack
+        run: | 
+          HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask docker
+          sudo /Applications/Docker.app/Contents/MacOS/Docker --unattended --install-privileged-components
+          open -a /Applications/Docker.app --args --unattended --accept-license
+          echo "We are waiting for Docker to be up and running. It can take over 2 minutes..."
+          while ! /Applications/Docker.app/Contents/Resources/bin/docker info &>/dev/null; do sleep 1; done
+          docker ps
 
 
 
