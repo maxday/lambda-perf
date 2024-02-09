@@ -101,9 +101,12 @@ const buildJsonFromData = (data) => {
     ];
     for (const runtime of runtimes) {
       const filteredData = data.filter((e) => e.lambda.S === runtime) || [];
-      const initDurations = filteredData.map((e) =>
+      let initDurations = filteredData.map((e) =>
         parseFloat(e.initDuration.N, 10)
       );
+      if (initDurations.length > 10) {
+        initDurations = initDurations.slice(0, 10);
+      }
       const averageMemoryUsed = formatMaxThreeDigits(
         computeMean(filteredData.map((e) => parseFloat(e.maxMemoryUsed.N, 10)))
       );
