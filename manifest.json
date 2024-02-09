@@ -12,13 +12,6 @@
       }
     },
     {
-      "displayName": "nodejs14.x",
-      "runtime": "nodejs14.x",
-      "handler": "index.handler",
-      "path": "nodejs14x",
-      "architectures": ["x86_64", "arm64"]
-    },
-    {
       "displayName": "nodejs16.x",
       "runtime": "nodejs16.x",
       "handler": "index.handler",
@@ -46,16 +39,6 @@
       "architectures": ["x86_64", "arm64"],
       "image": {
         "baseImage": "public.ecr.aws/lambda/nodejs:20"
-      }
-    },
-    {
-      "displayName": "python3.7",
-      "runtime": "python3.7",
-      "handler": "index.handler",
-      "path": "python37",
-      "architectures": ["x86_64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/python:3.7"
       }
     },
     {
@@ -149,16 +132,6 @@
       }
     },
     {
-      "displayName": "go1.x",
-      "runtime": "go1.x",
-      "handler": "main",
-      "path": "go1x",
-      "architectures": ["x86_64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/go:1"
-      }
-    },
-    {
       "displayName": "java11",
       "runtime": "java11",
       "handler": "io.github.maxday.Handler::handleRequest",
@@ -169,16 +142,6 @@
       }
     },
     {
-      "displayName": "java8",
-      "runtime": "java8",
-      "handler": "io.github.maxday.Handler::handleRequest",
-      "path": "java8",
-      "architectures": ["x86_64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/java:8"
-      }
-    },
-    {
       "displayName": "java8.al2",
       "runtime": "java8.al2",
       "handler": "io.github.maxday.Handler::handleRequest",
@@ -186,16 +149,6 @@
       "architectures": ["x86_64", "arm64"],
       "image": {
         "baseImage": "public.ecr.aws/lambda/java:8.al2"
-      }
-    },
-    {
-      "displayName": "ruby2.7",
-      "runtime": "ruby2.7",
-      "handler": "index.handler",
-      "path": "ruby27",
-      "architectures": ["x86_64", "arm64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/ruby:2.7"
       }
     },
     {
