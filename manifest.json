@@ -355,7 +355,7 @@
     {
       "displayName": "llrt (prov.al2023)",
       "runtime": "provided.al2023",
-      "handler": "index.hello",
+      "handler": "index.handler",
       "path": "llrt_on_provided_al2023",
       "architectures": ["x86_64", "arm64"],
       "image": {
