@@ -69,3 +69,15 @@ hr {
 .badge:empty {
     display: inline-block;
 }
+@media (prefers-color-scheme: dark) {
+    body {
+        --bs-body-bg: var(--bs-gray-900);
+        --bs-body-color: var(--bs-gray-200);
+    }
+    .footer {
+        background-color: var(--bs-gray-800);
+    }
+    .text-muted {
+        color: var(--bs-gray-500) !important; /* needs important since BS .text-muted also uses important */
+    }
+}
