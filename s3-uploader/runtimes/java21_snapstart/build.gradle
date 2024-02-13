@@ -4,6 +4,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation 'org.crac:crac:1.4.0'
+}
+
 sourceCompatibility = 21
 targetCompatibility = 21
 
