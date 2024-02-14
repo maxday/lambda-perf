@@ -4,6 +4,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation 'org.crac:crac:1.4.0'
+}
+
 sourceCompatibility = 21
 targetCompatibility = 21
 
@@ -11,6 +15,9 @@ task buildZip(type: Zip) {
     archiveBaseName = 'code'
     from compileJava
     from processResources
+    into('lib') {
+        from configurations.runtimeClasspath
+    }
 }
 
 build.dependsOn buildZip
