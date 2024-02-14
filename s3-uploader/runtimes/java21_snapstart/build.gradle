@@ -15,6 +15,9 @@ task buildZip(type: Zip) {
     archiveBaseName = 'code'
     from compileJava
     from processResources
+    into('lib') {
+        from configurations.runtimeClasspath
+    }
 }
 
 build.dependsOn buildZip
