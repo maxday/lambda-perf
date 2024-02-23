@@ -112,6 +112,16 @@
       }
     },
     {
+      "displayName": "dotnet8",
+      "runtime": "dotnet8",
+      "handler": "LambdaPerf::LambdaPerf.Function::Handler",
+      "path": "dotnet8",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/dotnet:8"
+      }
+    },
+    {
       "displayName": "dotnet8 aot (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
