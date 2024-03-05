@@ -68,6 +68,9 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=$(cat /tmp/creds_json | jq .Credentials.SecretAccessKey| tr -d '"')
           export AWS_SESSION_TOKEN=$(cat /tmp/creds_json | jq .Credentials.SessionToken|tr -d '"')
           sls deploy --force
-
-
-
+      - name: Remove the cron job scheduler in staging (eu-west-1)
+        if: "${{ inputs.region == 'eu-west-1' }}"
+        run: |
+          RULE_NAME=$(aws events list-rule-names-by-target --target-arn arn:aws:lambda:${{ inputs.region }}:${{ secrets.AWS_ACCOUNT_ID }}:function:lambda-perf-dev-functionTriggerDeployerRs --region ${{ inputs.region }} | jq -r '.RuleNames[0]')
+          echo "Disabling rule ${RULE_NAME}"
+          aws events disable-rule --name $RULE_NAME --region ${{ inputs.region }}
