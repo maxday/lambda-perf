@@ -12,6 +12,7 @@ provider:
     role:
       name: lambda-perf-${sls:stage}-role-${aws:region}
   timeout: 900
+  logRetentionInDays: 7
   iamRoleStatements:
     - Effect: Allow
       Action: "logs:CreateLogGroup"
