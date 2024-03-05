@@ -74,3 +74,6 @@ jobs:
           RULE_NAME=$(aws events list-rule-names-by-target --target-arn arn:aws:lambda:${{ inputs.region }}:${{ secrets.AWS_ACCOUNT_ID }}:function:lambda-perf-dev-functionTriggerDeployerRs --region ${{ inputs.region }} | jq -r '.RuleNames[0]')
           echo "Disabling rule ${RULE_NAME}"
           aws events disable-rule --name $RULE_NAME --region ${{ inputs.region }}
+          RULE_NAME=$(aws events list-rule-names-by-target --target-arn arn:aws:lambda:${{ inputs.region }}:${{ secrets.AWS_ACCOUNT_ID }}:function:lambda-perf-dev-resultBuilder --region ${{ inputs.region }} | jq -r '.RuleNames[0]')
+          echo "Disabling rule ${RULE_NAME}"
+          aws events disable-rule --name $RULE_NAME --region ${{ inputs.region }}
