@@ -1,5 +1,4 @@
 [workspace]
-
 members = [
     "function-trigger-deployer-rs",
     "function-deployer-rs",
@@ -7,6 +6,7 @@ members = [
     "function-report-log-processor-rs",
     "common_lib"
 ]
+resolver = "2"
 
 [profile.release]
 opt-level = 'z'
