@@ -327,13 +327,13 @@
       "hasSpecificImageBuild": true
     },
     {
-      "displayName": "graalvm java21 (prov.al2)",
+      "displayName": "graalvm java21 (prov.al2023)",
       "runtime": "provided.al2023",
       "handler": "com.xavierbouclet.OkHandler",
-      "path": "graalvm_java21_on_provided_al2",
+      "path": "graalvm_java21_on_provided_al2023",
       "architectures": ["x86_64", "arm64"],
       "image": {
-        "baseImage": "public.ecr.aws/lambda/provided:al2"
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
       }
     }
   ]
