@@ -9,14 +9,13 @@ const sendToS3 = async (
   client,
   region,
   path,
-  architecture,
+  codeFilename,
   delayInMs,
   nbRetry
 ) => {
   if (nbRetry > 5) {
     throw new Error("Too many retries");
   }
-  const codeFilename = `code_${architecture}.zip`;
   const fileStream = fs.createReadStream(`./runtimes/${path}/${codeFilename}`);
   const putObjectParams = {
     Bucket: `lambda-perf-${region}`,
@@ -26,17 +25,17 @@ const sendToS3 = async (
   const command = new PutObjectCommand(putObjectParams);
   try {
     await client.send(command);
-    console.log(`s3 upload success for ${path} arch = ${architecture}`);
+    console.log(`s3 upload success for ${path} codeFileName = ${codeFilename}`);
   } catch (e) {
     console.error(e);
     await sleep(delayInMs);
-    await sendToS3(client, region, path, architecture, delayInMs, nbRetry + 1);
+    await sendToS3(client, region, path, codeFilename, delayInMs, nbRetry + 1);
   }
 };
 
-const build = async (path, architecture, nbRetry) => {
+const build = async (path, architecture, hasSpecificImageBuild, nbRetry) => {
   console.log(
-    `start building the artifact for ${path} arch = ${architecture}, retry = ${nbRetry}`
+    `start building the artifact for ${path} arch = ${architecture}, hasSpecificImageBuild = ${hasSpecificImageBuild} and retry = ${nbRetry}`
   );
   if (nbRetry > 5) {
     throw new Error("Too many retries");
@@ -48,6 +47,12 @@ const build = async (path, architecture, nbRetry) => {
     childProcess.execSync(
       `./runtimes/${path}/build.sh ${path} ${architecture}`
     );
+
+    if (hasSpecificImageBuild) {
+      childProcess.execSync(
+        `./runtimes/${path}/build_image.sh ${path} ${architecture}`
+      );
+    }
   } catch (e) {
     console.error(e);
     await build(path, architecture, nbRetry + 1);
@@ -64,15 +69,33 @@ const upload = async () => {
     for (const architecture of runtime.architectures) {
       if (architecture === ARCHITECTURE) {
         const path = runtime.path;
-        await build(path, architecture, 0);
+        const hasSpecificImageBuild =
+          runtime.hasOwnProperty("hasSpecificImageBuild") &&
+          runtime.hasSpecificImageBuild === true;
+        await build(path, architecture, hasSpecificImageBuild, 0);
+
+        let codeFilename = `code_${architecture}.zip`;
         await sendToS3(
           s3Client,
           REGION,
           path,
-          architecture,
+          codeFilename,
           SLEEP_DELAY_IN_MILLISEC,
           0
         );
+        // we need to upload a different artifact if the runtime
+        // has specific image build instructions
+        codeFilename = `code_${architecture}_image.zip`;
+        if (hasSpecificImageBuild) {
+          await sendToS3(
+            s3Client,
+            REGION,
+            path,
+            codeFilename,
+            SLEEP_DELAY_IN_MILLISEC,
+            0
+          );
+        }
       }
     }
   }

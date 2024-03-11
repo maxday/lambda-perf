@@ -13,9 +13,18 @@ const buildDockerImage = async (
   region,
   runtime,
   architecture,
+  hasSpecificImageBuild,
   delayInMs
 ) => {
-  await getFromS3(s3Client, region, runtime.path, architecture, delayInMs, 0);
+  await getFromS3(
+    s3Client,
+    region,
+    runtime.path,
+    architecture,
+    hasSpecificImageBuild,
+    delayInMs,
+    0
+  );
   if (
     fs.existsSync(runtime.path) &&
     runtime.path !== "." &&
@@ -43,6 +52,7 @@ const getFromS3 = async (
   region,
   path,
   architecture,
+  hasSpecificImageBuild,
   delayInMs,
   nbRetry
 ) => {
@@ -50,7 +60,10 @@ const getFromS3 = async (
   if (nbRetry > 5) {
     throw new Error("Too many retries");
   }
-  const codeFilename = `code_${architecture}.zip`;
+
+  const codeFilename = hasSpecificImageBuild
+    ? `code_${architecture}_image.zip`
+    : `code_${architecture}.zip`;
 
   const getObjectParams = {
     Bucket: `lambda-perf-${region}`,
@@ -70,7 +83,15 @@ const getFromS3 = async (
   } catch (e) {
     console.error(e);
     await sleep(delayInMs);
-    await getFromS3(client, region, path, architecture, delayInMs, nbRetry + 1);
+    await getFromS3(
+      client,
+      region,
+      path,
+      architecture,
+      hasSpecificImageBuild,
+      delayInMs,
+      nbRetry + 1
+    );
   }
 };
 
@@ -88,12 +109,16 @@ const run = async () => {
       if (architecture === ARCHITECTURE) {
         console.log("building image");
         if (runtime.hasOwnProperty("image")) {
+          const hasSpecificImageBuild =
+            runtime.hasOwnProperty("hasSpecificImageBuild") &&
+            runtime.hasSpecificImageBuild === true;
           await buildDockerImage(
             ACCOUNT_ID,
             s3Client,
             REGION,
             runtime,
             architecture,
+            hasSpecificImageBuild,
             SLEEP_DELAY_IN_MILLISEC
           );
         }
