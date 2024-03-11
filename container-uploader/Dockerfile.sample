@@ -5,5 +5,6 @@ ARG handlerCmd
 
 COPY ./${handlerCode} /var/runtime
 COPY ./${handlerCode} /var/task
+RUN chmod u+x /var/task/bootstrap || true
 ENV LAMBDA_PERF_CMD=${handlerCmd}
 CMD [ ${LAMBDA_PERF_CMD} ]
