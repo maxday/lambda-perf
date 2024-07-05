@@ -1,4 +1,4 @@
-name: build and upload artifacts in S3
+name: publish artifacts to S3
 
 on:
   workflow_dispatch:
