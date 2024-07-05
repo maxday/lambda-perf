@@ -70,6 +70,7 @@ jobs:
           ARCHITECTURE: ${{ inputs.architecture }}
           AWS_REGION: ${{ inputs.region }}
           RUNTIME_ID: ${{ matrix.runtime_id }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
           cd container-uploader
           yarn install

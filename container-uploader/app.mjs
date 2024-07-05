@@ -130,4 +130,4 @@ console.log('region = ', process.env.AWS_REGION);
 console.log('architecure = ', process.env.ARCHITECTURE);
 console.log('runtimeId = ', process.env.RUNTIME_ID);
 
-await run(process.env.ACCOUNT_ID, runtimeFromRuntimeId(manifest.runtimes, process.env.RUNTIME_ID), process.env.ARCHITECTURE, process.env.AWS_REGION);
+await run(process.env.AWS_ACCOUNT_ID, runtimeFromRuntimeId(manifest.runtimes, process.env.RUNTIME_ID), process.env.ARCHITECTURE, process.env.AWS_REGION);
