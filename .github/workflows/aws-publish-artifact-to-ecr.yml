@@ -76,5 +76,13 @@ jobs:
           yarn install
           node app.mjs
 
+  clean-untagged-image:
+    needs: build-upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: clean untagged images
+        env:
+          AWS_REGION: ${{ inputs.region }}
+        run: |
           UNTAGGED_IMAGES=$( aws ecr list-images --region ${AWS_REGION} --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
           aws ecr batch-delete-image --region ${AWS_REGION} --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
