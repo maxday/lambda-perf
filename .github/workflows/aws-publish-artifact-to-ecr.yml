@@ -29,7 +29,7 @@ jobs:
       runner: ${{ steps.select.outputs.runner }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-        - name: Check branch
+      - name: Check branch
         id: select
         run: |
           if [ ${{ inputs.architecture }} == 'x86_64' ]; then
