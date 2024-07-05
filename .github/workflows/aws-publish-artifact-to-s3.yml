@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       runner: ${{ steps.select.outputs.runner }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Check branch
         id: select
@@ -37,17 +38,21 @@ jobs:
             echo "runner=self-hosted" >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
+      - uses: actions/checkout@v3
+      - name: Build runtime matrix
+        id: set-matrix
+        run: |
+          jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json
+          echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json)" >> $GITHUB_OUTPUT
+
   build-upload:
     needs: setup
     runs-on: ${{ needs.setup.outputs.runner }}
+    strategy:
+      matrix: 
+        runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v3
-      - name: Delete huge unnecessary folders
-        run: |
-          rm -rf /opt/hostedtoolcache
-          rm -rf /usr/share/dotnet
-          rm -rf /opt/ghc
-          rm -rf "$AGENT_TOOLSDIRECTORY"
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
@@ -58,6 +63,7 @@ jobs:
         env:
           ARCHITECTURE: ${{ inputs.architecture }}
           AWS_REGION: ${{ inputs.region }}
+          RUNTIME_ID: ${{ matrix.runtime_id }}
         run: |
           cd s3-uploader
           yarn install

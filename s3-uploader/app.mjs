@@ -33,6 +33,7 @@ const build = async (path, architecture, hasSpecificImageBuild, nbRetry) => {
   console.log(
     `start building the artifact for ${path} arch = ${architecture}, hasSpecificImageBuild = ${hasSpecificImageBuild} and retry = ${nbRetry}`
   );
+
   if (nbRetry > 5) {
     throw new Error("Too many retries");
   }
@@ -51,41 +52,47 @@ const build = async (path, architecture, hasSpecificImageBuild, nbRetry) => {
     }
   } catch (e) {
     console.error(e);
-    await build(path, architecture, nbRetry + 1);
+    await build(path, architecture, hasSpecificImageBuild, nbRetry + 1);
   }
 };
 
-const upload = async () => {
-  const REGION = process.env.AWS_REGION;
-  const ARCHITECTURE = process.env.ARCHITECTURE;
+const upload = async (region, architecture, runtime) => {
   const SLEEP_DELAY_IN_MILLISEC = 5000;
+  const path = runtime.path;
+  const hasSpecificImageBuild =
+    runtime.hasOwnProperty("hasSpecificImageBuild") &&
+    runtime.hasSpecificImageBuild === true;
+  await build(path, architecture, hasSpecificImageBuild, 0);
 
-  for (const runtime of manifest.runtimes) {
-    for (const architecture of runtime.architectures) {
-      if (architecture === ARCHITECTURE) {
-        const path = runtime.path;
-        const hasSpecificImageBuild =
-          runtime.hasOwnProperty("hasSpecificImageBuild") &&
-          runtime.hasSpecificImageBuild === true;
-        await build(path, architecture, hasSpecificImageBuild, 0);
-
-        let codeFilename = `code_${architecture}.zip`;
-        await sendToS3(REGION, path, codeFilename, SLEEP_DELAY_IN_MILLISEC, 0);
-        // we need to upload a different artifact if the runtime
-        // has specific image build instructions
-        codeFilename = `code_${architecture}_image.zip`;
-        if (hasSpecificImageBuild) {
-          await sendToS3(
-            REGION,
-            path,
-            codeFilename,
-            SLEEP_DELAY_IN_MILLISEC,
-            0
-          );
-        }
-      }
-    }
+  let codeFilename = `code_${architecture}.zip`;
+  await sendToS3(region, path, codeFilename, SLEEP_DELAY_IN_MILLISEC, 0);
+  // we need to upload a different artifact if the runtime
+  // has specific image build instructions
+  codeFilename = `code_${architecture}_image.zip`;
+  if (hasSpecificImageBuild) {
+    await sendToS3(
+      region,
+      path,
+      codeFilename,
+      SLEEP_DELAY_IN_MILLISEC,
+      0
+    );
   }
 };
 
-await upload();
+const runtimeFromRuntimeId = (manifest, runtimeId) => {
+  const runtime = manifest.find(r => {
+    return r.path === runtimeId;
+  });
+  if(!runtime) {
+    throw "cound not find the runtime"
+  }
+  console.log(runtime);
+  return runtime;
+}
+
+console.log('region = ', process.env.AWS_REGION);
+console.log('architecure = ', process.env.ARCHITECTURE);
+console.log('runtimeId = ', process.env.RUNTIME_ID);
+
+await upload(process.env.AWS_REGION, process.env.ARCHITECTURE, runtimeFromRuntimeId(manifest.runtimes, process.env.RUNTIME_ID));
