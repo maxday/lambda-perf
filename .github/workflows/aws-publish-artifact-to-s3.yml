@@ -38,7 +38,7 @@ jobs:
             echo "runner=self-hosted" >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build runtime matrix
         id: set-matrix
         run: |
@@ -52,7 +52,7 @@ jobs:
       matrix: 
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
