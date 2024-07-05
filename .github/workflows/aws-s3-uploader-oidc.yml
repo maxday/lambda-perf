@@ -1,0 +1,60 @@
+name: build and upload artifacts in S3
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'region on which you want to deploy'
+        type: choice
+        options:
+          - eu-west-1
+          - us-east-1
+        required: true
+      architecture:
+        description: 'architecture'
+        type: choice
+        options:
+          - x86_64
+          - arm64
+        required: true
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      runner: ${{ steps.select.outputs.runner }}
+    steps:
+      - name: Check branch
+        id: select
+        run: |
+          if [ ${{ inputs.architecture }} == 'x86_64' ]; then
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+          else
+            echo "runner=self-hosted" >> $GITHUB_OUTPUT
+          fi
+          cat $GITHUB_OUTPUT
+  build-upload:
+    needs: setup
+    runs-on: ${{ needs.setup.outputs.runner }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Delete huge unnecessary folders
+        run: |
+          rm -rf /opt/hostedtoolcache
+          rm -rf /usr/share/dotnet
+          rm -rf /opt/ghc
+          rm -rf "$AGENT_TOOLSDIRECTORY"
+      - name: configure aws credentials
+          uses: aws-actions/configure-aws-credentials@v4.0.2
+          with:
+            role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+            role-session-name: GitHub_Action_LambdaPerf_Session
+            aws-region: ${{ inputs.region }}
+      - name: build and deploy
+        env:
+          ARCHITECTURE: ${{ inputs.architecture }}
+          AWS_REGION: ${{ inputs.region }}
+        run: |
+          cd s3-uploader
+          yarn install
+          node app.mjs
