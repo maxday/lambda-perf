@@ -188,18 +188,30 @@ mod tests {
     use super::*;
     use aws_sdk_dynamodb::config::{Credentials, Region};
     use aws_sdk_dynamodb::{Client, Config};
+    use testcontainers::{
+        core::{IntoContainerPort, WaitFor},
+        runners::AsyncRunner,
+        GenericImage,
+    };
 
     use std::io::Result;
-    use testcontainers::{self, clients};
-
-    mod custom_container;
 
     #[tokio::test]
     async fn test_create_table() -> Result<()> {
-        let docker = clients::Cli::default();
-        let node = docker.run(custom_container::DynamoDb);
-        let port = node.get_host_port_ipv4(8000);
+        let container = GenericImage::new("amazon/dynamodb-local", "latest")
+            .with_exposed_port(8000.tcp())
+            .with_wait_for(WaitFor::seconds(5))
+            .start()
+            .await
+            .expect("could not start dynamodb");
+
+        let port = container
+            .get_host_port_ipv4(8000.tcp())
+            .await
+            .expect("could not get the port");
+
         let client = build_custom_client(port).await;
+
         let dynamodb_manager =
             DynamoDBManager::new(String::from("pizza_test_2"), Some(client)).await;
         let res = dynamodb_manager.create().await;
