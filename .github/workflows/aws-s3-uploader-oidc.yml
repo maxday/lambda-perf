@@ -1,5 +1,9 @@
 name: publish artifacts to S3
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_dispatch:
     inputs:
@@ -17,10 +21,6 @@ on:
           - x86_64
           - arm64
         required: true
-
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   setup:
