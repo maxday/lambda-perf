@@ -42,8 +42,8 @@ jobs:
       - name: Build runtime matrix
         id: set-matrix
         run: |
-          jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}") and .image) | .path]' manifest.json
-          echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}") and .image) | .path]' manifest.json)" >> $GITHUB_OUTPUT
+          jq -c '[.runtimes[] | select(.architectures | index("arm64")) | select(.image != null and .image.baseImage != null) | .path]' manifest.json
+          echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | select(.image != null and .image.baseImage != null) | .path]' manifest.json)" >> $GITHUB_OUTPUT
 
   build-upload:
     needs: setup
