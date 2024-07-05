@@ -1,4 +1,4 @@
-name: AWS publish artifacts to S3
+name: AWS publish artifacts to ECR
 
 permissions:
   id-token: write
@@ -42,7 +42,7 @@ jobs:
       - name: Build runtime matrix
         id: set-matrix
         run: |
-          jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json
+          jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) and .image | .path]' manifest.json
           echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json)" >> $GITHUB_OUTPUT
 
   build-upload:
@@ -71,6 +71,9 @@ jobs:
           AWS_REGION: ${{ inputs.region }}
           RUNTIME_ID: ${{ matrix.runtime_id }}
         run: |
-          cd s3-uploader
+          cd container-uploader
           yarn install
           node app.mjs
+
+          UNTAGGED_IMAGES=$( aws ecr list-images --region ${AWS_REGION} --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+          aws ecr batch-delete-image --region ${AWS_REGION} --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
