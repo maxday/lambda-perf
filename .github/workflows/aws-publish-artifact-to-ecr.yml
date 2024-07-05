@@ -80,6 +80,12 @@ jobs:
     needs: build-upload
     runs-on: ubuntu-latest
     steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: GitHub_Action_LambdaPerf_Session
+          aws-region: ${{ inputs.region }}
       - name: clean untagged images
         env:
           AWS_REGION: ${{ inputs.region }}
