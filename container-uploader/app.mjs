@@ -95,36 +95,39 @@ const getFromS3 = async (
   }
 };
 
-const run = async () => {
-  const REGION = process.env.AWS_REGION;
-  const ACCOUNT_ID = process.env.ACCOUNT_ID;
-  const ARCHITECTURE = process.env.ARCHITECTURE;
+const run = async (accountId, runtime, architecture, region) => {
   const SLEEP_DELAY_IN_MILLISEC = 5000;
-
   const s3Client = new S3Client();
-  for (const runtime of manifest.runtimes) {
-    console.log(runtime);
-    for (const architecture of runtime.architectures) {
-      console.log(architecture);
-      if (architecture === ARCHITECTURE) {
-        console.log("building image");
-        if (runtime.hasOwnProperty("image")) {
-          const hasSpecificImageBuild =
-            runtime.hasOwnProperty("hasSpecificImageBuild") &&
-            runtime.hasSpecificImageBuild === true;
-          await buildDockerImage(
-            ACCOUNT_ID,
-            s3Client,
-            REGION,
-            runtime,
-            architecture,
-            hasSpecificImageBuild,
-            SLEEP_DELAY_IN_MILLISEC
-          );
-        }
-      }
-    }
+  console.log("building image");
+  if (runtime.hasOwnProperty("image")) {
+    const hasSpecificImageBuild =
+      runtime.hasOwnProperty("hasSpecificImageBuild") &&
+      runtime.hasSpecificImageBuild === true;
+    await buildDockerImage(
+      accountId,
+      s3Client,
+      region,
+      runtime,
+      architecture,
+      hasSpecificImageBuild,
+      SLEEP_DELAY_IN_MILLISEC
+    );
   }
 };
 
-await run();
+const runtimeFromRuntimeId = (manifest, runtimeId) => {
+  const runtime = manifest.find(r => {
+    return r.path === runtimeId;
+  });
+  if(!runtime) {
+    throw "cound not find the runtime"
+  }
+  console.log(runtime);
+  return runtime;
+}
+
+console.log('region = ', process.env.AWS_REGION);
+console.log('architecure = ', process.env.ARCHITECTURE);
+console.log('runtimeId = ', process.env.RUNTIME_ID);
+
+await run(process.env.AWS_ACCOUNT_ID, runtimeFromRuntimeId(manifest.runtimes, process.env.RUNTIME_ID), process.env.ARCHITECTURE, process.env.AWS_REGION);
