@@ -18,6 +18,10 @@ on:
           - arm64
         required: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   setup:
     runs-on: ubuntu-latest
