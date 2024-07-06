@@ -1,5 +1,5 @@
-const { Octokit } = require("@octokit/rest");
-const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
+import { Octokit } from "@octokit/rest";
+import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 
 const commitFile = async (content, filename, authToken, owner, repo) => {
   try {
@@ -141,7 +141,7 @@ const formatMaxThreeDigits = (number) => Math.round(number * 1e3) / 1e3;
 
 const computeMean = (array) => array.reduce((a, b) => a + b, 0) / array.length;
 
-exports.handler = async (_, context) => {
+export async function handler(_, context) {
   const TABLE = "report-log";
   const OWNER = "maxday";
   const REPO = "lambda-perf";
