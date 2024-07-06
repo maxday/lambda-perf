@@ -4,7 +4,6 @@ configValidationMode: error
 provider:
   name: aws
   memorySize: 128
-  runtime: nodejs18.x
   region: ${env:AWS_REGION}
   deploymentBucket:
     name: lambda-perf-${env:AWS_REGION}
@@ -212,6 +211,7 @@ functions:
   
   
   resultBuilder:
+    runtime: nodejs20.x
     environment:
       GH_AUTH_TOKEN: ${env:GH_AUTH_TOKEN}
       LAMBDA_PERF_ENV: ${env:LAMBDA_PERF_ENV}
