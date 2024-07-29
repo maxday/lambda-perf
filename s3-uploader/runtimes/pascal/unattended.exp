@@ -1,0 +1,9 @@
+#!/usr/bin/expect
+spawn ./install.sh
+expect "Install prefix"
+send "\r"
+expect "Install documentation"
+send "n \r"
+expect "Install demos"
+send "n \r"
+expect eof
