@@ -4,7 +4,7 @@ const dataManager = {
 
 const load = async (dataManager) => {
   const request = await fetch(
-    "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.5008807203047589"
+    "https://raw.githubusercontent.com/maxday/lambda-perf/main/data/last.json?0.4474705898393765"
   );
   const json = await request.json();
   dataManager.fetchData = json;
