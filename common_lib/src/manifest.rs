@@ -195,8 +195,9 @@ mod tests {
         let manifest = manifest::ManifestManager::new("manifest.test.layer.json");
         let manifest = manifest.read_manifest();
 
-        assert_eq!(manifest.runtimes.len(), 1);
+        assert_eq!(manifest.runtimes.len(), 2);
 
+        // bun
         assert_eq!(manifest.runtimes[0].display_name(), "bun layer(prov.al2)");
         assert_eq!(manifest.runtimes[0].runtime(), LambdaRuntime::Providedal2);
         assert_eq!(manifest.runtimes[0].handler(), "index.hello");
@@ -204,14 +205,30 @@ mod tests {
         assert_eq!(manifest.runtimes[0].architecture(), "x86_64");
         assert_eq!(manifest.runtimes[0].memory_size(), 128);
         assert!(!manifest.runtimes[0].has_image());
-
         let layer = manifest.runtimes[0].get_layer_name("us-east-1");
         assert_eq!(
             layer,
             Some(vec![String::from(
                 "arn:aws:lambda:us-east-1:226609089145:layer:bun-1_0_0-x64:1"
             )])
-        )
+        );
+
+        // deno
+        assert_eq!(manifest.runtimes[1].display_name(), "deno layer(prov.al2023)");
+        assert_eq!(manifest.runtimes[1].runtime(), LambdaRuntime::Providedal2023);
+        assert_eq!(manifest.runtimes[1].handler(), "index.hello");
+        assert_eq!(manifest.runtimes[1].path(), "deno_layer");
+        assert_eq!(manifest.runtimes[1].architecture(), "x86_64");
+        assert_eq!(manifest.runtimes[1].memory_size(), 128);
+        assert!(!manifest.runtimes[1].has_image());
+        let layer = manifest.runtimes[1].get_layer_name("us-east-1");
+        assert_eq!(
+            layer,
+            Some(vec![String::from(
+                "<TODO: add deno layer ARN once I know where it comes from>"
+            )])
+        );
+
     }
 
     #[test]

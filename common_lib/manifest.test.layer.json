@@ -10,6 +10,16 @@
         "layer": {
           "x86_64": "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-x64:1"
         }
+      },
+      {
+        "displayName": "deno layer(prov.al2023)",
+        "runtime": "provided.al2023",
+        "handler": "index.hello",
+        "path": "deno_layer",
+        "architectures": ["x86_64"],
+        "layer": {
+          "x86_64": "<TODO: add deno layer ARN once I know where it comes from>"
+        }
       }
     ]
 }
