@@ -54,6 +54,7 @@ in addition to the following custom runtimes:
 - `apple swift 5.8` on `provided.al2`
 - `bun` on `provided.al2` (with and without layer)
 - `llrt` on `provided.al2023`
+- `deno` on `provided.al2023`
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
