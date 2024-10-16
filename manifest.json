@@ -345,6 +345,16 @@
       "image": {
         "baseImage": "public.ecr.aws/lambda/provided:al2023"
       }
+    },
+    {
+      "displayName": "deno (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "index.main",
+      "path": "deno",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
     }
   ]
 }
