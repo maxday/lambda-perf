@@ -47,7 +47,7 @@ in addition to the following custom runtimes:
 - `c++` on `provided.al2023`
 - `dotnet7 aot` on `provided.al2`
 - `dotnet8 aot` on `provided.al2`
-- `dotnet8 aot` on `provided.al2023`
+- `dotnet9 aot` on `provided.al2023`
 - `quarkus native` on `provided.al2`
 - `graalvm java17` on `provided.al2`
 - `graalvm java21` on `provided.al2023`
