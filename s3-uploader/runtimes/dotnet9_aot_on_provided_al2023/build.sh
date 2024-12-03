@@ -15,6 +15,6 @@ fi
 
 rm ${DIR_NAME}/code_${2}.zip 2> /dev/null
 
-docker build --platform ${PLATFORM} ${DIR_NAME} --build-arg ARCH=${ARCH} --build-arg IMAGE_TAG=${IMAGE_TAG} -t maxday/dotnet8_on_provided_al2023_${2}
-dockerId=$(docker create maxday/dotnet8_on_provided_al2023_${2})
+docker build --platform ${PLATFORM} ${DIR_NAME} --build-arg ARCH=${ARCH} --build-arg IMAGE_TAG=${IMAGE_TAG} -t maxday/dotnet9_on_provided_al2023_${2}
+dockerId=$(docker create maxday/dotnet9_on_provided_al2023_${2})
 docker cp $dockerId:/code.zip ${DIR_NAME}/code_${2}.zip
