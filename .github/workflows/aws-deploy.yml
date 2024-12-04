@@ -56,7 +56,7 @@ jobs:
         run: |
           cd ./result-builder && yarn install
       - name: install Serverless Framework
-        run: sudo yarn global add serverless@^3.27.0 --prefix /usr/local
+        run: sudo yarn global add serverless@^4.4.14 --prefix /usr/local
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
