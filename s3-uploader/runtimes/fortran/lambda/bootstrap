@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -euo pipefail
+
+# Processing Loop
+while true
+do
+  echo "handler: $_HANDLER"
+  HEADERS="$(mktemp)"
+  # Get an event. The HTTP request will block until one is received
+  EVENT_DATA=$(curl -sS -LD "$HEADERS" -X GET "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next")
+  echo "event data: $EVENT_DATA"
+
+  # Extract request ID by scraping response headers received above
+  REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
+  echo "request id: $REQUEST_ID"
+
+  # Execute the handler function from the script
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LAMBDA_TASK_ROOT/lib
+  echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+  echo "ls -lh $(pwd) (current working dir)"
+  echo "$(ls -lh .)"
+  #RESPONSE=$($_HANDLER)
+  RESPONSE=$(/var/task/lambda)
+  
+  # Necessary API Gateway response format
+  JSON_RESPONSE='
+  {
+    "isBase64Encoded": false,
+    "statusCode": 200, 
+    "body": "'"$RESPONSE"'" 
+  }'
+
+  # Send the response
+  curl -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response"  -d "${JSON_RESPONSE}"
+done
