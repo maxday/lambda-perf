@@ -306,6 +306,17 @@
       }
     },
     {
+      "displayName": "bref layer(prov.al2)",
+      "runtime": "provided.al2",
+      "handler": "index.php",
+      "path": "bref_layer",
+      "architectures": ["x86_64", "arm64"],
+      "layer": {
+        "x86_64": "arn:aws:lambda:_REGION_:534081306603:layer:php-84-fpm:13",
+        "arm64": "arn:aws:lambda:_REGION_:534081306603:layer:arm-php-84-fpm:13"
+      }
+    },
+    {
       "displayName": "bun layer(prov.al2)",
       "runtime": "provided.al2",
       "handler": "index.hello",
