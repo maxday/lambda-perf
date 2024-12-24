@@ -92,6 +92,16 @@
       }
     },
     {
+      "displayName": "python3.13",
+      "runtime": "python3.13",
+      "handler": "index.handler",
+      "path": "python313",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.13"
+      }
+    },
+    {
       "displayName": "dotnet6",
       "runtime": "dotnet6",
       "handler": "LambdaPerf::LambdaPerf.Function::Handler",
