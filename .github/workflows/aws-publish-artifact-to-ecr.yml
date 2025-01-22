@@ -65,6 +65,8 @@ jobs:
           rm -rf /usr/share/dotnet
           rm -rf /opt/ghc
           rm -rf "$AGENT_TOOLSDIRECTORY"
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
       - name: build and deploy
         env:
           ARCHITECTURE: ${{ inputs.architecture }}
