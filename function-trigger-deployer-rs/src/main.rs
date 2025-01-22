@@ -40,6 +40,8 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     let skip_snapstart =
         std::env::var("SKIP_SNAPSTART").is_ok_and(|v| v.eq_ignore_ascii_case("true"));
 
+    info!("skip_snapstart is set to {}", skip_snapstart);
+
     let db_manager = DynamoDBManager::new(table_name, None).await;
 
     info!("deleting table");
