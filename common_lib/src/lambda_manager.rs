@@ -66,7 +66,7 @@ impl<'a> LambdaManager<'a> {
 }
 
 #[async_trait]
-impl<'a> FunctionManager for LambdaManager<'a> {
+impl FunctionManager for LambdaManager<'_> {
     async fn delete_function(&self, runtime: &Runtime) -> Result<bool, Error> {
         let function_name = runtime.function_name();
         let res = self

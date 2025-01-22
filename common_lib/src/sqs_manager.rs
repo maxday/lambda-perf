@@ -2,7 +2,6 @@ use async_trait::async_trait;
 use aws_config::BehaviorVersion;
 use aws_sdk_sqs::Client as SQSClient;
 use lambda_runtime::Error;
-use serde_json::json;
 
 use crate::{manifest::ManifestManager, runtime::Runtime};
 

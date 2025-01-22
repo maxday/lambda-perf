@@ -73,7 +73,7 @@ impl LogManager for CloudWatchManager {
         self.client
             .put_subscription_filter()
             .destination_arn(&self.report_log_processor_arn)
-            .filter_name(&format!("report-log-from-{}", runtime.function_name()))
+            .filter_name(format!("report-log-from-{}", runtime.function_name()))
             .filter_pattern("REPORT RequestId")
             .log_group_name(format!("/aws/lambda/{}", runtime.function_name()))
             .send()
