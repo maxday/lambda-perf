@@ -222,6 +222,14 @@
       }
     },
     {
+      "displayName": "java11 snapstart",
+      "runtime": "java11",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java11_snapstart",
+      "isSnapstart": true,
+      "architectures": ["x86_64"]
+    },
+    {
       "displayName": "java17",
       "runtime": "java17",
       "handler": "io.github.maxday.Handler::handleRequest",
@@ -232,6 +240,14 @@
       }
     },
     {
+      "displayName": "java17 snapstart",
+      "runtime": "java17",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java17_snapstart",
+      "isSnapstart": true,
+      "architectures": ["x86_64"]
+    },
+    {
       "displayName": "java21",
       "runtime": "java21",
       "handler": "io.github.maxday.Handler::handleRequest",
@@ -240,6 +256,14 @@
       "image": {
         "baseImage": "public.ecr.aws/lambda/java:21"
       }
+    },
+    {
+      "displayName": "java21 snapstart",
+      "runtime": "java21",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java21_snapstart",
+      "isSnapstart": true,
+      "architectures": ["x86_64"]
     },
     {
       "displayName": "quarkus (prov.al2)",
