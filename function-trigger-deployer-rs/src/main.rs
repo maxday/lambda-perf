@@ -38,7 +38,7 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
     let account_id = std::env::var("ACCOUNT_ID").expect("ACCOUNT_ID not set");
     let region = std::env::var("AWS_REGION").expect("AWS_REGION not set");
     let skip_snapstart =
-        std::env::var("SKIP_SNAPSTART").map_or(false, |v| v.eq_ignore_ascii_case("true"));
+        std::env::var("SKIP_SNAPSTART").is_ok_and(|v| v.eq_ignore_ascii_case("true"));
 
     let db_manager = DynamoDBManager::new(table_name, None).await;
 
