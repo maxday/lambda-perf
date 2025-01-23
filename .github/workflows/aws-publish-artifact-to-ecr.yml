@@ -67,6 +67,9 @@ jobs:
           rm -rf "$AGENT_TOOLSDIRECTORY"
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: build and deploy
         env:
           ARCHITECTURE: ${{ inputs.architecture }}
