@@ -49,6 +49,7 @@ jobs:
     needs: setup
     runs-on: ${{ needs.setup.outputs.runner }}
     strategy:
+      fail-fast: false
       matrix: 
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
