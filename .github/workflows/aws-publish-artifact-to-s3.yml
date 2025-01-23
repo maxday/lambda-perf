@@ -24,7 +24,7 @@ on:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       runner: ${{ steps.select.outputs.runner }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -33,9 +33,9 @@ jobs:
         id: select
         run: |
           if [ ${{ inputs.architecture }} == 'x86_64' ]; then
-            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "runner=ubuntu-24.04" >> $GITHUB_OUTPUT
           else
-            echo "runner=self-hosted" >> $GITHUB_OUTPUT
+            echo "runner=ubuntu-24.04-arm" >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
       - uses: actions/checkout@v4
@@ -49,6 +49,7 @@ jobs:
     needs: setup
     runs-on: ${{ needs.setup.outputs.runner }}
     strategy:
+      fail-fast: false
       matrix: 
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
@@ -65,6 +66,11 @@ jobs:
           rm -rf /usr/share/dotnet
           rm -rf /opt/ghc
           rm -rf "$AGENT_TOOLSDIRECTORY"
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: build and deploy
         env:
           ARCHITECTURE: ${{ inputs.architecture }}

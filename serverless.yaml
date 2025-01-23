@@ -137,6 +137,7 @@ functions:
         "Fn::GetAtt": [ FunctionReportLogProcessorRsLambdaFunction, Arn ]
       FUNCTION_QUEUE_NAME: lambda-perf-deployer
       SNAPSTART_QUEUE_NAME: lambda-perf-snapstart-deployer
+      SKIP_SNAPSTART: ${env:SKIP_SNAPSTART}
       ACCOUNT_ID: ${aws:accountId}
     package:
       individually: true

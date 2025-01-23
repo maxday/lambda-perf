@@ -1,7 +1,7 @@
 import fs from "fs";
 import childProcess from "child_process";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import manifest from "../manifest.json" assert { type: "json" };
+import manifest from "../manifest.json" with { type: "json" };
 
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
