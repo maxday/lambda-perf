@@ -164,7 +164,7 @@
     {
       "displayName": "ruby3.2",
       "runtime": "ruby3.2",
-      "handler": "index.handler",
+      "handler": "handler.handler",
       "path": "ruby32",
       "architectures": ["x86_64", "arm64"],
       "image": {
@@ -174,7 +174,7 @@
     {
       "displayName": "ruby3.3",
       "runtime": "ruby3.3",
-      "handler": "index.handler",
+      "handler": "handler.handler",
       "path": "ruby33",
       "architectures": ["x86_64", "arm64"],
       "image": {
