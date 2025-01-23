@@ -1,7 +1,6 @@
 FROM public.ecr.aws/lambda/provided:al2 as builder
 ARG ARCH
 WORKDIR /usr/src/app
-RUN yum -y update
 RUN yum -y install openssl openssl-devel
 RUN yum -y install gcc
 RUN yum -y install zip
