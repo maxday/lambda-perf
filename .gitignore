@@ -1,5 +1,3 @@
-.serverless
-
 container-uploader/node_modules
 container-uploader/*/*
 container-uploader/*.zip
@@ -25,8 +23,6 @@ s3-uploader/runtimes/llrt_on_provided_al2023/bootstrap
 s3-uploader/runtimes/llrt_on_provided_al2023/llrt-lambda-x64.zip
 s3-uploader/runtimes/llrt_on_provided_al2023/llrt-lambda-arm64.zip
 s3-uploader/runtimes/*/code*.zip
-
-
 
 result-builder/node_modules
 
