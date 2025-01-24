@@ -1,9 +1,8 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { ManagedPolicy } from 'aws-cdk-lib/aws-iam';
-import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
-export const createRole = (scope: Construct): void => {
+export const createRole = (scope: Construct): string => {
     const region = cdk.Aws.REGION;
     const accountId = cdk.Aws.ACCOUNT_ID;
     const policyStatements: iam.PolicyStatementProps[] = [
@@ -11,6 +10,7 @@ export const createRole = (scope: Construct): void => {
             effect: iam.Effect.ALLOW,
             actions: ['logs:CreateLogGroup'],
             resources: [
+                `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/LambdaPerfStack-*`,
                 `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/lambda-perf-*`,
             ],
         },
@@ -18,6 +18,7 @@ export const createRole = (scope: Construct): void => {
             effect: iam.Effect.ALLOW,
             actions: ['logs:CreateLogStream'],
             resources: [
+                `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/LambdaPerfStack-*`,
                 `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/lambda-perf-*`,
             ],
         },
@@ -25,6 +26,7 @@ export const createRole = (scope: Construct): void => {
             effect: iam.Effect.ALLOW,
             actions: ['logs:DeleteLogGroup'],
             resources: [
+                `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/LambdaPerfStack-*`,
                 `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/lambda-perf-*`,
             ],
         },
@@ -32,6 +34,7 @@ export const createRole = (scope: Construct): void => {
             effect: iam.Effect.ALLOW,
             actions: ['logs:PutLogEvents'],
             resources: [
+                `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/LambdaPerfStack-*`,
                 `arn:aws:logs:${region}:${accountId}:log-group:/aws/lambda/lambda-perf-*:log-stream:*`,
             ],
         },
@@ -60,14 +63,14 @@ export const createRole = (scope: Construct): void => {
             effect: iam.Effect.ALLOW,
             actions: ['lambda:AddPermission'],
             resources: [
-                `arn:aws:lambda:${region}:${accountId}:function:lambda-perf-*`,
+                `arn:aws:lambda:${region}:${accountId}:function:LambdaPerfStack-FunctionReportLogProcessorRs*`,
             ],
         },
         {
             effect: iam.Effect.ALLOW,
             actions: ['lambda:RemovePermission'],
             resources: [
-                `arn:aws:lambda:${region}:${accountId}:function:lambda-perf-*`,
+                `arn:aws:lambda:${region}:${accountId}:function:LambdaPerfStack-FunctionReportLogProcessorRs*`,
             ],
         },
         {
@@ -215,4 +218,6 @@ export const createRole = (scope: Construct): void => {
     policyStatements.forEach((policyStatement) => {
         role.addToPolicy(new iam.PolicyStatement(policyStatement));
     });
+
+    return role.roleArn;
 };

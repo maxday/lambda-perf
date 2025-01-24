@@ -55,8 +55,8 @@ jobs:
       - name: install dependencies
         run: |
           cd ./result-builder && yarn install
-      - name: install Serverless Framework
-        run: sudo yarn global add serverless@^4.4.14 --prefix /usr/local
+      - name: install CDK
+        run: sudo yarn global add aws-cdk
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
@@ -66,17 +66,7 @@ jobs:
       - name: deploy
         env:
           AWS_REGION: ${{ inputs.region }}
-          GH_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
+          GITHUB_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
           LAMBDA_PERF_ENV: ${{ inputs.lambdaPerfEnv }}
           SKIP_SNAPSTART: ${{ (inputs.region == 'eu-west-1') && secrets.SKIP_SNAPSTART_DEV || 'false' }}
-          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        run: sls deploy --force
-      - name: Remove the cron job scheduler in staging (eu-west-1)
-        if: "${{ inputs.region == 'eu-west-1' }}"
-        run: |
-          RULE_NAME=$(aws events list-rule-names-by-target --target-arn arn:aws:lambda:${{ inputs.region }}:${{ secrets.AWS_ACCOUNT_ID }}:function:lambda-perf-dev-functionTriggerDeployerRs --region ${{ inputs.region }} | jq -r '.RuleNames[0]')
-          echo "Disabling rule ${RULE_NAME}"
-          aws events disable-rule --name $RULE_NAME --region ${{ inputs.region }}
-          RULE_NAME=$(aws events list-rule-names-by-target --target-arn arn:aws:lambda:${{ inputs.region }}:${{ secrets.AWS_ACCOUNT_ID }}:function:lambda-perf-dev-resultBuilder --region ${{ inputs.region }} | jq -r '.RuleNames[0]')
-          echo "Disabling rule ${RULE_NAME}"
-          aws events disable-rule --name $RULE_NAME --region ${{ inputs.region }}
+        run: cd cdk && yarn install && cdk bootstrap && cdk deploy LambdaPerfStack --require-approval never
