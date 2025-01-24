@@ -163,6 +163,7 @@ export class LambdaPerfStack extends Stack {
         LAMBDA_PERF_ENV: props.lambdaPerfEnv, 
       },
       timeout: cdk.Duration.seconds(60),
+      role: iam.Role.fromRoleArn(this, 'RoleFunctionResultBuilder', lambdaRoleArn),
     });
 
     const rule = new events.Rule(this, 'ScheduleRule', {
