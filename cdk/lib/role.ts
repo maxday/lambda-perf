@@ -105,7 +105,7 @@ export const createRole = (scope: Construct): string => {
             effect: iam.Effect.ALLOW,
             actions: ['lambda:GetLayerVersion'],
             resources: [
-                `arn:aws:lambda:${region}:${accountId}:layer:lambda-perf-*`,
+                `arn:aws:lambda:*:*:layer:*:*`,
             ],
         },
         {
