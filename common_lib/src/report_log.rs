@@ -55,7 +55,7 @@ impl ReportLog {
 }
 
 impl ReportLogData {
-    pub fn new(report_log: &str) -> Self {
+    pub fn new(report_log: &str) -> Result<ReportLogData, String> {
         let regex = regex::Regex::new(
             r"REPORT RequestId: (?P<request_id>.*)\tDuration: (?P<duration>.*) ms\tBilled Duration: (?P<billed_duration>.*) ms\tMemory Size: (?P<memory_size>.*) MB\tMax Memory Used: (?P<max_memory_used>.*) MB(\tRestore Duration: (?P<restore_duration>.*) ms\tBilled Restore Duration: (?P<billed_restore_duration>.*) ms)?(\tInit Duration: (?P<init_duration>.*) ms)?\t",
         ).expect("could not find the regexp");
@@ -71,45 +71,58 @@ impl ReportLogData {
 
         let insert_date = ReportLogData::iso8601(&SystemTime::now());
 
-        ReportLogData {
-            request_id: dict
-                .get("request_id")
-                .expect("could not find the request_id")
-                .to_string(),
-            duration: dict
-                .get("duration")
-                .expect("could not find the duration")
-                .to_string(),
-            billed_duration: dict
-                .get("billed_duration")
-                .expect("could not find the billed_duration")
-                .to_string(),
-            memory_size: dict
-                .get("memory_size")
-                .expect("could not find the memory_size")
-                .to_string(),
-            max_memory_used: dict
-                .get("max_memory_used")
-                .expect("could not find the max_memory_used")
-                .to_string(),
-            init_duration: ReportLogData::init_duration(&dict),
+        let request_id = dict
+            .get("request_id")
+            .ok_or("could not find the request_id")?
+            .to_string();
+
+        let duration = dict
+            .get("duration")
+            .ok_or("could not find the duration")?
+            .to_string();
+
+        let billed_duration = dict
+            .get("billed_duration")
+            .ok_or("could not find the billed_duration")?
+            .to_string();
+
+        let memory_size = dict
+            .get("memory_size")
+            .ok_or("could not find the memory_size")?
+            .to_string();
+
+        let max_memory_used = dict
+            .get("max_memory_used")
+            .ok_or("could not find the max_memory_used")?
+            .to_string();
+
+        Ok(ReportLogData {
+            request_id,
+            duration,
+            billed_duration,
+            memory_size,
+            max_memory_used,
+            init_duration: ReportLogData::init_duration(&dict)?,
             billed_restore_duration: ReportLogData::billed_restore_duration(&dict),
             insert_date: insert_date.to_string(),
-        }
+        })
     }
+
     fn iso8601(system_time: &std::time::SystemTime) -> String {
         let dt: DateTime<Utc> = (*system_time).into();
         format!("{}", dt.format("%+"))
     }
-    fn init_duration(dict: &HashMap<&str, &str>) -> String {
-        match dict.get("init_duration") {
-            Some(init_duration) => init_duration.to_string(),
-            None => dict
-                .get("restore_duration")
-                .expect("could not find initDuration/restoreDuration")
-                .to_string(),
+
+    fn init_duration(dict: &HashMap<&str, &str>) -> Result<String, String> {
+        if let Some(init_duration) = dict.get("init_duration") {
+            return Ok(init_duration.to_string());
         }
+
+        dict.get("restore_duration")
+            .map(|restore_duration| restore_duration.to_string())
+            .ok_or_else(|| "could not find initDuration/restoreDuration".to_string())
     }
+
     fn billed_restore_duration(dict: &HashMap<&str, &str>) -> String {
         match dict.get("billed_restore_duration") {
             Some(billed_restore_duration) => billed_restore_duration.to_string(),
@@ -140,7 +153,7 @@ mod tests {
     #[test]
     fn test_report_log_details_new() {
         let report_log = "REPORT RequestId: 32f5cbf1-dd22-422a-a566-8965da5a3465	Duration: 8.40 ms	Billed Duration: 9 ms	Memory Size: 128 MB	Max Memory Used: 66 MB	Init Duration: 170.13 ms	";
-        let report_log_details = ReportLogData::new(report_log);
+        let report_log_details = ReportLogData::new(report_log).unwrap();
         assert_eq!(
             report_log_details.request_id,
             "32f5cbf1-dd22-422a-a566-8965da5a3465"
@@ -155,7 +168,7 @@ mod tests {
     #[test]
     fn test_report_log_details_new_snapstart() {
         let report_log = "REPORT RequestId: 1d4e1c44-b211-4a4c-972b-39c8da774f2e	Duration: 36.97 ms	Billed Duration: 173 ms	Memory Size: 128 MB	Max Memory Used: 68 MB	Restore Duration: 511.56 ms	Billed Restore Duration: 136 ms	";
-        let report_log_details = ReportLogData::new(report_log);
+        let report_log_details = ReportLogData::new(report_log).unwrap();
         assert_eq!(
             report_log_details.request_id,
             "1d4e1c44-b211-4a4c-972b-39c8da774f2e"
@@ -166,5 +179,16 @@ mod tests {
         assert_eq!(report_log_details.max_memory_used, "68");
         assert_eq!(report_log_details.init_duration, "511.56");
         assert_eq!(report_log_details.billed_restore_duration, "136");
+    }
+
+    #[test]
+    fn test_report_log_details_not_init_duration() {
+        let report_log = "REPORT RequestId: 32f5cbf1-dd22-422a-a566-8965da5a3465	Duration: 8.40 ms	Billed Duration: 9 ms	Memory Size: 128 MB	Max Memory Used: 66 MB	";
+        let report_log_details = ReportLogData::new(report_log);
+        assert!(report_log_details.is_err());
+        assert_eq!(
+            report_log_details.err().unwrap(),
+            "could not find initDuration/restoreDuration"
+        );
     }
 }
