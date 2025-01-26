@@ -96,7 +96,7 @@ async fn invoke<'a>(
             })
             .await?;
         info!("function updated to ensure cold start");
-        thread::sleep(Duration::from_secs(10));
+        thread::sleep(Duration::from_secs(20));
         retry
             .retry_async(|| async {
                 lambda_manager
