@@ -149,7 +149,7 @@ export class LambdaPerfStack extends Stack {
 
     functionInvokerRs.addEventSource(
       new lambdaEventSources.SqsEventSource(invokerQueue, {
-        batchSize: 5, 
+        batchSize: 3,
         maxBatchingWindow: cdk.Duration.seconds(30), 
       })
     );
