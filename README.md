@@ -29,6 +29,7 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `python3.10`
 - `python3.11`
 - `python3.12`
+- `python3.13`
 - `dotnet6`
 - `java11`
 - `java11 + snapstart`
