@@ -42,6 +42,16 @@
       }
     },
     {
+      "displayName": "nodejs22.x",
+      "runtime": "nodejs22.x",
+      "handler": "index.handler",
+      "path": "nodejs22x",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/nodejs:22"
+      }
+    },
+    {
       "displayName": "python3.8",
       "runtime": "python3.8",
       "handler": "index.handler",
