@@ -365,6 +365,16 @@
       "image": {
         "baseImage": "public.ecr.aws/lambda/provided:al2023"
       }
+    },
+    {
+      "displayName": "graalvm java23 (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "com.xavierbouclet.OkHandler",
+      "path": "graalvm_java23_on_provided_al2023",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
     }
   ]
 }
