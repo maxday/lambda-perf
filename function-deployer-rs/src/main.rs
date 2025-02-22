@@ -56,9 +56,9 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-async fn process_event<'a>(
+async fn process_event(
     event: LambdaEvent<SqsEventObj<Runtime>>,
-    lambda_manager: &LambdaManager<'a>,
+    lambda_manager: &LambdaManager<'_>,
     cloudwatch_manager: &CloudWatchManager,
     invoker_sqs_manager: &InvokerSQSManager,
 ) -> Result<Response, Error> {

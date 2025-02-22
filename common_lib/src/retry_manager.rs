@@ -36,7 +36,7 @@ impl RetryManager {
                     break result;
                 }
                 nb_attempt += 1;
-                let delay = rand::thread_rng().gen_range(self.delay_min..self.delay_max);
+                let delay = rand::rng().random_range(self.delay_min..self.delay_max);
                 info!("delay: {:?}", delay);
                 tokio::time::sleep(delay).await;
             }
