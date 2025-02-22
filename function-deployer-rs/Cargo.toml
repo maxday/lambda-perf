@@ -1,7 +1,7 @@
 [package]
 name = "function-deployer-rs"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 aws_lambda_events = "0.16.0"

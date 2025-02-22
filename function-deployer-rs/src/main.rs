@@ -8,7 +8,7 @@ use common_lib::runtime::Runtime;
 use common_lib::{lambda_manager::FunctionManager, retry_manager::RetryManager};
 
 use common_lib::lambda_manager::LambdaManager;
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent, service_fn};
 use tracing::info;
 
 #[tokio::main]
@@ -56,9 +56,9 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-async fn process_event<'a>(
+async fn process_event(
     event: LambdaEvent<SqsEventObj<Runtime>>,
-    lambda_manager: &LambdaManager<'a>,
+    lambda_manager: &LambdaManager<'_>,
     cloudwatch_manager: &CloudWatchManager,
     invoker_sqs_manager: &InvokerSQSManager,
 ) -> Result<Response, Error> {

@@ -306,7 +306,10 @@ mod tests {
             None,
             false,
         );
-        assert_eq!(test_runtime.json(), "{\"architecture\":\"arm64\",\"displayName\":\"nodejs20\",\"handler\":\"index.handler\",\"image\":{\"baseImage\":\"test_image\"},\"isSnapstart\":false,\"layer\":null,\"memorySize\":128,\"path\":\"nodejs20\",\"runtime\":\"nodejs20.x\"}");
+        assert_eq!(
+            test_runtime.json(),
+            "{\"architecture\":\"arm64\",\"displayName\":\"nodejs20\",\"handler\":\"index.handler\",\"image\":{\"baseImage\":\"test_image\"},\"isSnapstart\":false,\"layer\":null,\"memorySize\":128,\"path\":\"nodejs20\",\"runtime\":\"nodejs20.x\"}"
+        );
     }
 
     #[test]

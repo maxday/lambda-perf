@@ -3,11 +3,11 @@ use std::{thread, time::Duration};
 use async_trait::async_trait;
 use aws_config::BehaviorVersion;
 use aws_sdk_dynamodb::{
+    Client as DynamoDbClient,
     types::{
         self, AttributeDefinition, AttributeValue, BillingMode, KeySchemaElement, KeyType,
         ScalarAttributeType,
     },
-    Client as DynamoDbClient,
 };
 
 use lambda_runtime::Error;
@@ -189,9 +189,9 @@ mod tests {
     use aws_sdk_dynamodb::config::{Credentials, Region};
     use aws_sdk_dynamodb::{Client, Config};
     use testcontainers::{
+        GenericImage,
         core::{IntoContainerPort, WaitFor},
         runners::AsyncRunner,
-        GenericImage,
     };
 
     use std::io::Result;

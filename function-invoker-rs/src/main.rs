@@ -1,15 +1,11 @@
-use std::thread;
-use std::time::Duration;
-
 use aws_lambda_events::event::sqs::SqsEventObj;
-
 use common_lib::lambda_manager::{FunctionManager, LambdaManager};
-
 use common_lib::reponse::Response;
 use common_lib::retry_manager::RetryManager;
 use common_lib::runtime::Runtime;
-
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent, service_fn};
+use std::thread;
+use std::time::Duration;
 use tracing::info;
 
 #[tokio::main]
@@ -28,18 +24,19 @@ async fn main() -> Result<(), Error> {
     let account_id = std::env::var("ACCOUNT_ID").expect("ACCOUNT_ID not set");
     let region = std::env::var("AWS_REGION").expect("AWS_REGION not set");
     let lambda_manager = LambdaManager::new(None, &account_id, &region, &role_arn).await;
-    let lambda_manager_ref = &lambda_manager;
-    let handler_func_closure = |event: LambdaEvent<SqsEventObj<Runtime>>| async move {
-        process_event(event, lambda_manager_ref).await
-    };
 
-    lambda_runtime::run(service_fn(handler_func_closure)).await?;
+    lambda_runtime::run(service_fn(|event: LambdaEvent<SqsEventObj<Runtime>>| {
+        let lambda_manager_ref = &lambda_manager; // Reference instead of move
+        async move { process_event(event, lambda_manager_ref).await }
+    }))
+    .await?;
+
     Ok(())
 }
 
-async fn process_event<'a>(
+async fn process_event(
     event: LambdaEvent<SqsEventObj<Runtime>>,
-    lambda_manager: &LambdaManager<'a>,
+    lambda_manager: &LambdaManager<'_>,
 ) -> Result<Response, Error> {
     for record in event.payload.records.iter() {
         let retry = RetryManager::new(3, Duration::from_secs(1), Duration::from_secs(30));
@@ -53,10 +50,10 @@ async fn process_event<'a>(
     Ok(Response::success())
 }
 
-async fn invoke_snapstart<'a>(
+async fn invoke_snapstart(
     runtime: &Runtime,
     retry: &RetryManager,
-    lambda_manager: &LambdaManager<'a>,
+    lambda_manager: &LambdaManager<'_>,
 ) -> Result<(), Error> {
     let arns = lambda_manager.list_versions_by_function(runtime).await?;
     for i in 0..10 {
@@ -81,10 +78,10 @@ async fn invoke_snapstart<'a>(
     Ok(())
 }
 
-async fn invoke<'a>(
+async fn invoke(
     runtime: &Runtime,
     retry: &RetryManager,
-    lambda_manager: &LambdaManager<'a>,
+    lambda_manager: &LambdaManager<'_>,
 ) -> Result<(), Error> {
     for i in 0..10 {
         info!("run #: {}", i);
@@ -96,7 +93,7 @@ async fn invoke<'a>(
             })
             .await?;
         info!("function updated to ensure cold start");
-        thread::sleep(Duration::from_secs(15));
+        thread::sleep(Duration::from_secs(5));
         retry
             .retry_async(|| async {
                 lambda_manager
