@@ -6,7 +6,7 @@ use common_lib::{
     reponse::Response,
     report_log::{ReportLog, ReportLogData},
 };
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent, service_fn};
 use tracing::info;
 
 #[tokio::main]

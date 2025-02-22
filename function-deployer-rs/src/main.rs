@@ -8,7 +8,7 @@ use common_lib::runtime::Runtime;
 use common_lib::{lambda_manager::FunctionManager, retry_manager::RetryManager};
 
 use common_lib::lambda_manager::LambdaManager;
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent, service_fn};
 use tracing::info;
 
 #[tokio::main]

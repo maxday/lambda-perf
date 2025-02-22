@@ -3,14 +3,14 @@ use std::{thread, time::Duration};
 
 use async_trait::async_trait;
 use aws_config::BehaviorVersion;
-use aws_sdk_lambda::types::builders::EnvironmentBuilder;
 use aws_sdk_lambda::types::SnapStartApplyOn::PublishedVersions;
+use aws_sdk_lambda::types::builders::EnvironmentBuilder;
 use aws_sdk_lambda::{
-    types::{
-        builders::{FunctionCodeBuilder, SnapStartBuilder},
-        Architecture, ImageConfig, PackageType,
-    },
     Client as LambdaClient,
+    types::{
+        Architecture, ImageConfig, PackageType,
+        builders::{FunctionCodeBuilder, SnapStartBuilder},
+    },
 };
 
 use lambda_runtime::Error;

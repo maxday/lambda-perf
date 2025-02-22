@@ -1,4 +1,4 @@
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent, service_fn};
 use serde_json::Value;
 use tracing::log::info;
 
