@@ -365,6 +365,55 @@
       "image": {
         "baseImage": "public.ecr.aws/lambda/provided:al2023"
       }
+    },
+    {
+      "displayName": "ada (gnat)",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "ada",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "assembler (binutils)",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "asm",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "cobol (cobc)",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "cobol",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "fortran (gfortran)",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "fortran",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "lisp (sbcl)",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "lisp",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "oberon (obnc)",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "oberon",
+      "architectures": ["x86_64", "arm64"]
+    },
+    {
+      "displayName": "pascal (fpc)",
+      "runtime": "provided.al2",
+      "handler": "handler",
+      "path": "pascal",
+      "architectures": ["x86_64", "arm64"]
     }
   ]
 }
