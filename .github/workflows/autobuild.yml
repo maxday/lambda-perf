@@ -16,4 +16,4 @@ jobs:
       region: 'eu-west-1'
       architecture: 'arm64'
     secrets:
-      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}

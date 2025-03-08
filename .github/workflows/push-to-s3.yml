@@ -11,6 +11,10 @@ on:
         description: 'architecture'
         type: string
         required: true
+    secrets:
+      role:
+        description: 'AWS role to assume'
+        required: true
 
 jobs:
   setup:
@@ -46,7 +50,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+          role-to-assume: ${{ secrets.role }}
           role-session-name: GitHub_Action_LambdaPerf_Session
           aws-region: ${{ inputs.region }}
       - uses: actions/checkout@v4
