@@ -36,8 +36,8 @@ jobs:
 
   trigger-push-to-s3:
     strategy:
+      fail-fast: false
       matrix:
-        fail-fast: false
         architecture: [x86_64, arm64]
     uses: ./.github/workflows/push-to-s3.yml
     with:
