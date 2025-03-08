@@ -12,6 +12,7 @@ on:
 jobs:
   trigger-push-to-s3:
     strategy:
+      fail-fast: false
       matrix:
         architecture: [x86_64, arm64]
     uses: ./.github/workflows/push-to-s3.yml
@@ -24,6 +25,7 @@ jobs:
   trigger-push-to-ecr:
     needs: trigger-push-to-s3
     strategy:
+      fail-fast: false
       matrix:
         architecture: [x86_64, arm64]
     uses: ./.github/workflows/push-to-ecr.yml
