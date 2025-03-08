@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   test:
@@ -30,17 +29,3 @@ jobs:
       - name: install dependencies
         run: |
           cd ./result-builder && yarn install
-
-  trigger-push-to-s3:
-    permissions:
-      id-token: write
-      contents: read
-    strategy:
-      matrix:
-        architecture: [x86_64, arm64]
-    uses: ./.github/workflows/push-to-s3.yml
-    with:
-      region: 'eu-west-1'
-      architecture: ${{ matrix.architecture }}
-    secrets:
-      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
