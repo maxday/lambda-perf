@@ -11,8 +11,8 @@ on:
 
 jobs:
   trigger-push-to-s3-arm64:
-    uses: ./.github/workflows/push-to-s3.yml
-    with:
-      region: 'eu-west-1'
-      architecture: 'arm64'
-      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+    - run: echo "AWS_ROLE_TO_ASSUME=${{ secrets.AWS_ROLE_TO_ASSUME }}" >> $GITHUB_ENV
+    - uses: ./.github/workflows/push-to-s3.yml
+      with:
+        region: 'eu-west-1'
+        architecture: 'arm64'

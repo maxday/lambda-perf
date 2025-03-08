@@ -3,10 +3,6 @@ name: Push to s3
 on:
   workflow_call:
     inputs:
-      role:
-        description: 'AWS role to assume'
-        type: string
-        required: true
       region:
         description: 'region on which you want to deploy'
         type: string
@@ -50,7 +46,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
-          role-to-assume: ${{ inputs.role }}
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-session-name: GitHub_Action_LambdaPerf_Session
           aws-region: ${{ inputs.region }}
       - uses: actions/checkout@v4
