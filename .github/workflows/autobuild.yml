@@ -1,5 +1,9 @@
 name: autobuild
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   schedule:
     - cron: '50 8 * * *'
@@ -7,7 +11,13 @@ on:
 
 jobs:
   trigger-push-to-s3:
-    uses: ./.github/workflows/push-to-s3.yml
-    with:
-      region: 'eu-west-1'
-      architecture: 'x86_64'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: ['x86_64', 'arm64']
+    steps:
+      - name: Trigger push to S3 for ${{ matrix.architecture }}
+        uses: ./.github/workflows/push-to-s3.yml
+        with:
+          region: 'eu-west-1'
+          architecture: ${{ matrix.architecture }}

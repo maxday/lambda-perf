@@ -12,10 +12,6 @@ on:
         type: string
         required: true
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   setup:
     runs-on: ubuntu-24.04
