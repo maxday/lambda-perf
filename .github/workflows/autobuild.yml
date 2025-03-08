@@ -10,26 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  trigger-push-to-s3-x86_64:
-    steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: GitHub_Action_LambdaPerf_Session
-          aws-region: ${{ inputs.region }}
-      - uses: ./.github/workflows/push-to-s3.yml
-        with:
-          region: 'eu-west-1'
-          architecture: 'x86_64'
-  # trigger-push-to-s3-arm64:
-  #   - name: configure aws credentials
-  #     uses: aws-actions/configure-aws-credentials@v4.0.2
-  #     with:
-  #       role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-  #       role-session-name: GitHub_Action_LambdaPerf_Session
-  #       aws-region: ${{ inputs.region }}
-  #   - uses: ./.github/workflows/push-to-s3.yml
-  #     with:
-  #       region: 'eu-west-1'
-  #       architecture: 'arm64'
+  trigger-push-to-s3-arm64:
+    - uses: ./.github/workflows/push-to-s3.yml
+      with:
+        region: 'eu-west-1'
+        architecture: 'arm64'
