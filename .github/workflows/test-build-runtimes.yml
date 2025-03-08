@@ -1,10 +1,11 @@
-name: test deploy stagging
+name: test build runtimes
 
 permissions:
   id-token: write
   contents: read
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
