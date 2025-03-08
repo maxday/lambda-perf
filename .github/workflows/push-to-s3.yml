@@ -2,6 +2,22 @@ name: Push to s3
 
 on:
   workflow_call:
+    inputs:
+      region:
+        description: 'region on which you want to deploy'
+        type: choice
+        options:
+          - eu-west-1
+          - us-east-1
+        default:
+        required: true
+      architecture:
+        description: 'architecture'
+        type: choice
+        options:
+          - x86_64
+          - arm64
+        required: true
 
 jobs:
   setup:
