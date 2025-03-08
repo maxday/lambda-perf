@@ -43,6 +43,12 @@ jobs:
       matrix: 
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: GitHub_Action_LambdaPerf_Session
+          aws-region: ${{ inputs.region }}
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
