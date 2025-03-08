@@ -1,5 +1,9 @@
 name: autobuild
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   schedule:
     - cron: '50 8 * * *'
