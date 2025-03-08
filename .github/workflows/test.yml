@@ -1,9 +1,5 @@
 name: test
 
-permissions:
-  id-token: write
-  contents: read
-
 on:
   pull_request:
     branches:
@@ -36,6 +32,9 @@ jobs:
           cd ./result-builder && yarn install
 
   trigger-push-to-s3:
+    permissions:
+    id-token: write
+    contents: read
     strategy:
       matrix:
         architecture: [x86_64, arm64]
