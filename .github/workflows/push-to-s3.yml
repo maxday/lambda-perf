@@ -5,9 +5,11 @@ on:
     inputs:
       region:
         description: 'region on which you want to deploy'
+        type: string
         required: true
       architecture:
         description: 'architecture'
+        type: string
         required: true
 
 jobs:
