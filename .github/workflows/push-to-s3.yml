@@ -16,6 +16,7 @@ jobs:
   setup:
     runs-on: ubuntu-24.04
     outputs:
+      runner: ${{ steps.select.outputs.runner }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Check branch
