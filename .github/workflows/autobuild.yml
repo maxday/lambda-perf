@@ -11,8 +11,16 @@ on:
 
 jobs:
   trigger-push-to-s3-arm64:
-    - run: echo "AWS_ROLE_TO_ASSUME=${{ secrets.AWS_ROLE_TO_ASSUME }}" >> $GITHUB_ENV
-    - uses: ./.github/workflows/push-to-s3.yml
-      with:
-        region: 'eu-west-1'
-        architecture: 'arm64'
+    runs-on: ubuntu-latest
+
+    steps:
+      # Set AWS_ROLE_TO_ASSUME as an environment variable
+      - name: Set environment variable for AWS_ROLE_TO_ASSUME
+        run: echo "AWS_ROLE_TO_ASSUME=${{ secrets.AWS_ROLE_TO_ASSUME }}" >> $GITHUB_ENV
+
+      # Call the reusable workflow
+      - name: Trigger push to S3 for arm64
+        uses: ./.github/workflows/push-to-s3.yml
+        with:
+          region: 'eu-west-1'
+          architecture: 'arm64'
