@@ -10,10 +10,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  trigger-push-to-s3-arm64:
+  trigger-push-to-s3:
+    strategy:
+      matrix:
+        architecture: [x86_64, arm64]
     uses: ./.github/workflows/push-to-s3.yml
     with:
       region: 'eu-west-1'
-      architecture: 'arm64'
+      architecture: ${{ matrix.architecture }}
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
