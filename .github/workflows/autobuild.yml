@@ -11,7 +11,7 @@ on:
 
 jobs:
   trigger-push-to-s3-arm64:
-    - uses: ./.github/workflows/push-to-s3.yml
-      with:
-        region: 'eu-west-1'
-        architecture: 'arm64'
+    uses: ./.github/workflows/push-to-s3.yml
+    with:
+      region: 'eu-west-1'
+      architecture: 'arm64'
