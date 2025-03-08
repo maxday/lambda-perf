@@ -93,5 +93,10 @@ jobs:
         env:
           AWS_REGION: ${{ inputs.region }}
         run: |
-          UNTAGGED_IMAGES=$( aws ecr list-images --region ${AWS_REGION} --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
-          aws ecr batch-delete-image --region ${AWS_REGION} --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
+          UNTAGGED_IMAGES=$(aws ecr list-images --region "${AWS_REGION}" --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json)
+          if [[ "$UNTAGGED_IMAGES" == "[]" ]]; then
+            echo "No untagged images found. Skipping deletion."
+          else
+            aws ecr batch-delete-image --region "${AWS_REGION}" --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
+          fi
+
