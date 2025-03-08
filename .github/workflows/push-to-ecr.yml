@@ -1,4 +1,4 @@
-name: Push to S3
+name: Push to ECR
 
 on:
   workflow_call:
@@ -36,8 +36,8 @@ jobs:
       - name: Build runtime matrix
         id: set-matrix
         run: |
-          jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json
-          echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json)" >> $GITHUB_OUTPUT
+          jq -c '[.runtimes[] | select(.architectures | index("arm64")) | select(.image != null and .image.baseImage != null) | .path]' manifest.json
+          echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | select(.image != null and .image.baseImage != null) | .path]' manifest.json)" >> $GITHUB_OUTPUT
 
   build-upload:
     needs: setup
@@ -47,13 +47,19 @@ jobs:
       matrix: 
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
+      - uses: actions/checkout@v4
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           role-to-assume: ${{ secrets.role }}
           role-session-name: GitHub_Action_LambdaPerf_Session
           aws-region: ${{ inputs.region }}
-      - uses: actions/checkout@v4
+      - name: Delete huge unnecessary folders
+        run: |
+          rm -rf /opt/hostedtoolcache
+          rm -rf /usr/share/dotnet
+          rm -rf /opt/ghc
+          rm -rf "$AGENT_TOOLSDIRECTORY"
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
       - uses: actions/setup-node@v4
@@ -64,7 +70,25 @@ jobs:
           ARCHITECTURE: ${{ inputs.architecture }}
           AWS_REGION: ${{ inputs.region }}
           RUNTIME_ID: ${{ matrix.runtime_id }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
-          cd s3-uploader
+          cd container-uploader
           yarn install
           node app.mjs
+
+  clean-untagged-image:
+    needs: build-upload
+    runs-on: ubuntu-24.04
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          role-to-assume: ${{ secrets.role }}
+          role-session-name: GitHub_Action_LambdaPerf_Session
+          aws-region: ${{ inputs.region }}
+      - name: clean untagged images
+        env:
+          AWS_REGION: ${{ inputs.region }}
+        run: |
+          UNTAGGED_IMAGES=$( aws ecr list-images --region ${AWS_REGION} --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+          aws ecr batch-delete-image --region ${AWS_REGION} --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
