@@ -52,7 +52,7 @@ jobs:
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.role }}
           role-session-name: GitHub_Action_LambdaPerf_Session

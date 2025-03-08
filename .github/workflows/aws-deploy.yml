@@ -58,7 +58,7 @@ jobs:
       - name: install CDK
         run: sudo yarn global add aws-cdk
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-session-name: GitHub_Action_LambdaPerf_Session

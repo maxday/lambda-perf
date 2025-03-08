@@ -1,5 +1,9 @@
 name: test
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   pull_request:
     branches:
@@ -29,3 +33,14 @@ jobs:
       - name: install dependencies
         run: |
           cd ./result-builder && yarn install
+
+  trigger-push-to-s3:
+    strategy:
+      matrix:
+        architecture: [x86_64, arm64]
+    uses: ./.github/workflows/push-to-s3.yml
+    with:
+      region: 'us-east-1'
+      architecture: ${{ matrix.architecture }}
+    secrets:
+      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
