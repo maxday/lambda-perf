@@ -1,5 +1,9 @@
 name: Push to ECR
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
