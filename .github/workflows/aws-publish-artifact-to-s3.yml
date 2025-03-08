@@ -5,17 +5,21 @@ permissions:
   contents: read
 
 on:
-  workflow_run:
-    workflows: ["autobuild"]
-    types:
-      - completed
   workflow_dispatch:
     inputs:
       region:
         description: 'region on which you want to deploy'
+        type: choice
+        options:
+          - eu-west-1
+          - us-east-1
         required: true
       architecture:
         description: 'architecture'
+        type: choice
+        options:
+          - x86_64
+          - arm64
         required: true
 
 jobs:
