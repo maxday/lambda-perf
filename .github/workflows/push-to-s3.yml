@@ -1,9 +1,5 @@
 name: Push to s3
 
-permissions:
-  id-token: write
-  contents: read
-
 on:
   workflow_call:
     inputs:
@@ -48,18 +44,6 @@ jobs:
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v4
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: GitHub_Action_LambdaPerf_Session
-          aws-region: ${{ inputs.region }}
-      - name: Delete huge unnecessary folders
-        run: |
-          rm -rf /opt/hostedtoolcache
-          rm -rf /usr/share/dotnet
-          rm -rf /opt/ghc
-          rm -rf "$AGENT_TOOLSDIRECTORY"
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
       - uses: actions/setup-node@v4
