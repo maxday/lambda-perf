@@ -1,4 +1,4 @@
-name: AWS publish artifacts to ECR
+name: AWS publish artifacts to S3
 
 permissions:
   id-token: write
@@ -23,78 +23,12 @@ on:
         required: true
 
 jobs:
-  setup:
-    runs-on: ubuntu-24.04
-    outputs:
-      runner: ${{ steps.select.outputs.runner }}
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - name: Check branch
-        id: select
-        run: |
-          if [ ${{ inputs.architecture }} == 'x86_64' ]; then
-            echo "runner=ubuntu-24.04" >> $GITHUB_OUTPUT
-          else
-            echo "runner=ubuntu-24.04-arm" >> $GITHUB_OUTPUT
-          fi
-          cat $GITHUB_OUTPUT
-      - uses: actions/checkout@v4
-      - name: Build runtime matrix
-        id: set-matrix
-        run: |
-          jq -c '[.runtimes[] | select(.architectures | index("arm64")) | select(.image != null and .image.baseImage != null) | .path]' manifest.json
-          echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | select(.image != null and .image.baseImage != null) | .path]' manifest.json)" >> $GITHUB_OUTPUT
-
-  build-upload:
-    needs: setup
-    runs-on: ${{ needs.setup.outputs.runner }}
-    strategy:
-      fail-fast: false
-      matrix: 
-        runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
-    steps:
-      - uses: actions/checkout@v4
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: GitHub_Action_LambdaPerf_Session
-          aws-region: ${{ inputs.region }}
-      - name: Delete huge unnecessary folders
-        run: |
-          rm -rf /opt/hostedtoolcache
-          rm -rf /usr/share/dotnet
-          rm -rf /opt/ghc
-          rm -rf "$AGENT_TOOLSDIRECTORY"
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: build and deploy
-        env:
-          ARCHITECTURE: ${{ inputs.architecture }}
-          AWS_REGION: ${{ inputs.region }}
-          RUNTIME_ID: ${{ matrix.runtime_id }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-        run: |
-          cd container-uploader
-          yarn install
-          node app.mjs
-
-  clean-untagged-image:
-    needs: build-upload
-    runs-on: ubuntu-24.04
-    steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: GitHub_Action_LambdaPerf_Session
-          aws-region: ${{ inputs.region }}
-      - name: clean untagged images
-        env:
-          AWS_REGION: ${{ inputs.region }}
-        run: |
-          UNTAGGED_IMAGES=$( aws ecr list-images --region ${AWS_REGION} --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
-          aws ecr batch-delete-image --region ${AWS_REGION} --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
+  trigger-push-to-ecr:
+    uses: ./.github/workflows/push-to-ecr.yml
+    with:
+      region: ${{ inputs.region }}
+      architecture: ${{ inputs.architecture }}
+    secrets:
+      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+  
