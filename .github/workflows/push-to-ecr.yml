@@ -15,6 +15,9 @@ on:
       role:
         description: 'AWS role to assume'
         required: true
+      account_id:
+        description: 'AWS account id'
+        required: true
 
 jobs:
   setup:
@@ -70,7 +73,7 @@ jobs:
           ARCHITECTURE: ${{ inputs.architecture }}
           AWS_REGION: ${{ inputs.region }}
           RUNTIME_ID: ${{ matrix.runtime_id }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_ACCOUNT_ID: ${{ secrets.account_id }}
         run: |
           cd container-uploader
           yarn install
