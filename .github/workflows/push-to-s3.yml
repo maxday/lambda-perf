@@ -1,37 +1,12 @@
-name: AWS publish artifacts to S3
-
-permissions:
-  id-token: write
-  contents: read
+name: Push to s3
 
 on:
-  workflow_run:
-    workflows: ["autobuild"]
-    types:
-      - completed
-  workflow_dispatch:
-    inputs:
-      region:
-        description: 'region on which you want to deploy'
-        type: choice
-        options:
-          - eu-west-1
-          - us-east-1
-        default:
-        required: true
-      architecture:
-        description: 'architecture'
-        type: choice
-        options:
-          - x86_64
-          - arm64
-        required: true
+  workflow_call:
 
 jobs:
   setup:
     runs-on: ubuntu-24.04
     outputs:
-      runner: ${{ steps.select.outputs.runner }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Check branch

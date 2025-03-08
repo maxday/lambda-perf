@@ -1,0 +1,13 @@
+name: autobuild
+
+on:
+  schedule:
+    - cron: '50 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger-push-to-s3:
+    uses: ./.github/workflows/push-to-s3.yml
+    with:
+      - region: 'eu-west-1'
+      - architecture: 'x86_64'
