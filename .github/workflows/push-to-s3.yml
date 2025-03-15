@@ -7,10 +7,6 @@ permissions:
 on:
   workflow_call:
     inputs:
-      region:
-        description: 'region on which you want to deploy'
-        type: string
-        required: true
       architecture:
         description: 'architecture'
         type: string
@@ -18,6 +14,9 @@ on:
     secrets:
       role:
         description: 'AWS role to assume'
+        required: true
+      region:
+        description: 'AWS region to deploy to'
         required: true
 
 jobs:
@@ -56,7 +55,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.role }}
           role-session-name: GitHub_Action_LambdaPerf_Session
-          aws-region: ${{ inputs.region }}
+          aws-region: ${{ secrets.region }}
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
@@ -66,7 +65,7 @@ jobs:
       - name: build and deploy
         env:
           ARCHITECTURE: ${{ inputs.architecture }}
-          AWS_REGION: ${{ inputs.region }}
+          AWS_REGION: ${{ secrets.region }}
           RUNTIME_ID: ${{ matrix.runtime_id }}
         run: |
           cd s3-uploader
