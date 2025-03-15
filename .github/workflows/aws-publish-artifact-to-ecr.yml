@@ -7,12 +7,13 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      region:
-        description: 'region on which you want to deploy'
+      environment:
+        description: 'Environment to deploy'
         type: choice
         options:
-          - dev
-          - prod
+          - DEV
+          - PROD
+        required: true
         required: true
       architecture:
         description: 'architecture'
@@ -26,9 +27,11 @@ jobs:
   trigger-push-to-ecr:
     uses: ./.github/workflows/push-to-ecr.yml
     with:
-      region: ${{ inputs.region == 'DEV' && secrets.DEV_REGION || inputs.region == 'PROD' && secrets.PROD_REGION }}
       architecture: ${{ inputs.architecture }}
+      environment: ${{ inputs.environment }}
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+      devRegion: ${{ secrets.AWS_DEV_REGION }}
+      prodRegion: ${{ secrets.AWS_PROD_REGION }}
   
