@@ -23,20 +23,12 @@ on:
         required: true
 
 jobs:
-  trigger-push-to-s3-dev:
-    if: inputs.environment == 'DEV'
+  trigger-push-to-s3:
+    env:
+      REGION: ${{ inputs.environment == 'PROD' && secrets.AWS_PROD_REGION || secrets.AWS_DEV_REGION }}
     uses: ./.github/workflows/push-to-s3.yml
     with:
       architecture: ${{ inputs.architecture }}
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       region: ${{ secrets.AWS_DEV_REGION }}
-
-  trigger-push-to-s3-prod:
-    if: inputs.environment == 'PROD'
-    uses: ./.github/workflows/push-to-s3.yml
-    with:
-      architecture: ${{ inputs.architecture }}
-    secrets:
-      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-      region: ${{ secrets.AWS_PROD_REGION }}
