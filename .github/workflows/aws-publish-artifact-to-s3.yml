@@ -1,4 +1,4 @@
-name: AWS publish artifacts to ECR
+name: AWS publish artifacts to S3
 
 permissions:
   id-token: write
@@ -23,8 +23,8 @@ on:
         required: true
 
 jobs:
-  trigger-push-to-ecr:
-    uses: ./.github/workflows/push-to-ecr.yml
+  trigger-push-to-s3:
+    uses: ./.github/workflows/push-to-s3.yml
     with:
       region: ${{ inputs.environment == 'DEV' && secrets.AWS_DEV_REGION || secrets.AWS_PROD_REGION }}
       architecture: ${{ inputs.architecture }}
