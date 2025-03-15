@@ -11,8 +11,8 @@ on:
         description: 'region on which you want to deploy'
         type: choice
         options:
-          - eu-west-1
-          - us-east-1
+          - dev
+          - prod
         required: true
       architecture:
         description: 'architecture'
@@ -26,7 +26,7 @@ jobs:
   trigger-push-to-ecr:
     uses: ./.github/workflows/push-to-ecr.yml
     with:
-      region: ${{ inputs.region }}
+      region: ${{ inputs.region == 'DEV' && secrets.DEV_REGION || inputs.region == 'PROD' && secrets.PROD_REGION }}
       architecture: ${{ inputs.architecture }}
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
