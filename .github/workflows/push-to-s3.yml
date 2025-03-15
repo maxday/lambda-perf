@@ -21,10 +21,10 @@ on:
         required: true
       devRegion:
         description: 'AWS region for DEV'
-        required: true
+        required: false
       prodRegion:
         description: 'AWS region for PROD'
-        required: true
+        required: false
 
 jobs:
   setup:
