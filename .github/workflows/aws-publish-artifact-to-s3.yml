@@ -24,12 +24,25 @@ on:
 
 jobs:
   trigger-push-to-s3:
-    env:
-      AWS_REGION: ${{ inputs.region == 'DEV' && secrets.DEV_REGION || inputs.region == 'PROD' && secrets.PROD_REGION }}
-    uses: ./.github/workflows/push-to-s3.yml
-    with:
-      region: ${{ env.REGION }}
-      architecture: ${{ inputs.architecture }}
-    secrets:
-      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Region Variable
+        id: set-region
+        run: |
+          if [[ "${{ inputs.region }}" == "DEV" ]]; then
+            echo "REGION=${{ secrets.DEV_REGION }}" >> $GITHUB_ENV
+          elif [[ "${{ inputs.region }}" == "PROD" ]]; then
+            echo "REGION=${{ secrets.PROD_REGION }}" >> $GITHUB_ENV
+          else
+            echo "Invalid region: ${{ inputs.region }}"
+            exit 1
+          fi
+
+      - name: Trigger Push to S3
+        uses: ./.github/workflows/push-to-s3.yml
+        with:
+          region: ${{ env.REGION }}
+          architecture: ${{ inputs.architecture }}
+        secrets:
+          role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
   
