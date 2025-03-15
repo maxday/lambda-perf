@@ -24,9 +24,11 @@ on:
 
 jobs:
   trigger-push-to-s3:
+    env:
+      AWS_REGION: ${{ inputs.region == 'DEV' && secrets.DEV_REGION || inputs.region == 'PROD' && secrets.PROD_REGION }}
     uses: ./.github/workflows/push-to-s3.yml
     with:
-      region: ${{ inputs.region == 'DEV' && secrets.DEV_REGION || inputs.region == 'PROD' && secrets.PROD_REGION }}
+      region: ${{ env.REGION }}
       architecture: ${{ inputs.architecture }}
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
