@@ -12,7 +12,7 @@ on:
         type: choice
         options:
           - DEV
-          - TEST
+          - PROD
         required: true
       architecture:
         description: 'Architecture'
@@ -24,9 +24,14 @@ on:
 
 jobs:
   trigger-push-to-s3:
-    uses: ./.github/workflows/push-to-s3.yml
-    with:
-      region: ${{ inputs.environment == 'DEV' && secrets.AWS_DEV_REGION || secrets.AWS_PROD_REGION }}
-      architecture: ${{ inputs.architecture }}
-    secrets:
-      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+    runs-on: ubuntu-latest
+    env:
+      REGION: ${{ inputs.environment == 'PROD' && secrets.AWS_PROD_REGION || secrets.AWS_DEV_REGION }}
+    steps:
+      - name: Trigger Push to S3 Workflow
+        uses: ./.github/workflows/push-to-s3.yml
+        with:
+          architecture: ${{ inputs.architecture }}
+          region: ${{ env.REGION }}
+        secrets:
+          role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
