@@ -7,15 +7,15 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      region:
-        description: 'region on which you want to deploy'
+      environment:
+        description: 'Environment to deploy'
         type: choice
         options:
-          - eu-west-1
-          - us-east-1
+          - DEV
+          - PROD
         required: true
       architecture:
-        description: 'architecture'
+        description: 'Architecture'
         type: choice
         options:
           - x86_64
@@ -26,8 +26,9 @@ jobs:
   trigger-push-to-s3:
     uses: ./.github/workflows/push-to-s3.yml
     with:
-      region: ${{ inputs.region }}
       architecture: ${{ inputs.architecture }}
+      environment: ${{ inputs.environment }}
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-  
+      devRegion: ${{ secrets.AWS_DEV_REGION }}
+      prodRegion: ${{ secrets.AWS_PROD_REGION }}
