@@ -53,6 +53,7 @@ in addition to the following custom runtimes:
 - `quarkus native` on `provided.al2`
 - `graalvm java17` on `provided.al2`
 - `graalvm java21` on `provided.al2023`
+- `graalvm java23` on `provided.al2023`
 - `apple swift 5.8` on `provided.al2`
 - `bun` on `provided.al2` (with and without layer)
 - `llrt` on `provided.al2023`
