@@ -1,4 +1,4 @@
-name: AWS publish artifacts to S3
+name: AWS publish artifacts to ECR
 
 permissions:
   id-token: write
@@ -7,15 +7,15 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      region:
-        description: 'region on which you want to deploy'
+      environment:
+        description: 'Environment to deploy'
         type: choice
         options:
-          - dev
-          - prod
+          - DEV
+          - TEST
         required: true
       architecture:
-        description: 'architecture'
+        description: 'Architecture'
         type: choice
         options:
           - x86_64
@@ -23,35 +23,11 @@ on:
         required: true
 
 jobs:
-  compute-region:
-    runs-on: ubuntu-latest
-    outputs:
-      region: ${{ steps.set-region.outputs.REGION }}  # Expose REGION as job output
-    steps:
-      - name: Set Region Variable
-        id: set-region
-        run: |
-          if [[ "${{ inputs.region }}" == "DEV" ]]; then
-            echo "REGION=${{ secrets.DEV_REGION }}" >> $GITHUB_ENV
-            echo "REGION=${{ secrets.DEV_REGION }}" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.region }}" == "PROD" ]]; then
-            echo "REGION=${{ secrets.PROD_REGION }}" >> $GITHUB_ENV
-            echo "REGION=${{ secrets.PROD_REGION }}" >> $GITHUB_OUTPUT
-          else
-            echo "Invalid region: ${{ inputs.region }}"
-            exit 1
-          fi
-
-  trigger-push-to-s3:
-    needs: compute-region
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Push to S3
-        uses: ./.github/workflows/push-to-s3.yml
-        with:
-          region: ${{ needs.compute-region.outputs.region }}
-          architecture: ${{ inputs.architecture }}
-        secrets:
-          role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-
-  
+  trigger-push-to-ecr:
+    uses: ./.github/workflows/push-to-ecr.yml
+    with:
+      region: ${{ inputs.environment == 'DEV' && secrets.AWS_DEV_REGION || secrets.AWS_PROD_REGION }}
+      architecture: ${{ inputs.architecture }}
+    secrets:
+      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      account_id: ${{ secrets.AWS_ACCOUNT_ID }}
