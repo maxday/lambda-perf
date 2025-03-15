@@ -32,7 +32,7 @@ jobs:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       region: ${{ secrets.AWS_DEV_REGION }}
 
-  trigger-push-to-s3-dev:
+  trigger-push-to-s3-prod:
     if: inputs.environment == 'PROD'
     uses: ./.github/workflows/push-to-s3.yml
     with:
