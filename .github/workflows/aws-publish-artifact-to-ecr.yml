@@ -14,9 +14,8 @@ on:
           - DEV
           - PROD
         required: true
-        required: true
       architecture:
-        description: 'architecture'
+        description: 'Architecture'
         type: choice
         options:
           - x86_64
@@ -34,4 +33,3 @@ jobs:
       account_id: ${{ secrets.AWS_ACCOUNT_ID }}
       devRegion: ${{ secrets.AWS_DEV_REGION }}
       prodRegion: ${{ secrets.AWS_PROD_REGION }}
-  
