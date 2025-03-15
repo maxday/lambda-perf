@@ -30,4 +30,3 @@ jobs:
       architecture: ${{ inputs.architecture }}
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-      account_id: ${{ secrets.AWS_ACCOUNT_ID }}
