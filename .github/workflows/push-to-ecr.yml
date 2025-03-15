@@ -11,6 +11,10 @@ on:
         description: 'architecture'
         type: string
         required: true
+      environment:
+        description: 'environment'
+        type: string
+        required: true
     secrets:
       role:
         description: 'AWS role to assume'
