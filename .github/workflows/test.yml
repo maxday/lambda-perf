@@ -46,3 +46,4 @@ jobs:
     secrets:
       role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       devRegion: ${{ secrets.AWS_DEV_REGION }}
+      prodRegion: ${{ secrets.AWS_PROD_REGION }}
