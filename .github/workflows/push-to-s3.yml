@@ -57,12 +57,20 @@ jobs:
       matrix: 
         runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
-      - name: configure aws credentials
+      - name: configure aws credentials for DEV
         uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ inputs.environment == 'DEV' }}
         with:
           role-to-assume: ${{ secrets.role }}
-          role-session-name: GitHub_Action_LambdaPerf_Session
-          aws-region: ${{ inputs.environment == 'DEV' && secrets.devRegion || inputs.environment == 'PROD' && secrets.prodRegion }}
+          role-session-name: GitHub_Action_LambdaPerf_Session_DEV
+          aws-region: ${{ secrets.devRegion }}
+      - name: configure aws credentials for PROD
+        uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ inputs.environment == 'PROD' }}
+        with:
+          role-to-assume: ${{ secrets.role }}
+          role-session-name: GitHub_Action_LambdaPerf_Session_PROD
+          aws-region: ${{ secrets.prodRegion }}
       - uses: actions/checkout@v4
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
