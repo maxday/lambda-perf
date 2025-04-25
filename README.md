@@ -68,7 +68,7 @@ Then the REPORT log line containing the init duration, max memory used and other
 
 ### Step 3
 
-After all these invocations, all information stored in DynamoDB is aggregated and a new JSON file is created, then commited to this repo. ie: https://github.com/maxday/lambda-perf/blob/main/data/2022-09-05.json
+After all these invocations, all information stored in DynamoDB is aggregated and a new JSON file is created, then commited to this repo. ie: https://github.com/maxday/lambda-perf/blob/main/data/2022/2022-09-05.json
 
 ### Step 4
 
