@@ -39,6 +39,7 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `java21 + snapstart`
 - `ruby3.2`
 - `ruby3.3`
+- `ruby3.4`
 
 in addition to the following custom runtimes:
 - `go` on `provided.al2`

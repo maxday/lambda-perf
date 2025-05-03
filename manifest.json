@@ -202,6 +202,16 @@
       }
     },
     {
+      "displayName": "ruby3.4",
+      "runtime": "ruby3.4",
+      "handler": "handler.handler",
+      "path": "ruby34",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/ruby:3.4"
+      }
+    },
+    {
       "displayName": "go (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
