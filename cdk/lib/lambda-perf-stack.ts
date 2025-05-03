@@ -17,6 +17,21 @@ interface LambdaPerfStackProps extends cdk.StackProps {
 }
 
 export class LambdaPerfStack extends Stack {
+
+  attachCronScheduleIfNeeded = (env: string, hour: number, lambdaFunction: lambda.Function, ruleName: string) => {
+    if (env === 'production') {
+      const rule = new events.Rule(this, ruleName, {
+        schedule: events.Schedule.cron({
+          minute: '0',
+          hour: hour.toString(),
+          day: '*',
+          month: '*',
+        })
+      });
+      rule.addTarget(new targets.LambdaFunction(lambdaFunction));
+    }
+  }
+
   constructor(scope: Construct, id: string, props: LambdaPerfStackProps) {
     super(scope, id, props);
 
@@ -75,13 +90,7 @@ export class LambdaPerfStack extends Stack {
       role: iam.Role.fromRoleArn(this, 'RoleFunctionTriggerDeployerRs', lambdaRoleArn),
     });
 
-    
-    if (props.lambdaPerfEnv === 'production') {
-      new events.Rule(this, 'FunctionTriggerDeployerSchedule', {
-        schedule: events.Schedule.cron({ minute: '0', hour: '11', day: '*', month: '*', year: '*' }),
-        targets: [new targets.LambdaFunction(functionTriggerDeployerRs)],
-      });
-    }
+    this.attachCronScheduleIfNeeded(props.lambdaPerfEnv, 11, functionTriggerDeployerRs, 'FunctionTriggerDeployerSchedule');
 
     const functionDeployerRs = new lambda.Function(this, 'FunctionDeployerRs', {
       runtime: lambda.Runtime.PROVIDED_AL2023,
@@ -138,7 +147,7 @@ export class LambdaPerfStack extends Stack {
       handler: 'bootstrap',
       code: lambda.Code.fromAsset('../target/lambda/function-invoker-rs/bootstrap-function-invoker-rs.zip'),
       environment: {
-        ACCOUNT_ID: cdk.Aws.ACCOUNT_ID, 
+        ACCOUNT_ID: cdk.Aws.ACCOUNT_ID,
         ROLE_ARN: lambdaRoleArn,
       },
       timeout: cdk.Duration.seconds(900),
@@ -150,32 +159,21 @@ export class LambdaPerfStack extends Stack {
     functionInvokerRs.addEventSource(
       new lambdaEventSources.SqsEventSource(invokerQueue, {
         batchSize: 3,
-        maxBatchingWindow: cdk.Duration.seconds(30), 
+        maxBatchingWindow: cdk.Duration.seconds(30),
       })
     );
 
     const resultBuilder = new lambda.Function(this, 'ResultBuilder', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'app.handler',
-      code: lambda.Code.fromAsset('../result-builder'), 
+      code: lambda.Code.fromAsset('../result-builder'),
       environment: {
-        GH_AUTH_TOKEN: props.githubAuthToken, 
-        LAMBDA_PERF_ENV: props.lambdaPerfEnv, 
+        GH_AUTH_TOKEN: props.githubAuthToken,
+        LAMBDA_PERF_ENV: props.lambdaPerfEnv,
       },
       timeout: cdk.Duration.seconds(60),
       role: iam.Role.fromRoleArn(this, 'RoleFunctionResultBuilder', lambdaRoleArn),
     });
-
-    const rule = new events.Rule(this, 'ScheduleRule', {
-      schedule: events.Schedule.cron({
-        minute: '0',
-        hour: '14',
-        day: '*',
-        month: '*',
-      })
-    });
-
-    // Add the Lambda function as a target for the scheduled rule
-    rule.addTarget(new targets.LambdaFunction(resultBuilder));
+    this.attachCronScheduleIfNeeded(props.lambdaPerfEnv, 14, resultBuilder, 'ScheduleRule');
   }
 }
