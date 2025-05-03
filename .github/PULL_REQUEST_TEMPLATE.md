@@ -5,6 +5,7 @@
 - [ ] Updated `README.md` to reflect the new runtime
 - [ ] Gave execution permission to `build.sh`
 - [ ] If needed, updated `.github/dependabot.yml`
+- [ ] If needed, updated `.gitignore`
 
 ## Description
 *Please provide a clear and concise description of the changes made in this PR.*

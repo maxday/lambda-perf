@@ -8,11 +8,12 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "@octokit/rest": "^21.0.0"
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.145.0"
-  }
+  },
+  "license": "Apache-2.0",
+  "private": true
 }
