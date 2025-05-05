@@ -4,7 +4,7 @@ ARG ARCH
 WORKDIR /tmp
 COPY src .
 RUN yum update -y && yum install -y clang zlib-devel krb5-devel openssl-devel zip gzip tar wget
-RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && chmod +x ./dotnet-install.sh && ./dotnet-install.sh --version latest
+RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && chmod +x ./dotnet-install.sh && ./dotnet-install.sh --version 9.0.203
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 ENV SSL_CERT_FILE=/tmp/noop
 RUN /root/.dotnet/dotnet publish --configuration Release --arch $ARCH --output /tmp/publish
