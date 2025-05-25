@@ -23,6 +23,7 @@ updates:
       interval: "monthly"
   - package-ecosystem: "npm"
     directory: "result-builder"
+    dependency-type: "all"
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
