@@ -28,10 +28,12 @@ updates:
       interval: "monthly"
   - package-ecosystem: "npm"
     directory: "s3-uploader"
+    dependency-type: "all"
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
     directory: "container-uploader"
+    dependency-type: "all"
     schedule:
       interval: "monthly"
 
