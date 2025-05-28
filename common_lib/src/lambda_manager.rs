@@ -16,7 +16,6 @@ use lambda_runtime::Error;
 
 use tracing::info;
 
-use crate::retry_manager::RetryManager;
 use crate::runtime::Runtime;
 
 pub struct LambdaManager<'a> {
@@ -194,7 +193,7 @@ impl FunctionManager for LambdaManager<'_> {
         info!("Creating IMAGE function: {}", function_name);
         info!("Image URI: {}", image_uri);
         let package_type = PackageType::Image;
-        let mut res = self
+        let res = self
             .client
             .create_function()
             .function_name(&function_name)
@@ -220,7 +219,7 @@ impl FunctionManager for LambdaManager<'_> {
         info!("Creating ZIP function: {}", function_name);
         let package_type = PackageType::Zip;
         let layers = runtime.get_layer_name(self.region);
-        let mut res = self
+        let res = self
             .client
             .create_function()
             .function_name(&function_name)
