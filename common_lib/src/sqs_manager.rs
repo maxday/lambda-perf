@@ -79,14 +79,8 @@ mod tests {
     #[tokio::test]
     async fn test_build_sqs() {
         let manifest = ManifestManager::new("manifest.test.json");
-        let sqs_manager = SQSManager::new(
-            "123456789",
-            "us-east-1",
-            "test_queue",
-            manifest,
-            None,
-        )
-        .await;
+        let sqs_manager =
+            SQSManager::new("123456789", "us-east-1", "test_queue", manifest, None).await;
         let sqs_messages = sqs_manager.build_message();
         assert_eq!(sqs_messages.len(), 10);
 

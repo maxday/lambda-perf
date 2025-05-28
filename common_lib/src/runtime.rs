@@ -25,7 +25,7 @@ impl Runtime {
         architecture: String,
         memory_size: i32,
         image: Option<Image>,
-        layer: Option<LayerInfo>
+        layer: Option<LayerInfo>,
     ) -> Self {
         Runtime {
             display_name,
@@ -35,7 +35,7 @@ impl Runtime {
             architecture,
             memory_size,
             image,
-            layer
+            layer,
         }
     }
 }
@@ -257,7 +257,7 @@ mod tests {
             String::from("arm64"),
             128,
             Some(Image::new(String::from("test_image"))),
-            None
+            None,
         );
         assert_eq!(
             test_runtime.json(),

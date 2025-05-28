@@ -6,10 +6,7 @@ use aws_config::BehaviorVersion;
 use aws_sdk_lambda::types::builders::EnvironmentBuilder;
 use aws_sdk_lambda::{
     Client as LambdaClient,
-    types::{
-        Architecture, ImageConfig, PackageType,
-        builders::{FunctionCodeBuilder},
-    },
+    types::{Architecture, ImageConfig, PackageType, builders::FunctionCodeBuilder},
 };
 
 use lambda_runtime::Error;
