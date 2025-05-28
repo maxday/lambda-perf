@@ -3,13 +3,12 @@ use std::{thread, time::Duration};
 
 use async_trait::async_trait;
 use aws_config::BehaviorVersion;
-use aws_sdk_lambda::types::SnapStartApplyOn::PublishedVersions;
 use aws_sdk_lambda::types::builders::EnvironmentBuilder;
 use aws_sdk_lambda::{
     Client as LambdaClient,
     types::{
         Architecture, ImageConfig, PackageType,
-        builders::{FunctionCodeBuilder, SnapStartBuilder},
+        builders::{FunctionCodeBuilder},
     },
 };
 
@@ -35,7 +34,6 @@ pub trait FunctionManager {
     async fn update_function_configuration(&self, function_name: &str) -> Result<(), Error>;
     async fn invoke_function(&self, function_name: &str) -> Result<(), Error>;
     async fn publish_version(&self, runtime: &Runtime) -> Result<(), Error>;
-    async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_image_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn create_zip_function(&self, runtime: &Runtime) -> Result<(), Error>;
     async fn list_versions_by_function(&self, runtime: &Runtime) -> Result<Vec<String>, Error>;
@@ -110,9 +108,6 @@ impl FunctionManager for LambdaManager<'_> {
     }
 
     async fn create_function(&self, runtime: &Runtime) -> Result<(), Error> {
-        if runtime.is_snapstart() {
-            return self.create_snapstart_function(runtime).await;
-        }
         if runtime.has_image() {
             self.create_image_function(runtime).await
         } else {
@@ -149,18 +144,6 @@ impl FunctionManager for LambdaManager<'_> {
         info!("Publishing function #{}", i);
         self.publish_version(runtime).await?;
         thread::sleep(Duration::from_secs(5));
-        Ok(())
-    }
-
-    async fn create_snapstart_function(&self, runtime: &Runtime) -> Result<(), Error> {
-        self.create_zip_function(runtime).await?;
-        thread::sleep(Duration::from_secs(5));
-        let retry = RetryManager::new(3, Duration::from_secs(10), Duration::from_secs(30));
-        for i in 0..10 {
-            retry
-                .retry_async(|| async { self.snapshot(runtime, i).await })
-                .await?;
-        }
         Ok(())
     }
 
@@ -225,13 +208,6 @@ impl FunctionManager for LambdaManager<'_> {
             .role(self.role_arn)
             .memory_size(runtime.memory_size())
             .architectures(Architecture::from(runtime.architecture()));
-        if runtime.is_snapstart() {
-            res = res.snap_start(
-                SnapStartBuilder::default()
-                    .apply_on(PublishedVersions)
-                    .build(),
-            );
-        }
         let res = res.send().await;
         match res {
             Ok(_) => Ok(()),
@@ -261,13 +237,6 @@ impl FunctionManager for LambdaManager<'_> {
             .runtime(runtime.runtime())
             .handler(runtime.handler())
             .set_layers(layers);
-        if runtime.is_snapstart() {
-            res = res.snap_start(
-                SnapStartBuilder::default()
-                    .apply_on(PublishedVersions)
-                    .build(),
-            );
-        }
         let res = res.send().await;
         match res {
             Ok(_) => Ok(()),

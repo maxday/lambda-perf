@@ -33,11 +33,8 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `dotnet6`
 - `dotnet8`
 - `java11`
-- `java11 + snapstart`
 - `java17`
-- `java17 + snapstart`
 - `java21`
-- `java21 + snapstart`
 - `ruby3.2`
 - `ruby3.3`
 - `ruby3.4`
@@ -62,6 +59,8 @@ in addition to the following custom runtimes:
 - `llrt` on `provided.al2023`
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
+
+Note that the SnapStart feature is no longer benchmarked, as using it with a simple hello-world application may not represent a meaningful use case.
 
 ### Step 2
 

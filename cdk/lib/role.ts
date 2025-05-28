@@ -176,7 +176,6 @@ export const createRole = (scope: Construct): string => {
             actions: ['sqs:SendMessage'],
             resources: [
                 `arn:aws:sqs:${region}:${accountId}:lambda-perf-deployer`,
-                `arn:aws:sqs:${region}:${accountId}:lambda-perf-snapstart-deployer`,
                 `arn:aws:sqs:${region}:${accountId}:lambda-perf-invoker`,
             ],
         },

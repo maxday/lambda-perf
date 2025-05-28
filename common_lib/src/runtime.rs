@@ -13,8 +13,6 @@ pub struct Runtime {
     memory_size: i32,
     image: Option<Image>,
     layer: Option<LayerInfo>,
-    #[serde(default)]
-    is_snapstart: bool,
 }
 
 impl Runtime {
@@ -27,8 +25,7 @@ impl Runtime {
         architecture: String,
         memory_size: i32,
         image: Option<Image>,
-        layer: Option<LayerInfo>,
-        is_snapstart: bool,
+        layer: Option<LayerInfo>
     ) -> Self {
         Runtime {
             display_name,
@@ -38,8 +35,7 @@ impl Runtime {
             architecture,
             memory_size,
             image,
-            layer,
-            is_snapstart,
+            layer
         }
     }
 }
@@ -87,10 +83,6 @@ impl Runtime {
 
     pub fn build_s3_key(&self) -> String {
         format!("{}/code_{}.zip", self.path, self.architecture)
-    }
-
-    pub fn is_snapstart(&self) -> bool {
-        self.is_snapstart
     }
 
     pub fn has_image(&self) -> bool {
@@ -163,7 +155,6 @@ mod tests {
             128,
             None,
             None,
-            false,
         );
         assert_eq!(test_runtime.package_type(), PackageType::Zip);
         assert!(!test_runtime.has_image());
@@ -180,7 +171,6 @@ mod tests {
             128,
             None,
             None,
-            false,
         );
         assert_eq!(test_runtime.build_s3_key(), "nodejs20/code_arm64.zip");
     }
@@ -196,7 +186,6 @@ mod tests {
             128,
             None,
             None,
-            false,
         );
         assert_eq!(test_runtime.architecture(), "arm64");
         assert_eq!(test_runtime.memory_size(), 128);
@@ -217,7 +206,6 @@ mod tests {
             128,
             Some(Image::new(String::from("test_image"))),
             None,
-            false,
         );
         assert_eq!(test_runtime.package_type(), PackageType::Image);
         assert!(test_runtime.has_image());
@@ -234,7 +222,6 @@ mod tests {
             128,
             None,
             None,
-            false,
         );
         assert_eq!(
             test_runtime.function_name(),
@@ -253,44 +240,11 @@ mod tests {
             128,
             Some(Image::new(String::from("test_image"))),
             None,
-            false,
         );
         assert_eq!(
             test_runtime.image_name("0123456789", "us-east-1"),
             "0123456789.dkr.ecr.us-east-1.amazonaws.com/lambda-perf:nodejs20-arm64"
         );
-    }
-
-    #[test]
-    fn test_is_snapstart_true() {
-        let test_runtime = Runtime::new(
-            String::from("nodejs20"),
-            String::from("nodejs20.x"),
-            String::from("index.handler"),
-            String::from("nodejs20"),
-            String::from("arm64"),
-            128,
-            Some(Image::new(String::from("test_image"))),
-            None,
-            true,
-        );
-        assert!(test_runtime.is_snapstart());
-    }
-
-    #[test]
-    fn test_is_snapstart_false() {
-        let test_runtime = Runtime::new(
-            String::from("nodejs20"),
-            String::from("nodejs20.x"),
-            String::from("index.handler"),
-            String::from("nodejs20"),
-            String::from("arm64"),
-            128,
-            Some(Image::new(String::from("test_image"))),
-            None,
-            false,
-        );
-        assert!(!test_runtime.is_snapstart());
     }
 
     #[test]
@@ -303,12 +257,11 @@ mod tests {
             String::from("arm64"),
             128,
             Some(Image::new(String::from("test_image"))),
-            None,
-            false,
+            None
         );
         assert_eq!(
             test_runtime.json(),
-            "{\"architecture\":\"arm64\",\"displayName\":\"nodejs20\",\"handler\":\"index.handler\",\"image\":{\"baseImage\":\"test_image\"},\"isSnapstart\":false,\"layer\":null,\"memorySize\":128,\"path\":\"nodejs20\",\"runtime\":\"nodejs20.x\"}"
+            "{\"architecture\":\"arm64\",\"displayName\":\"nodejs20\",\"handler\":\"index.handler\",\"image\":{\"baseImage\":\"test_image\"},\"layer\":null,\"memorySize\":128,\"path\":\"nodejs20\",\"runtime\":\"nodejs20.x\"}"
         );
     }
 
@@ -323,7 +276,6 @@ mod tests {
             128,
             Some(Image::new(String::from("test_image"))),
             None,
-            false,
         );
         assert_eq!(test_runtime.get_layer_name("us-east-1"), None);
     }
@@ -344,7 +296,6 @@ mod tests {
                 )),
                 arm64: None,
             }),
-            false,
         );
         assert_eq!(
             test_runtime.get_layer_name("us-east-1"),
@@ -370,7 +321,6 @@ mod tests {
                     "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-arm64:1",
                 )),
             }),
-            false,
         );
         assert_eq!(
             test_runtime.get_layer_name("us-east-1"),
@@ -396,7 +346,6 @@ mod tests {
                     "arn:aws:lambda:_REGION_:226609089145:layer:bun-1_0_0-arm64:1",
                 )),
             }),
-            false,
         );
         assert_eq!(test_runtime.get_layer_name("us-east-1"), None);
     }
