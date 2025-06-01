@@ -684,11 +684,11 @@
     tslib "^2.6.2"
 
 "@smithy/hash-node@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@smithy/hash-node/-/hash-node-4.0.2.tgz#a34fe5a33b067d754ca63302b9791778f003e437"
-  integrity sha512-VnTpYPnRUE7yVhWozFdlxcYknv9UN7CeOqSrMH+V877v4oqtVYuoqhIhtSjmGPvYrYnAkaM61sLMKHvxL138yg==
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@smithy/hash-node/-/hash-node-4.0.4.tgz#f867cfe6b702ed8893aacd3e097f8ca8ecba579e"
+  integrity sha512-qnbTPUhCVnCgBp4z4BUJUhOEkVwxiEi1cyFM+Zj6o+aY8OFGxUQleKWq8ltgp3dujuhXojIvJWdoqpm6dVO3lQ==
   dependencies:
-    "@smithy/types" "^4.2.0"
+    "@smithy/types" "^4.3.1"
     "@smithy/util-buffer-from" "^4.0.0"
     "@smithy/util-utf8" "^4.0.0"
     tslib "^2.6.2"
@@ -901,6 +901,13 @@
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.3.0.tgz#80a0da5ac907cfe9e97e89814bc7502626451580"
   integrity sha512-+1iaIQHthDh9yaLhRzaoQxRk+l9xlk+JjMFxGRhNLz+m9vKOkjNeU8QuB4w3xvzHyVR/BVlp/4AXDHjoRIkfgQ==
+  dependencies:
+    tslib "^2.6.2"
+
+"@smithy/types@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.3.1.tgz#c11276ea16235d798f47a68aef9f44d3dbb70dd4"
+  integrity sha512-UqKOQBL2x6+HWl3P+3QqFD4ncKq0I8Nuz9QItGv5WuKuMHuuwlhvqcZCoXGfc+P1QmfJE7VieykoYYmrOoFJxA==
   dependencies:
     tslib "^2.6.2"
 
