@@ -19,8 +19,8 @@
     <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.9" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.13.0" />
-    <PackageReference Include="Amazon.Lambda.Core" Version="2.5.1" />
+    <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.13.1" />
+    <PackageReference Include="Amazon.Lambda.Core" Version="2.6.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
   </ItemGroup>
   
