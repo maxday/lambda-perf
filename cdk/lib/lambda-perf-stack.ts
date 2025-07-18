@@ -11,7 +11,6 @@ import { createRole } from './role';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 
 interface LambdaPerfStackProps extends cdk.StackProps {
-  skipSnapstart: string;
   githubAuthToken: string;
   lambdaPerfEnv: string;
 }
@@ -51,11 +50,6 @@ export class LambdaPerfStack extends Stack {
       visibilityTimeout: cdk.Duration.seconds(900),
     });
 
-    const snapstartDeployerQueue = new sqs.Queue(this, 'LambdaPerfSnapstartDeployerQueue', {
-      queueName: 'lambda-perf-snapstart-deployer',
-      visibilityTimeout: cdk.Duration.seconds(900),
-    });
-
     const invokerQueue = new sqs.Queue(this, 'LambdaPerfInvokerQueue', {
       queueName: 'lambda-perf-invoker',
       visibilityTimeout: cdk.Duration.seconds(900),
@@ -82,8 +76,6 @@ export class LambdaPerfStack extends Stack {
         TABLE_NAME: 'report-log',
         REPORT_LOG_PROCESSOR_ARN: functionReportLogProcessorRs.functionArn,
         FUNCTION_QUEUE_NAME: deployerQueue.queueName,
-        SNAPSTART_QUEUE_NAME: snapstartDeployerQueue.queueName,
-        SKIP_SNAPSTART: props.skipSnapstart,
         ACCOUNT_ID: accountId,
       },
       timeout: cdk.Duration.seconds(60),
@@ -113,31 +105,6 @@ export class LambdaPerfStack extends Stack {
       new lambdaEventSources.SqsEventSource(deployerQueue, {
         batchSize: 5,
         maxBatchingWindow: cdk.Duration.seconds(30),
-      })
-    );
-
-    const functionSnapstartDeployerRs = new lambda.Function(this, 'FunctionSnapstartDeployerRs', {
-      runtime: lambda.Runtime.PROVIDED_AL2023,
-      architecture: lambda.Architecture.ARM_64,
-      handler: 'bootstrap',
-      code: lambda.Code.fromAsset('../target/lambda/function-deployer-rs/bootstrap-function-deployer-rs.zip'),
-      environment: {
-        ACCOUNT_ID: accountId,
-        REPORT_LOG_PROCESSOR_ARN: functionReportLogProcessorRs.functionArn,
-        ROLE_ARN: lambdaRoleArn,
-        INVOKER_QUEUE_NAME: invokerQueue.queueName,
-      },
-      timeout: cdk.Duration.seconds(900),
-      role: iam.Role.fromRoleArn(this, 'RoleFunctionSnapstartDeployerRs', lambdaRoleArn),
-    });
-
-    snapstartDeployerQueue.grantSendMessages(functionSnapstartDeployerRs);
-
-    functionSnapstartDeployerRs.addEventSource(
-      new lambdaEventSources.SqsEventSource(snapstartDeployerQueue, {
-        batchSize: 2,
-        maxBatchingWindow: cdk.Duration.seconds(120),
-        maxConcurrency: 2,
       })
     );
 
