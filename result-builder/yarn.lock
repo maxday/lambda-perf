@@ -534,14 +534,6 @@
   dependencies:
     "@octokit/openapi-types" "^23.0.1"
 
-"@smithy/abort-controller@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@smithy/abort-controller/-/abort-controller-4.0.2.tgz#36a23e8cc65fc03cacb6afa35dfbfd319c560c6b"
-  integrity sha512-Sl/78VDtgqKxN2+1qduaVE140XF+Xg+TafkncspwM4jFP/LHr76ZHmIY/y3V1M0mMLNk+Je6IGbzxy23RSToMw==
-  dependencies:
-    "@smithy/types" "^4.2.0"
-    tslib "^2.6.2"
-
 "@smithy/abort-controller@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@smithy/abort-controller/-/abort-controller-4.0.3.tgz#53a53dabc5a46fec70857acb07653d658c79b916"
@@ -767,21 +759,10 @@
     "@smithy/types" "^4.3.0"
     tslib "^2.6.2"
 
-"@smithy/node-http-handler@^4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@smithy/node-http-handler/-/node-http-handler-4.0.4.tgz#aa583d201c1ee968170b65a07f06d633c214b7a1"
-  integrity sha512-/mdqabuAT3o/ihBGjL94PUbTSPSRJ0eeVTdgADzow0wRJ0rN4A27EOrtlK56MYiO1fDvlO3jVTCxQtQmK9dZ1g==
-  dependencies:
-    "@smithy/abort-controller" "^4.0.2"
-    "@smithy/protocol-http" "^5.1.0"
-    "@smithy/querystring-builder" "^4.0.2"
-    "@smithy/types" "^4.2.0"
-    tslib "^2.6.2"
-
-"@smithy/node-http-handler@^4.0.6":
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/@smithy/node-http-handler/-/node-http-handler-4.0.6.tgz#a022da499ba3af4b6b4c815104fde973c0eccc40"
-  integrity sha512-NqbmSz7AW2rvw4kXhKGrYTiJVDHnMsFnX4i+/FzcZAfbOBauPYs2ekuECkSbtqaxETLLTu9Rl/ex6+I2BKErPA==
+"@smithy/node-http-handler@^4.0.4", "@smithy/node-http-handler@^4.0.6":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@smithy/node-http-handler/-/node-http-handler-4.1.0.tgz#6b528cd0da0c35755b34afba207b7db972b0eb92"
+  integrity sha512-vqfSiHz2v8b3TTTrdXi03vNz1KLYYS3bhHCDv36FYDqxT7jvTll1mMnCrkD+gOvgwybuunh/2VmvOMqwBegxEg==
   dependencies:
     "@smithy/abort-controller" "^4.0.4"
     "@smithy/protocol-http" "^5.1.2"
