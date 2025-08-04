@@ -42,40 +42,9 @@ async fn process_event(
         let retry = RetryManager::new(3, Duration::from_secs(1), Duration::from_secs(30));
         let runtime = &record.body;
         info!("processing runtime: {}", runtime.function_name());
-        match runtime.is_snapstart() {
-            true => invoke_snapstart(runtime, &retry, lambda_manager).await,
-            false => invoke(runtime, &retry, lambda_manager).await,
-        }?;
+        invoke(runtime, &retry, lambda_manager).await?;
     }
     Ok(Response::success())
-}
-
-async fn invoke_snapstart(
-    runtime: &Runtime,
-    retry: &RetryManager,
-    lambda_manager: &LambdaManager<'_>,
-) -> Result<(), Error> {
-    let arns = lambda_manager.list_versions_by_function(runtime).await?;
-    for i in 0..10 {
-        info!("snapstart run #: {}", i);
-        if let Some(arn) = arns.get(i) {
-            info!("arn = {}", arn);
-            retry
-                .retry_async(|| async {
-                    lambda_manager
-                        .update_function_configuration(&runtime.function_name())
-                        .await
-                })
-                .await?;
-            info!("function updated to ensure cold start");
-            thread::sleep(Duration::from_secs(5));
-            retry
-                .retry_async(|| async { lambda_manager.invoke_function(arn).await })
-                .await?;
-            info!("function invoked");
-        }
-    }
-    Ok(())
 }
 
 async fn invoke(

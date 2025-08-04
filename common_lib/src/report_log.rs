@@ -166,22 +166,6 @@ mod tests {
     }
 
     #[test]
-    fn test_report_log_details_new_snapstart() {
-        let report_log = "REPORT RequestId: 1d4e1c44-b211-4a4c-972b-39c8da774f2e	Duration: 36.97 ms	Billed Duration: 173 ms	Memory Size: 128 MB	Max Memory Used: 68 MB	Restore Duration: 511.56 ms	Billed Restore Duration: 136 ms	";
-        let report_log_details = ReportLogData::new(report_log).unwrap();
-        assert_eq!(
-            report_log_details.request_id,
-            "1d4e1c44-b211-4a4c-972b-39c8da774f2e"
-        );
-        assert_eq!(report_log_details.duration, "36.97");
-        assert_eq!(report_log_details.billed_duration, "173");
-        assert_eq!(report_log_details.memory_size, "128");
-        assert_eq!(report_log_details.max_memory_used, "68");
-        assert_eq!(report_log_details.init_duration, "511.56");
-        assert_eq!(report_log_details.billed_restore_duration, "136");
-    }
-
-    #[test]
     fn test_report_log_details_not_init_duration() {
         let report_log = "REPORT RequestId: 32f5cbf1-dd22-422a-a566-8965da5a3465	Duration: 8.40 ms	Billed Duration: 9 ms	Memory Size: 128 MB	Max Memory Used: 66 MB	";
         let report_log_details = ReportLogData::new(report_log);
