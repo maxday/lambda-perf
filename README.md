@@ -1,14 +1,14 @@
-# 🔄 Continous Lambda Cold Starts Benchmark 
+# 🔄 Continous Lambda Cold Starts Benchmark
 
 **TL;DR:** 👀 to https://maxday.github.io/lambda-perf/
 
-to see the benchmark result: 
+to see the benchmark result:
 
 ![screenshot](https://github.com/maxday/lambda-perf/blob/main/docs/screenshot.png)
 
 ## Why?
 
-There are already a lot of blog posts talking about Lambda Cold Starts performance per runtime but I could not find any always up-to-date information. 
+There are already a lot of blog posts talking about Lambda Cold Starts performance per runtime but I could not find any always up-to-date information.
 
 That's why I decided to create this project: data is always up to date as the benchmark is running daily.
 
@@ -60,6 +60,8 @@ in addition to the following custom runtimes:
 - `apple swift 5.8` on `provided.al2`
 - `bun` on `provided.al2` (with and without layer)
 - `llrt` on `provided.al2023`
+- `shell` on `provided.al2`
+- `shell` on `provided.al2023`
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
 
