@@ -16,9 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.12.2" />
-    <PackageReference Include="Amazon.Lambda.Core" Version="2.5.0" />
+    <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.13.1" />
+    <PackageReference Include="Amazon.Lambda.Core" Version="2.7.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
+  <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="9.0.8" />
+  <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.8" />
   </ItemGroup>
 
 </Project>
