@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 as builder
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS builder
 ARG ARCH
 RUN apt-get update
 RUN apt-get install -y zip

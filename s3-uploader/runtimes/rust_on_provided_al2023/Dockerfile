@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/provided:al2023 as builder
+FROM public.ecr.aws/lambda/provided:al2023 AS builder
 ARG ARCH
 WORKDIR /usr/src/app
 RUN dnf -y update

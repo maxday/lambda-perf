@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/java:17 as builder
+FROM public.ecr.aws/lambda/java:17 AS builder
 WORKDIR /tmpBuild
 RUN yum install -y unzip
 RUN  curl -k -L -v -X GET https://services.gradle.org/distributions/gradle-8.3-bin.zip > gradle-8.3-bin.zip
