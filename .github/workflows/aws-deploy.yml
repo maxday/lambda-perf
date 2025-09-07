@@ -60,7 +60,6 @@ jobs:
         env:
           AWS_REGION: ${{ inputs.environment == 'DEV' && secrets.AWS_DEV_REGION || inputs.environment == 'PROD' && secrets.AWS_PROD_REGION }}
           LAMBDA_PERF_ENV: ${{ inputs.environment == 'PROD' && 'production' || 'dev' }}
-          SKIP_SNAPSTART: ${{ (inputs.environment == 'DEV') && secrets.SKIP_SNAPSTART_DEV || 'false' }}
           GITHUB_AUTH_TOKEN: ${{ inputs.environment == 'PROD' && secrets.GH_AUTH_TOKEN || 'no-token-needed' }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: cd cdk && yarn install && cdk bootstrap && cdk deploy LambdaPerfStack --require-approval never
