@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/java:21 as builder
+FROM public.ecr.aws/lambda/java:21 AS builder
 WORKDIR /tmpBuild
 RUN dnf -y update
 RUN dnf -y install zip

@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/provided:al2 as builder
+FROM public.ecr.aws/lambda/provided:al2 AS builder
 ARG ARCH
 
 RUN yum update -y
