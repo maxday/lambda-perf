@@ -951,6 +951,13 @@
   dependencies:
     "@smithy/types" "^4.2.0"
 
+"@smithy/service-error-classification@^4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@smithy/service-error-classification/-/service-error-classification-4.0.6.tgz#5d4d3017f5b62258fbfc1067e14198e125a8286c"
+  integrity sha512-RRoTDL//7xi4tn5FrN2NzH17jbgmnKidUqd4KvquT0954/i6CXXkh1884jBiunq24g9cGtPBEXlU40W6EpNOOg==
+  dependencies:
+    "@smithy/types" "^4.3.1"
+
 "@smithy/shared-ini-file-loader@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.0.2.tgz#15043f0516fe09ff4b22982bc5f644dc701ebae5"
@@ -1136,12 +1143,12 @@
     tslib "^2.6.2"
 
 "@smithy/util-retry@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@smithy/util-retry/-/util-retry-4.0.2.tgz#9b64cf460d63555884e641721d19e3c0abff8ee6"
-  integrity sha512-Qryc+QG+7BCpvjloFLQrmlSd0RsVRHejRXd78jNO3+oREueCjwG1CCEH1vduw/ZkM1U9TztwIKVIi3+8MJScGg==
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@smithy/util-retry/-/util-retry-4.0.6.tgz#f931fdd1f01786b21a82711e185c58410e8e41c7"
+  integrity sha512-+YekoF2CaSMv6zKrA6iI/N9yva3Gzn4L6n35Luydweu5MMPYpiGZlWqehPHDHyNbnyaYlz/WJyYAZnC+loBDZg==
   dependencies:
-    "@smithy/service-error-classification" "^4.0.2"
-    "@smithy/types" "^4.2.0"
+    "@smithy/service-error-classification" "^4.0.6"
+    "@smithy/types" "^4.3.1"
     tslib "^2.6.2"
 
 "@smithy/util-stream@^4.2.0":
