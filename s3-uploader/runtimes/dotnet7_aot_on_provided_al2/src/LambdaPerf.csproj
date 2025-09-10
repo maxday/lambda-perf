@@ -26,6 +26,7 @@
   
   <ItemGroup>
     <!--The runtime directives file allows the compiler to know what types and assemblies to not trim out of the final binary, even if they don't appear to be used.-->
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="9.0.9" />
     <PackageReference Include="Microsoft.NET.ILLink.Analyzers" Version="7.0.100-1.23401.1" />
     <RdXmlFile Include="rd.xml" />
   </ItemGroup>
