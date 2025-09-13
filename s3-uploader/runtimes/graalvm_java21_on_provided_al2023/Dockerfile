@@ -1,5 +1,5 @@
 FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.2.0-Final-java21 AS builder
-RUN curl https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.11-bin.tar.gz --output apache-maven-3.9.11-bin.tar.gz
+RUN curl https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz --output apache-maven-3.9.11-bin.tar.gz
 RUN tar xzf apache-maven-3.9.11-bin.tar.gz
 COPY src ./src
 COPY pom.xml .
@@ -13,7 +13,7 @@ COPY --from=builder /project/target/graalvm-java21 /tmp
 RUN strip /tmp/graalvm-java21
 
 # zip the extension
-FROM ubuntu:latest 
+FROM ubuntu:latest AS compresser
 RUN apt-get update
 RUN apt-get install -y zip
 RUN mkdir /package
