@@ -8,4 +8,4 @@ target_compile_features(${PROJECT_NAME} PRIVATE "cxx_std_11")
 target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-fno-rtti" "-fno-exceptions")
 
 # this line creates a target that packages your binary and zips it up
-aws_lambda_package_target(${PROJECT_NAME} NO_LIBC)
+aws_lambda_package_target(${PROJECT_NAME})
