@@ -738,6 +738,16 @@
     "@smithy/types" "^4.3.1"
     tslib "^2.6.2"
 
+"@smithy/node-config-provider@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@smithy/node-config-provider/-/node-config-provider-4.3.0.tgz#619ba522d683081d06f112a581b9009988cb38eb"
+  integrity sha512-5QgHNuWdT9j9GwMPPJCKxy2KDxZ3E5l4M3/5TatSZrqYVoEiqQrDfAq8I6KWZw7RZOHtVtCzEPdYz7rHZixwcA==
+  dependencies:
+    "@smithy/property-provider" "^4.2.0"
+    "@smithy/shared-ini-file-loader" "^4.3.0"
+    "@smithy/types" "^4.6.0"
+    tslib "^2.6.2"
+
 "@smithy/node-http-handler@^4.0.4", "@smithy/node-http-handler@^4.0.6":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@smithy/node-http-handler/-/node-http-handler-4.1.0.tgz#6b528cd0da0c35755b34afba207b7db972b0eb92"
@@ -773,6 +783,14 @@
     "@smithy/types" "^4.3.1"
     tslib "^2.6.2"
 
+"@smithy/property-provider@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@smithy/property-provider/-/property-provider-4.2.0.tgz#431c573326f572ae9063d58c21690f28251f9dce"
+  integrity sha512-rV6wFre0BU6n/tx2Ztn5LdvEdNZ2FasQbPQmDOPfV9QQyDmsCkOAB0osQjotRCQg+nSKFmINhyda0D3AnjSBJw==
+  dependencies:
+    "@smithy/types" "^4.6.0"
+    tslib "^2.6.2"
+
 "@smithy/protocol-http@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@smithy/protocol-http/-/protocol-http-5.1.0.tgz#ad34e336a95944785185234bebe2ec8dbe266936"
@@ -795,15 +813,6 @@
   integrity sha512-rOG5cNLBXovxIrICSBm95dLqzfvxjEmuZx4KK3hWwPFHGdW3lxY0fZNXfv2zebfRO7sJZ5pKJYHScsqopeIWtQ==
   dependencies:
     "@smithy/types" "^4.3.1"
-    tslib "^2.6.2"
-
-"@smithy/querystring-builder@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@smithy/querystring-builder/-/querystring-builder-4.0.2.tgz#834cea95bf413ab417bf9c166d60fd80d2cb3016"
-  integrity sha512-NTOs0FwHw1vimmQM4ebh+wFQvOwkEf/kQL6bSM1Lock+Bv4I89B3hGYoUEPkmvYPkDKyp5UdXJYu+PoTQ3T31Q==
-  dependencies:
-    "@smithy/types" "^4.2.0"
-    "@smithy/util-uri-escape" "^4.0.0"
     tslib "^2.6.2"
 
 "@smithy/querystring-builder@^4.0.4":
@@ -860,6 +869,14 @@
   integrity sha512-63X0260LoFBjrHifPDs+nM9tV0VMkOTl4JRMYNuKh/f5PauSjowTfvF3LogfkWdcPoxsA9UjqEOgjeYIbhb7Nw==
   dependencies:
     "@smithy/types" "^4.3.1"
+    tslib "^2.6.2"
+
+"@smithy/shared-ini-file-loader@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.3.0.tgz#241a493ea7fa7faeaefccf6a5fa81af521d91cfa"
+  integrity sha512-VCUPPtNs+rKWlqqntX0CbVvWyjhmX30JCtzO+s5dlzzxrvSfRh5SY0yxnkirvc1c80vdKQttahL71a9EsdolSQ==
+  dependencies:
+    "@smithy/types" "^4.6.0"
     tslib "^2.6.2"
 
 "@smithy/signature-v4@^5.1.0":
@@ -920,6 +937,13 @@
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.3.1.tgz#c11276ea16235d798f47a68aef9f44d3dbb70dd4"
   integrity sha512-UqKOQBL2x6+HWl3P+3QqFD4ncKq0I8Nuz9QItGv5WuKuMHuuwlhvqcZCoXGfc+P1QmfJE7VieykoYYmrOoFJxA==
+  dependencies:
+    tslib "^2.6.2"
+
+"@smithy/types@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.6.0.tgz#8ea8b15fedee3cdc555e8f947ce35fb1e973bb7a"
+  integrity sha512-4lI9C8NzRPOv66FaY1LL1O/0v0aLVrq/mXP/keUa9mJOApEeae43LsLd2kZRUJw91gxOQfLIrV3OvqPgWz1YsA==
   dependencies:
     tslib "^2.6.2"
 
@@ -1012,12 +1036,12 @@
     tslib "^2.6.2"
 
 "@smithy/util-endpoints@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@smithy/util-endpoints/-/util-endpoints-3.0.2.tgz#6933a0d6d4a349523ef71ca9540c9c0b222b559e"
-  integrity sha512-6QSutU5ZyrpNbnd51zRTL7goojlcnuOB55+F9VBD+j8JpRY50IGamsjlycrmpn8PQkmJucFW8A0LSfXj7jjtLQ==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@smithy/util-endpoints/-/util-endpoints-3.2.0.tgz#4bdc4820ceab5d66365ee72cfb14226e10bb0e24"
+  integrity sha512-TXeCn22D56vvWr/5xPqALc9oO+LN+QpFjrSM7peG/ckqEPoI3zaKZFp+bFwfmiHhn5MGWPaLCqDOJPPIixk9Wg==
   dependencies:
-    "@smithy/node-config-provider" "^4.0.2"
-    "@smithy/types" "^4.2.0"
+    "@smithy/node-config-provider" "^4.3.0"
+    "@smithy/types" "^4.6.0"
     tslib "^2.6.2"
 
 "@smithy/util-hex-encoding@^4.0.0":
