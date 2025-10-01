@@ -629,14 +629,14 @@
     tslib "^2.6.2"
 
 "@smithy/credential-provider-imds@^4.0.2":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@smithy/credential-provider-imds/-/credential-provider-imds-4.0.5.tgz#d44989d783300af37b2be2fc4ec29cdb67540c32"
-  integrity sha512-saEAGwrIlkb9XxX/m5S5hOtzjoJPEK6Qw2f9pYTbIsMPOFyGSXBBTw95WbOyru8A1vIS2jVCCU1Qhz50QWG3IA==
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@smithy/credential-provider-imds/-/credential-provider-imds-4.2.0.tgz#21855ceb157afeea60d74c61fe7316e90d8ec545"
+  integrity sha512-SOhFVvFH4D5HJZytb0bLKxCrSnwcqPiNlrw+S4ZXjMnsC+o9JcUQzbZOEQcA8yv9wJFNhfsUiIUKiEnYL68Big==
   dependencies:
-    "@smithy/node-config-provider" "^4.1.2"
-    "@smithy/property-provider" "^4.0.3"
-    "@smithy/types" "^4.3.0"
-    "@smithy/url-parser" "^4.0.3"
+    "@smithy/node-config-provider" "^4.3.0"
+    "@smithy/property-provider" "^4.2.0"
+    "@smithy/types" "^4.6.0"
+    "@smithy/url-parser" "^4.2.0"
     tslib "^2.6.2"
 
 "@smithy/eventstream-codec@^4.0.3", "@smithy/eventstream-codec@^4.0.4":
@@ -850,6 +850,16 @@
     "@smithy/types" "^4.3.0"
     tslib "^2.6.2"
 
+"@smithy/node-config-provider@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@smithy/node-config-provider/-/node-config-provider-4.3.0.tgz#619ba522d683081d06f112a581b9009988cb38eb"
+  integrity sha512-5QgHNuWdT9j9GwMPPJCKxy2KDxZ3E5l4M3/5TatSZrqYVoEiqQrDfAq8I6KWZw7RZOHtVtCzEPdYz7rHZixwcA==
+  dependencies:
+    "@smithy/property-provider" "^4.2.0"
+    "@smithy/shared-ini-file-loader" "^4.3.0"
+    "@smithy/types" "^4.6.0"
+    tslib "^2.6.2"
+
 "@smithy/node-http-handler@^4.0.4", "@smithy/node-http-handler@^4.0.5":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@smithy/node-http-handler/-/node-http-handler-4.1.0.tgz#6b528cd0da0c35755b34afba207b7db972b0eb92"
@@ -875,6 +885,14 @@
   integrity sha512-Wcn17QNdawJZcZZPBuMuzyBENVi1AXl4TdE0jvzo4vWX2x5df/oMlmr/9M5XAAC6+yae4kWZlOYIsNsgDrMU9A==
   dependencies:
     "@smithy/types" "^4.3.0"
+    tslib "^2.6.2"
+
+"@smithy/property-provider@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@smithy/property-provider/-/property-provider-4.2.0.tgz#431c573326f572ae9063d58c21690f28251f9dce"
+  integrity sha512-rV6wFre0BU6n/tx2Ztn5LdvEdNZ2FasQbPQmDOPfV9QQyDmsCkOAB0osQjotRCQg+nSKFmINhyda0D3AnjSBJw==
+  dependencies:
+    "@smithy/types" "^4.6.0"
     tslib "^2.6.2"
 
 "@smithy/protocol-http@^5.1.0":
@@ -944,6 +962,14 @@
     "@smithy/types" "^4.3.0"
     tslib "^2.6.2"
 
+"@smithy/querystring-parser@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@smithy/querystring-parser/-/querystring-parser-4.2.0.tgz#4c4ebe257e951dff91f9db65f9558752641185e8"
+  integrity sha512-BjATSNNyvVbQxOOlKse0b0pSezTWGMvA87SvoFoFlkRsKXVsN3bEtjCxvsNXJXfnAzlWFPaT9DmhWy1vn0sNEA==
+  dependencies:
+    "@smithy/types" "^4.6.0"
+    tslib "^2.6.2"
+
 "@smithy/service-error-classification@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@smithy/service-error-classification/-/service-error-classification-4.0.2.tgz#96740ed8be7ac5ad7d6f296d4ddf3f66444b8dcc"
@@ -972,6 +998,14 @@
   integrity sha512-vHwlrqhZGIoLwaH8vvIjpHnloShqdJ7SUPNM2EQtEox+yEDFTVQ7E+DLZ+6OhnYEgFUwPByJyz6UZaOu2tny6A==
   dependencies:
     "@smithy/types" "^4.3.0"
+    tslib "^2.6.2"
+
+"@smithy/shared-ini-file-loader@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.3.0.tgz#241a493ea7fa7faeaefccf6a5fa81af521d91cfa"
+  integrity sha512-VCUPPtNs+rKWlqqntX0CbVvWyjhmX30JCtzO+s5dlzzxrvSfRh5SY0yxnkirvc1c80vdKQttahL71a9EsdolSQ==
+  dependencies:
+    "@smithy/types" "^4.6.0"
     tslib "^2.6.2"
 
 "@smithy/signature-v4@^5.1.0":
@@ -1008,6 +1042,13 @@
   dependencies:
     tslib "^2.6.2"
 
+"@smithy/types@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.6.0.tgz#8ea8b15fedee3cdc555e8f947ce35fb1e973bb7a"
+  integrity sha512-4lI9C8NzRPOv66FaY1LL1O/0v0aLVrq/mXP/keUa9mJOApEeae43LsLd2kZRUJw91gxOQfLIrV3OvqPgWz1YsA==
+  dependencies:
+    tslib "^2.6.2"
+
 "@smithy/url-parser@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@smithy/url-parser/-/url-parser-4.0.2.tgz#a316f7d8593ffab796348bc5df96237833880713"
@@ -1024,6 +1065,15 @@
   dependencies:
     "@smithy/querystring-parser" "^4.0.3"
     "@smithy/types" "^4.3.0"
+    tslib "^2.6.2"
+
+"@smithy/url-parser@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@smithy/url-parser/-/url-parser-4.2.0.tgz#b6d6e739233ae120e4d6725b04375cb87791491f"
+  integrity sha512-AlBmD6Idav2ugmoAL6UtR6ItS7jU5h5RNqLMZC7QrLCoITA9NzIN3nx9GWi8g4z1pfWh2r9r96SX/jHiNwPJ9A==
+  dependencies:
+    "@smithy/querystring-parser" "^4.2.0"
+    "@smithy/types" "^4.6.0"
     tslib "^2.6.2"
 
 "@smithy/util-base64@^4.0.0":
