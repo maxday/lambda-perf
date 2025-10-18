@@ -55,7 +55,7 @@ in addition to the following custom runtimes:
 - `graalvm java21` on `provided.al2023`
 - `graalvm java23` on `provided.al2023`
 - `apple swift 5.8` on `provided.al2`
-- `apple swift 6.1` on `provided.al2`
+- `apple swift 6.2` on `provided.al2`
 - `bun` on `provided.al2` (with and without layer)
 - `llrt` on `provided.al2023`
 - `shell` on `provided.al2`
