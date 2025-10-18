@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -9,7 +9,7 @@ let package = Package(
         .executable(name: "MaxdayLambda", targets: ["MaxdayLambda"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", from: "2.0.0-beta.3"),
+        .package(url: "https://github.com/awslabs/swift-aws-lambda-runtime", from: "2.3.0"),
     ],
     targets: [
         .executableTarget(name: "MaxdayLambda", dependencies: [

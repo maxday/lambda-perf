@@ -13,7 +13,7 @@ fi
 
 rm ${DIR_NAME}/code_${2}.zip 2> /dev/null
 
-docker build ${DIR_NAME} --platform ${ARCH} -t maxday/swift61_on_provided_al2_${2}
-dockerId=$(docker create maxday/swift61_on_provided_al2_${2})
+docker build ${DIR_NAME} --platform ${ARCH} -t maxday/swift62_on_provided_al2_${2}
+dockerId=$(docker create maxday/swift62_on_provided_al2_${2})
 
 docker cp $dockerId:/code.zip ${DIR_NAME}/code_${2}.zip
