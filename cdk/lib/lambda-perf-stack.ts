@@ -105,6 +105,7 @@ export class LambdaPerfStack extends Stack {
       new lambdaEventSources.SqsEventSource(deployerQueue, {
         batchSize: 5,
         maxBatchingWindow: cdk.Duration.seconds(30),
+        enabled: true,
       })
     );
 
@@ -127,6 +128,7 @@ export class LambdaPerfStack extends Stack {
       new lambdaEventSources.SqsEventSource(invokerQueue, {
         batchSize: 6,
         maxBatchingWindow: cdk.Duration.seconds(30),
+        enabled: true,
       })
     );
 
