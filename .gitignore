@@ -21,6 +21,7 @@ s3-uploader/runtimes/llrt_on_provided_al2023/llrt-lambda-x64.zip
 s3-uploader/runtimes/llrt_on_provided_al2023/llrt-lambda-arm64.zip
 s3-uploader/runtimes/*/code*.zip
 s3-uploader/runtimes/swift*/.build
+s3-uploader/runtimes/swift*/Package.resolved
 
 result-builder/node_modules
 
