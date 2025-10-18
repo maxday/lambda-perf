@@ -1,8 +1,10 @@
 import AWSLambdaRuntime
 
-@main
-struct MyLambda: SimpleLambdaHandler {
-    func handle(_ input: String, context: LambdaContext) async throws -> String {
-        "Ok"
-    }
+typealias Event = [String: AWSLambdaRuntime.LambdaCodable]
+
+let runtime = LambdaRuntime {
+    (event: Event, context: LambdaContext) in
+    "OK"
 }
+
+try await runtime.run()
