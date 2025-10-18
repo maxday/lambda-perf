@@ -8,9 +8,7 @@ use crate::{manifest::ManifestManager, runtime::Runtime};
 pub struct SQSManager {
     pub client: SQSClient,
     pub function_queue_url: String,
-    pub snapstart_queue_url: String,
     pub manifest_manager: ManifestManager,
-    pub skip_snapstart: bool,
 }
 
 impl SQSManager {
@@ -18,8 +16,6 @@ impl SQSManager {
         account_id: &str,
         region: &str,
         function_queue_name: &str,
-        snapstart_queue_name: &str,
-        skip_snapstart: bool,
         manifest_manager: ManifestManager,
         client: Option<SQSClient>,
     ) -> Self {
@@ -32,14 +28,10 @@ impl SQSManager {
         };
         let function_queue_url =
             SQSManager::build_queue_url(account_id, region, function_queue_name);
-        let snapstart_queue_url =
-            SQSManager::build_queue_url(account_id, region, snapstart_queue_name);
         SQSManager {
             client,
             function_queue_url,
-            snapstart_queue_url,
             manifest_manager,
-            skip_snapstart,
         }
     }
     fn build_queue_url(account_id: &str, region: &str, queue_name: &str) -> String {
@@ -60,28 +52,15 @@ pub trait QueueManager {
 impl QueueManager for SQSManager {
     fn build_message(&self) -> Vec<Runtime> {
         let manifest = self.manifest_manager.read_manifest();
-        if self.skip_snapstart {
-            return manifest
-                .runtimes
-                .into_iter()
-                .filter(|r| !r.is_snapstart())
-                .collect();
-        }
         manifest.runtimes
     }
 
     async fn send_message(&self) -> Result<(), Error> {
         let messages = self.build_message().into_iter();
         for message in messages {
-            let queue_url = if message.is_snapstart() {
-                &self.snapstart_queue_url
-            } else {
-                &self.function_queue_url
-            };
-
             self.client
                 .send_message()
-                .queue_url(queue_url)
+                .queue_url(&self.function_queue_url)
                 .message_body(serde_json::to_string(&message)?)
                 .send()
                 .await?;
@@ -100,16 +79,8 @@ mod tests {
     #[tokio::test]
     async fn test_build_sqs() {
         let manifest = ManifestManager::new("manifest.test.json");
-        let sqs_manager = SQSManager::new(
-            "123456789",
-            "us-east-1",
-            "test_queue",
-            "snapstart_test_queue",
-            false,
-            manifest,
-            None,
-        )
-        .await;
+        let sqs_manager =
+            SQSManager::new("123456789", "us-east-1", "test_queue", manifest, None).await;
         let sqs_messages = sqs_manager.build_message();
         assert_eq!(sqs_messages.len(), 10);
 
@@ -124,7 +95,6 @@ mod tests {
                 128,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -140,7 +110,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -154,7 +123,6 @@ mod tests {
                 128,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -170,7 +138,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -184,7 +151,6 @@ mod tests {
                 128,
                 None,
                 None,
-                false,
             )
         );
 
@@ -199,7 +165,6 @@ mod tests {
                 256,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -215,7 +180,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -229,7 +193,6 @@ mod tests {
                 256,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -245,7 +208,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -259,39 +221,6 @@ mod tests {
                 256,
                 None,
                 None,
-                false,
-            )
-        );
-    }
-
-    #[tokio::test]
-    async fn test_build_sqs_skip_snapstart() {
-        let manifest = ManifestManager::new("manifest.test.snapstart.and.not.snapstart.json");
-        let sqs_manager = SQSManager::new(
-            "123456789",
-            "us-east-1",
-            "test_queue",
-            "snapstart_test_queue",
-            true,
-            manifest,
-            None,
-        )
-        .await;
-        let sqs_messages = sqs_manager.build_message();
-        assert_eq!(sqs_messages.len(), 1);
-
-        assert_eq!(
-            sqs_messages[0],
-            Runtime::new(
-                "java11".to_string(),
-                "java11".to_string(),
-                "io.github.maxday.Handler::handleRequest".to_string(),
-                "java_11".to_string(),
-                "x86_64".to_string(),
-                128,
-                None,
-                None,
-                false,
             )
         );
     }
