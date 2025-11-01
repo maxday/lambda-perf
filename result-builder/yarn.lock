@@ -945,28 +945,12 @@
   dependencies:
     "@smithy/types" "^4.8.0"
 
-"@smithy/shared-ini-file-loader@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.0.2.tgz#15043f0516fe09ff4b22982bc5f644dc701ebae5"
-  integrity sha512-J9/gTWBGVuFZ01oVA6vdb4DAjf1XbDhK6sLsu3OS9qmLrS6KB5ygpeHiM3miIbj1qgSJ96GYszXFWv6ErJ8QEw==
+"@smithy/shared-ini-file-loader@^4.0.2", "@smithy/shared-ini-file-loader@^4.0.3", "@smithy/shared-ini-file-loader@^4.3.3":
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.3.4.tgz#ba0707daba05d7705ae120abdc27dbfa5b5b9049"
+  integrity sha512-y5ozxeQ9omVjbnJo9dtTsdXj9BEvGx2X8xvRgKnV+/7wLBuYJQL6dOa/qMY6omyHi7yjt1OA97jZLoVRYi8lxA==
   dependencies:
-    "@smithy/types" "^4.2.0"
-    tslib "^2.6.2"
-
-"@smithy/shared-ini-file-loader@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.0.3.tgz#23fab0e773630b0817846c52c54b435ac32a4dd0"
-  integrity sha512-vHwlrqhZGIoLwaH8vvIjpHnloShqdJ7SUPNM2EQtEox+yEDFTVQ7E+DLZ+6OhnYEgFUwPByJyz6UZaOu2tny6A==
-  dependencies:
-    "@smithy/types" "^4.3.0"
-    tslib "^2.6.2"
-
-"@smithy/shared-ini-file-loader@^4.3.3":
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.3.3.tgz#1d5162cd3a14f57e4fde56f65aa188e8138c1248"
-  integrity sha512-9f9Ixej0hFhroOK2TxZfUUDR13WVa8tQzhSzPDgXe5jGL3KmaM9s8XN7RQwqtEypI82q9KHnKS71CJ+q/1xLtQ==
-  dependencies:
-    "@smithy/types" "^4.8.0"
+    "@smithy/types" "^4.8.1"
     tslib "^2.6.2"
 
 "@smithy/signature-v4@^5.1.0":
@@ -1054,6 +1038,13 @@
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.8.0.tgz#e6f65e712478910b74747081e6046e68159f767d"
   integrity sha512-QpELEHLO8SsQVtqP+MkEgCYTFW0pleGozfs3cZ183ZBj9z3VC1CX1/wtFMK64p+5bhtZo41SeLK1rBRtd25nHQ==
+  dependencies:
+    tslib "^2.6.2"
+
+"@smithy/types@^4.8.1":
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.8.1.tgz#0ecad4e329340c8844e38a18c7608d84cc1c853c"
+  integrity sha512-N0Zn0OT1zc+NA+UVfkYqQzviRh5ucWwO7mBV3TmHHprMnfcJNfhlPicDkBHi0ewbh+y3evR6cNAW0Raxvb01NA==
   dependencies:
     tslib "^2.6.2"
 
