@@ -2,14 +2,12 @@ use async_trait::async_trait;
 use aws_config::BehaviorVersion;
 use aws_sdk_sqs::Client as SQSClient;
 use lambda_runtime::Error;
-use serde_json::json;
 
 use crate::{manifest::ManifestManager, runtime::Runtime};
 
 pub struct SQSManager {
     pub client: SQSClient,
     pub function_queue_url: String,
-    pub snapstart_queue_url: String,
     pub manifest_manager: ManifestManager,
 }
 
@@ -18,7 +16,6 @@ impl SQSManager {
         account_id: &str,
         region: &str,
         function_queue_name: &str,
-        snapstart_queue_name: &str,
         manifest_manager: ManifestManager,
         client: Option<SQSClient>,
     ) -> Self {
@@ -31,12 +28,9 @@ impl SQSManager {
         };
         let function_queue_url =
             SQSManager::build_queue_url(account_id, region, function_queue_name);
-        let snapstart_queue_url =
-            SQSManager::build_queue_url(account_id, region, snapstart_queue_name);
         SQSManager {
             client,
             function_queue_url,
-            snapstart_queue_url,
             manifest_manager,
         }
     }
@@ -62,16 +56,12 @@ impl QueueManager for SQSManager {
     }
 
     async fn send_message(&self) -> Result<(), Error> {
-        let messages = self.build_message();
+        let messages = self.build_message().into_iter();
         for message in messages {
-            let queue_url = match message.is_snapstart() {
-                true => &self.snapstart_queue_url,
-                false => &self.function_queue_url,
-            };
             self.client
                 .send_message()
-                .queue_url(queue_url)
-                .message_body(json!(message).to_string())
+                .queue_url(&self.function_queue_url)
+                .message_body(serde_json::to_string(&message)?)
                 .send()
                 .await?;
         }
@@ -89,15 +79,8 @@ mod tests {
     #[tokio::test]
     async fn test_build_sqs() {
         let manifest = ManifestManager::new("manifest.test.json");
-        let sqs_manager = SQSManager::new(
-            "123456789",
-            "us-east-1",
-            "test_queue",
-            "snapstart_test_queue",
-            manifest,
-            None,
-        )
-        .await;
+        let sqs_manager =
+            SQSManager::new("123456789", "us-east-1", "test_queue", manifest, None).await;
         let sqs_messages = sqs_manager.build_message();
         assert_eq!(sqs_messages.len(), 10);
 
@@ -112,7 +95,6 @@ mod tests {
                 128,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -128,7 +110,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -142,7 +123,6 @@ mod tests {
                 128,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -158,7 +138,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -172,7 +151,6 @@ mod tests {
                 128,
                 None,
                 None,
-                false,
             )
         );
 
@@ -187,7 +165,6 @@ mod tests {
                 256,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -203,7 +180,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -217,7 +193,6 @@ mod tests {
                 256,
                 None,
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -233,7 +208,6 @@ mod tests {
                     base_image: "public.ecr.aws/lambda/nodejs:18".to_string(),
                 }),
                 None,
-                false,
             )
         );
         assert_eq!(
@@ -247,7 +221,6 @@ mod tests {
                 256,
                 None,
                 None,
-                false,
             )
         );
     }

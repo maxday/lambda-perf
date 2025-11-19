@@ -6,7 +6,7 @@ use common_lib::{
     reponse::Response,
     report_log::{ReportLog, ReportLogData},
 };
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent, service_fn};
 use tracing::info;
 
 #[tokio::main]
@@ -48,11 +48,17 @@ async fn process_event(
     info!("{:?}", report_log);
     for log_event in data.log_events {
         info!("log_event = {:?}", log_event.message);
-        let report_log_data = ReportLogData::new(&log_event.message);
-        info!("report_log_data = {:?}", report_log_data);
-        dynamodb_manager
-            .insert_report_log(&report_log, &report_log_data)
-            .await?;
+        match ReportLogData::new(&log_event.message) {
+            Ok(report_log_data) => {
+                info!("report_log_data = {:?}", report_log);
+                dynamodb_manager
+                    .insert_report_log(&report_log, &report_log_data)
+                    .await?;
+            }
+            Err(error_message) => {
+                info!("Could not create report_log_data: {}", error_message);
+            }
+        }
     }
     Ok(Response::success())
 }

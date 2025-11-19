@@ -1,0 +1,88 @@
+name: Push to S3
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      architecture:
+        description: 'architecture'
+        type: string
+        required: true
+      environment:
+        description: 'environment'
+        type: string
+        required: true
+    secrets:
+      role:
+        description: 'AWS role to assume'
+        required: true
+      devRegion:
+        description: 'AWS region for DEV'
+        required: true
+      prodRegion:
+        description: 'AWS region for PROD'
+        required: true
+
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    outputs:
+      runner: ${{ steps.select.outputs.runner }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Check branch
+        id: select
+        run: |
+          if [ ${{ inputs.architecture }} == 'x86_64' ]; then
+            echo "runner=ubuntu-24.04" >> $GITHUB_OUTPUT
+          else
+            echo "runner=ubuntu-24.04-arm" >> $GITHUB_OUTPUT
+          fi
+          cat $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+      - name: Build runtime matrix
+        id: set-matrix
+        run: |
+          jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json
+          echo "matrix=$(jq -c '[.runtimes[] | select(.architectures | index("${{ inputs.architecture }}")) | .path]' manifest.json)" >> $GITHUB_OUTPUT
+
+  build-upload:
+    needs: setup
+    runs-on: ${{ needs.setup.outputs.runner }}
+    strategy:
+      fail-fast: false
+      matrix: 
+        runtime_id: ${{fromJson(needs.setup.outputs.matrix)}}
+    steps:
+      - name: configure aws credentials for DEV
+        uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ inputs.environment == 'DEV' }}
+        with:
+          role-to-assume: ${{ secrets.role }}
+          role-session-name: GitHub_Action_LambdaPerf_Session_DEV
+          aws-region: ${{ secrets.devRegion }}
+      - name: configure aws credentials for PROD
+        uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ inputs.environment == 'PROD' }}
+        with:
+          role-to-assume: ${{ secrets.role }}
+          role-session-name: GitHub_Action_LambdaPerf_Session_PROD
+          aws-region: ${{ secrets.prodRegion }}
+      - uses: actions/checkout@v4
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: build and deploy
+        env:
+          ARCHITECTURE: ${{ inputs.architecture }}
+          AWS_REGION: ${{ inputs.environment == 'DEV' && secrets.devRegion || inputs.environment == 'PROD' && secrets.prodRegion }}
+          RUNTIME_ID: ${{ matrix.runtime_id }}
+        run: |
+          cd s3-uploader
+          yarn install
+          node app.mjs

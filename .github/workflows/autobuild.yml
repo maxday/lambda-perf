@@ -1,0 +1,41 @@
+name: autobuild
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  schedule:
+    - cron: '00 16 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger-push-to-s3:
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: [x86_64, arm64]
+    uses: ./.github/workflows/push-to-s3.yml
+    with:
+      environment: PROD
+      architecture: ${{ matrix.architecture }}
+    secrets:
+      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      devRegion: ${{ secrets.AWS_DEV_REGION }}
+      prodRegion: ${{ secrets.AWS_PROD_REGION }}
+
+  trigger-push-to-ecr:
+    needs: trigger-push-to-s3
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: [x86_64, arm64]
+    uses: ./.github/workflows/push-to-ecr.yml
+    with:
+      environment: PROD
+      architecture: ${{ matrix.architecture }}
+    secrets:
+      role: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+      devRegion: ${{ secrets.AWS_DEV_REGION }}
+      prodRegion: ${{ secrets.AWS_PROD_REGION }}

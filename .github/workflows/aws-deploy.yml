@@ -7,24 +7,17 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      region:
-        description: 'region on which you want to deploy'
+      environment:
+        description: 'Environment to deploy'
         type: choice
         options:
-          - eu-west-1
-          - us-east-1
-        required: true
-      lambdaPerfEnv:
-        description: 'environment on which you want to deploy'
-        type: choice
-        options:
-          - staging
-          - production
+          - DEV
+          - PROD
         required: true
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -55,27 +48,18 @@ jobs:
       - name: install dependencies
         run: |
           cd ./result-builder && yarn install
-      - name: install Serverless Framework
-        run: sudo yarn global add serverless@^4.4.14 --prefix /usr/local
+      - name: install CDK
+        run: sudo yarn global add aws-cdk
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-session-name: GitHub_Action_LambdaPerf_Session
-          aws-region: ${{ inputs.region }}
+          aws-region: ${{ inputs.environment == 'DEV' && secrets.AWS_DEV_REGION || inputs.environment == 'PROD' && secrets.AWS_PROD_REGION }}
       - name: deploy
         env:
-          AWS_REGION: ${{ inputs.region }}
-          GH_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
-          LAMBDA_PERF_ENV: ${{ inputs.lambdaPerfEnv }}
-          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        run: sls deploy --force
-      - name: Remove the cron job scheduler in staging (eu-west-1)
-        if: "${{ inputs.region == 'eu-west-1' }}"
-        run: |
-          RULE_NAME=$(aws events list-rule-names-by-target --target-arn arn:aws:lambda:${{ inputs.region }}:${{ secrets.AWS_ACCOUNT_ID }}:function:lambda-perf-dev-functionTriggerDeployerRs --region ${{ inputs.region }} | jq -r '.RuleNames[0]')
-          echo "Disabling rule ${RULE_NAME}"
-          aws events disable-rule --name $RULE_NAME --region ${{ inputs.region }}
-          RULE_NAME=$(aws events list-rule-names-by-target --target-arn arn:aws:lambda:${{ inputs.region }}:${{ secrets.AWS_ACCOUNT_ID }}:function:lambda-perf-dev-resultBuilder --region ${{ inputs.region }} | jq -r '.RuleNames[0]')
-          echo "Disabling rule ${RULE_NAME}"
-          aws events disable-rule --name $RULE_NAME --region ${{ inputs.region }}
+          AWS_REGION: ${{ inputs.environment == 'DEV' && secrets.AWS_DEV_REGION || inputs.environment == 'PROD' && secrets.AWS_PROD_REGION }}
+          LAMBDA_PERF_ENV: ${{ inputs.environment == 'PROD' && 'production' || 'dev' }}
+          GITHUB_AUTH_TOKEN: ${{ inputs.environment == 'PROD' && secrets.GH_AUTH_TOKEN || 'no-token-needed' }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: cd cdk && yarn install && cdk bootstrap && cdk deploy LambdaPerfStack --require-approval never

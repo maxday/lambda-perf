@@ -1,14 +1,14 @@
-# 🔄 Continous Lambda Cold Starts Benchmark 
+# 🔄 Continous Lambda Cold Starts Benchmark
 
 **TL;DR:** 👀 to https://maxday.github.io/lambda-perf/
 
-to see the benchmark result: 
+to see the benchmark result:
 
 ![screenshot](https://github.com/maxday/lambda-perf/blob/main/docs/screenshot.png)
 
 ## Why?
 
-There are already a lot of blog posts talking about Lambda Cold Starts performance per runtime but I could not find any always up-to-date information. 
+There are already a lot of blog posts talking about Lambda Cold Starts performance per runtime but I could not find any always up-to-date information.
 
 That's why I decided to create this project: data is always up to date as the benchmark is running daily.
 
@@ -23,6 +23,7 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `nodejs16.x`
 - `nodejs18.x`
 - `nodejs20.x`
+- `nodejs22.x`
 - `python3.8`
 - `python3.9`
 - `python3.10`
@@ -30,14 +31,13 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `python3.12`
 - `python3.13`
 - `dotnet6`
+- `dotnet8`
 - `java11`
-- `java11 + snapstart`
 - `java17`
-- `java17 + snapstart`
 - `java21`
-- `java21 + snapstart`
 - `ruby3.2`
 - `ruby3.3`
+- `ruby3.4`
 
 in addition to the following custom runtimes:
 - `go` on `provided.al2`
@@ -49,14 +49,21 @@ in addition to the following custom runtimes:
 - `dotnet7 aot` on `provided.al2`
 - `dotnet8 aot` on `provided.al2`
 - `dotnet8 aot` on `provided.al2023`
+- `dotnet9 aot` on `provided.al2023`
 - `quarkus native` on `provided.al2`
 - `graalvm java17` on `provided.al2`
 - `graalvm java21` on `provided.al2023`
+- `graalvm java23` on `provided.al2023`
 - `apple swift 5.8` on `provided.al2`
+- `apple swift 6.2` on `provided.al2`
 - `bun` on `provided.al2` (with and without layer)
 - `llrt` on `provided.al2023`
+- `shell` on `provided.al2`
+- `shell` on `provided.al2023`
 
 Each of this function is packaged in a zip file, uploaded to a S3 bucket.
+
+Note that the SnapStart feature is no longer benchmarked, as using it with a simple hello-world application may not represent a meaningful use case.
 
 ### Step 2
 
@@ -66,7 +73,7 @@ Then the REPORT log line containing the init duration, max memory used and other
 
 ### Step 3
 
-After all these invocations, all information stored in DynamoDB is aggregated and a new JSON file is created, then commited to this repo. ie: https://github.com/maxday/lambda-perf/blob/main/data/2022-09-05.json
+After all these invocations, all information stored in DynamoDB is aggregated and a new JSON file is created, then commited to this repo. ie: https://github.com/maxday/lambda-perf/blob/main/data/2022/2022-09-05.json
 
 ### Step 4
 

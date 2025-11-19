@@ -12,13 +12,13 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.shade.plugin.version>3.2.1</maven.shade.plugin.version>
-        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
-        <aws.java.sdk.version>2.29.27</aws.java.sdk.version>
+        <aws.java.sdk.version>2.35.9</aws.java.sdk.version>
         <slf4j.version>1.7.28</slf4j.version>
-        <graalvm.version>24.1.1</graalvm.version>
-        <graalvm.native.maven.plugin.version>0.10.3</graalvm.native.maven.plugin.version>
-        <junit5.version>5.11.3</junit5.version>
+        <graalvm.version>25.0.0</graalvm.version>
+        <graalvm.native.maven.plugin.version>0.11.0</graalvm.native.maven.plugin.version>
+        <junit5.version>6.0.0</junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -51,12 +51,12 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
-            <version>1.2.3</version>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>url-connection-client</artifactId>
-            <version>2.29.27</version>
+            <version>2.35.9</version>
             <exclusions>
                 <exclusion>
                     <groupId>software.amazon.awssdk</groupId>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.formkiq</groupId>
             <artifactId>lambda-runtime-graalvm</artifactId>
-            <version>2.5.0</version>
+            <version>2.6.0</version>
         </dependency>
     </dependencies>
 
@@ -108,16 +108,15 @@
                         <configuration>
                             <imageName>graalvm-java17</imageName>
                             <mainClass>com.formkiq.lambda.runtime.graalvm.LambdaRuntime</mainClass>
-                            <buildArgs combine.children="append">
-                                <!-- BouncyCastleAlpn issue tracked in https://github.com/netty/netty/issues/11369 -->
-                                <buildArgs>
-                                    --verbose
-                                    --no-fallback
-                                    --initialize-at-build-time=org.slf4j
-                                    --initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils
-                                    --enable-url-protocols=http
-                                    -H:ReflectionConfigurationFiles=${project.basedir}/src/main/resources/reflect.json
-                                </buildArgs>
+                            <!-- BouncyCastleAlpn issue tracked in https://github.com/netty/netty/issues/11369 -->
+                            <buildArgs>
+                                <buildArg>--verbose</buildArg>
+                                <buildArg>--no-fallback</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j</buildArg>
+                                <buildArg>--initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils</buildArg>
+                                <buildArg>--enable-url-protocols=http</buildArg>
+                                <buildArg>-H:+AddAllCharsets -march=compatibility</buildArg>
+                                <buildArg>-H:ReflectionConfigurationFiles=${project.basedir}/src/main/resources/reflect.json</buildArg>
                             </buildArgs>
                         </configuration>
                     </plugin>

@@ -1,4 +1,4 @@
-FROM public.ecr.aws/sam/build-java8.al2 as builder
+FROM public.ecr.aws/sam/build-java8.al2 AS builder
 WORKDIR /tmpBuild
 
 COPY src ./src

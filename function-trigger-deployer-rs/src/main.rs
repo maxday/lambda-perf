@@ -1,4 +1,4 @@
-use lambda_runtime::{service_fn, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent, service_fn};
 use serde_json::Value;
 use tracing::log::info;
 
@@ -33,8 +33,6 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
         std::env::var("REPORT_LOG_PROCESSOR_ARN").expect("REPORT_LOG_PROCESSOR_ARN not set");
     let function_queue_name =
         std::env::var("FUNCTION_QUEUE_NAME").expect("FUNCTION_QUEUE_NAME not set");
-    let snapstart_queue_name =
-        std::env::var("SNAPSTART_QUEUE_NAME").expect("SNAPSTART_QUEUE_NAME not set");
     let account_id = std::env::var("ACCOUNT_ID").expect("ACCOUNT_ID not set");
     let region = std::env::var("AWS_REGION").expect("AWS_REGION not set");
 
@@ -62,7 +60,6 @@ async fn func(_: LambdaEvent<Value>) -> Result<Response, Error> {
         &account_id,
         &region,
         &function_queue_name,
-        &snapstart_queue_name,
         manifest_manager,
         None,
     )

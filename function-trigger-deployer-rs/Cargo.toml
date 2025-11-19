@@ -1,10 +1,10 @@
 [package]
 name = "function-trigger-deployer-rs"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-lambda_runtime = "0.13.0"
+lambda_runtime = "0.14.1"
 
 serde = "1.0.192"
 serde_json = "1.0.108"

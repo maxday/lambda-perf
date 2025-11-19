@@ -23,14 +23,20 @@ updates:
       interval: "monthly"
   - package-ecosystem: "npm"
     directory: "result-builder"
+    allow:
+      - dependency-type: "all"
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
     directory: "s3-uploader"
+    allow:
+      - dependency-type: "all"
     schedule:
       interval: "monthly"
   - package-ecosystem: "npm"
     directory: "container-uploader"
+    allow:
+      - dependency-type: "all"
     schedule:
       interval: "monthly"
 
@@ -49,6 +55,10 @@ updates:
       interval: "daily"
   - package-ecosystem: "nuget"
     directory: "s3-uploader/runtimes/dotnet8_aot_on_provided_al2023/src"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "s3-uploader/runtimes/dotnet9_aot_on_provided_al2023/src"
     schedule:
       interval: "daily"
   - package-ecosystem: "gomod"

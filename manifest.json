@@ -2,6 +2,16 @@
   "memorySizes": [128, 256, 512, 1024],
   "runtimes": [
     {
+      "displayName": "apple swift 6.2 (prov.al2)",
+      "runtime": "provided.al2",
+      "handler": "SimpleLambdaHandler",
+      "path": "swift62_on_provided_al2",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
+    },
+    {
       "displayName": "apple swift 5.8 (prov.al2)",
       "runtime": "provided.al2",
       "handler": "SimpleLambdaHandler",
@@ -39,6 +49,16 @@
       "architectures": ["x86_64", "arm64"],
       "image": {
         "baseImage": "public.ecr.aws/lambda/nodejs:20"
+      }
+    },
+    {
+      "displayName": "nodejs22.x",
+      "runtime": "nodejs22.x",
+      "handler": "index.handler",
+      "path": "nodejs22x",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/nodejs:22"
       }
     },
     {
@@ -152,6 +172,16 @@
       }
     },
     {
+      "displayName": "dotnet9 aot (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "bootstrap",
+      "path": "dotnet9_aot_on_provided_al2023",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
+    },
+    {
       "displayName": "java11",
       "runtime": "java11",
       "handler": "io.github.maxday.Handler::handleRequest",
@@ -174,7 +204,7 @@
     {
       "displayName": "ruby3.2",
       "runtime": "ruby3.2",
-      "handler": "index.handler",
+      "handler": "handler.handler",
       "path": "ruby32",
       "architectures": ["x86_64", "arm64"],
       "image": {
@@ -184,11 +214,21 @@
     {
       "displayName": "ruby3.3",
       "runtime": "ruby3.3",
-      "handler": "index.handler",
+      "handler": "handler.handler",
       "path": "ruby33",
       "architectures": ["x86_64", "arm64"],
       "image": {
         "baseImage": "public.ecr.aws/lambda/ruby:3.3"
+      }
+    },
+    {
+      "displayName": "ruby3.4",
+      "runtime": "ruby3.4",
+      "handler": "handler.handler",
+      "path": "ruby34",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/ruby:3.4"
       }
     },
     {
@@ -232,14 +272,6 @@
       }
     },
     {
-      "displayName": "java11 snapstart",
-      "runtime": "java11",
-      "handler": "io.github.maxday.Handler::handleRequest",
-      "path": "java11_snapstart",
-      "isSnapstart": true,
-      "architectures": ["x86_64"]
-    },
-    {
       "displayName": "java17",
       "runtime": "java17",
       "handler": "io.github.maxday.Handler::handleRequest",
@@ -250,14 +282,6 @@
       }
     },
     {
-      "displayName": "java17 snapstart",
-      "runtime": "java17",
-      "handler": "io.github.maxday.Handler::handleRequest",
-      "path": "java17_snapstart",
-      "isSnapstart": true,
-      "architectures": ["x86_64"]
-    },
-    {
       "displayName": "java21",
       "runtime": "java21",
       "handler": "io.github.maxday.Handler::handleRequest",
@@ -266,14 +290,6 @@
       "image": {
         "baseImage": "public.ecr.aws/lambda/java:21"
       }
-    },
-    {
-      "displayName": "java21 snapstart",
-      "runtime": "java21",
-      "handler": "io.github.maxday.Handler::handleRequest",
-      "path": "java21_snapstart",
-      "isSnapstart": true,
-      "architectures": ["x86_64"]
     },
     {
       "displayName": "quarkus (prov.al2)",
@@ -351,6 +367,36 @@
       "runtime": "provided.al2023",
       "handler": "com.xavierbouclet.OkHandler",
       "path": "graalvm_java21_on_provided_al2023",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
+    },
+    {
+      "displayName": "graalvm java23 (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "com.xavierbouclet.OkHandler",
+      "path": "graalvm_java23_on_provided_al2023",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
+    },
+    {
+      "displayName": "shell (prov.al2)",
+      "runtime": "provided.al2",
+      "handler": "bootstrap",
+      "path": "shell_on_provided_al2",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2"
+      }
+    },
+    {
+      "displayName": "shell (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "bootstrap",
+      "path": "shell_on_provided_al2023",
       "architectures": ["x86_64", "arm64"],
       "image": {
         "baseImage": "public.ecr.aws/lambda/provided:al2023"
