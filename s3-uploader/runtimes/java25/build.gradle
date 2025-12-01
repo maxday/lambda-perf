@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 25
+targetCompatibility = 25
+
+task buildZip(type: Zip) {
+    archiveBaseName = 'code'
+    from compileJava
+    from processResources
+}
+
+build.dependsOn buildZip
