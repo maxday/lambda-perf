@@ -24,6 +24,7 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `nodejs18.x`
 - `nodejs20.x`
 - `nodejs22.x`
+- `nodejs24.x`
 - `python3.8`
 - `python3.9`
 - `python3.10`
