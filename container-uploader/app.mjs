@@ -43,7 +43,22 @@ const buildDockerImage = async (
   console.log("docker logging in!");
   childProcess.execSync(cmdLogin);
   console.log("docker logged in!");
-  childProcess.execSync(`docker push ${tag}`);
+  try {
+    const result = childProcess.execSync(`docker push ${tag}`, {
+      stdio: 'pipe'
+    });
+    console.log('Docker push output:', result.toString());
+  } catch (err) {
+    console.error('Docker push failed!');
+
+    if (err.stdout) {
+      console.error('stdout:', err.stdout.toString());
+    }
+
+    if (err.stderr) {
+      console.error('stderr:', err.stderr.toString());
+    }
+  }
   console.log("image pushed!");
 };
 
@@ -119,7 +134,7 @@ const runtimeFromRuntimeId = (manifest, runtimeId) => {
   const runtime = manifest.find(r => {
     return r.path === runtimeId;
   });
-  if(!runtime) {
+  if (!runtime) {
     throw "cound not find the runtime"
   }
   console.log(runtime);
