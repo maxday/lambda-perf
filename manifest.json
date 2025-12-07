@@ -132,16 +132,6 @@
       }
     },
     {
-      "displayName": "dotnet8 aot (prov.al2)",
-      "runtime": "provided.al2",
-      "handler": "bootstrap",
-      "path": "dotnet8_aot_on_provided_al2",
-      "architectures": ["x86_64", "arm64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/provided:al2"
-      }
-    },
-    {
       "displayName": "dotnet8 aot (prov.al2023)",
       "runtime": "provided.al2023",
       "handler": "bootstrap",

@@ -50,10 +50,6 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "nuget"
-    directory: "s3-uploader/runtimes/dotnet8_aot_on_provided_al2/src"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "nuget"
     directory: "s3-uploader/runtimes/dotnet8_aot_on_provided_al2023/src"
     schedule:
       interval: "daily"
