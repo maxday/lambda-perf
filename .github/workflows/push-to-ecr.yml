@@ -103,10 +103,47 @@ jobs:
         env:
           AWS_REGION: ${{ inputs.environment == 'DEV' && secrets.devRegion || inputs.environment == 'PROD' && secrets.prodRegion }}
         run: |
-          UNTAGGED_IMAGES=$(aws ecr list-images --region "${AWS_REGION}" --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json)
-          if [[ "$UNTAGGED_IMAGES" == "[]" ]]; then
+          echo "Fetching untagged images..."
+          IMAGES_JSON=$(aws ecr list-images \
+            --region "${AWS_REGION}" \
+            --repository-name lambda-perf \
+            --filter "tagStatus=UNTAGGED" \
+            --query 'imageIds' \
+            --output json)
+
+          COUNT=$(echo "$IMAGES_JSON" | jq length)
+          if (( COUNT == 0 )); then
             echo "No untagged images found. Skipping deletion."
-          else
-            aws ecr batch-delete-image --region "${AWS_REGION}" --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
+            exit 0
           fi
 
+          echo "Found $COUNT untagged images. Deleting in batches of 100..."
+
+          # read all images into an array
+          mapfile -t IMAGES_ARRAY < <(echo "$IMAGES_JSON" | jq -c '.[]')
+
+          BATCH=()
+          for IMG in "${IMAGES_ARRAY[@]}"; do
+            BATCH+=("$IMG")
+
+            if (( ${#BATCH[@]} == 100 )); then
+              BATCH_JSON=$(printf '%s\n' "${BATCH[@]}" | jq -s '.')
+              echo "Deleting batch of 100 images..."
+              aws ecr batch-delete-image \
+                --region "${AWS_REGION}" \
+                --repository-name lambda-perf \
+                --image-ids "$BATCH_JSON"
+              BATCH=()
+            fi
+          done
+
+          # delete leftover images
+          if (( ${#BATCH[@]} > 0 )); then
+            BATCH_JSON=$(printf '%s\n' "${BATCH[@]}" | jq -s '.')
+            LEFT_COUNT=${#BATCH[@]}
+            echo "Deleting final batch of $LEFT_COUNT images..."
+            aws ecr batch-delete-image \
+              --region "${AWS_REGION}" \
+              --repository-name lambda-perf \
+              --image-ids "$BATCH_JSON"
+          fi
