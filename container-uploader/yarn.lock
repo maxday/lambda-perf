@@ -1060,14 +1060,7 @@
     "@smithy/types" "^4.9.0"
     tslib "^2.6.2"
 
-"@smithy/service-error-classification@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@smithy/service-error-classification/-/service-error-classification-4.0.2.tgz#96740ed8be7ac5ad7d6f296d4ddf3f66444b8dcc"
-  integrity sha512-LA86xeFpTKn270Hbkixqs5n73S+LVM0/VZco8dqd+JT75Dyx3Lcw/MraL7ybjmz786+160K8rPOmhsq0SocoJQ==
-  dependencies:
-    "@smithy/types" "^4.2.0"
-
-"@smithy/service-error-classification@^4.2.5":
+"@smithy/service-error-classification@^4.0.2", "@smithy/service-error-classification@^4.2.5":
   version "4.2.5"
   resolved "https://registry.yarnpkg.com/@smithy/service-error-classification/-/service-error-classification-4.2.5.tgz#a64eb78e096e59cc71141e3fea2b4194ce59b4fd"
   integrity sha512-8fEvK+WPE3wUAcDvqDQG1Vk3ANLR8Px979te96m84CbKAjBVf25rPYSzb4xU4hlTyho7VhOGnh5i62D/JVF0JQ==
