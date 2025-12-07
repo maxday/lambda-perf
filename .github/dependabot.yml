@@ -106,6 +106,10 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
+    directory: "s3-uploader/runtimes/java25"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
     directory: "s3-uploader/runtimes/java21_snapstart"
     schedule:
       interval: "daily"

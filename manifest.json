@@ -312,6 +312,16 @@
       }
     },
     {
+      "displayName": "java25",
+      "runtime": "java25",
+      "handler": "io.github.maxday.Handler::handleRequest",
+      "path": "java25",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/java:25"
+      }
+    },
+    {
       "displayName": "quarkus (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",

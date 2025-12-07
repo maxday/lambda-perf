@@ -37,6 +37,7 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `java11`
 - `java17`
 - `java21`
+- `java25`
 - `ruby3.2`
 - `ruby3.3`
 - `ruby3.4`
