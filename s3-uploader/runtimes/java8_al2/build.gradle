@@ -4,11 +4,8 @@ repositories {
     mavenCentral()
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 task buildZip(type: Zip) {
     archiveBaseName = 'code'
