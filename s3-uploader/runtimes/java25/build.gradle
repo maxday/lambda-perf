@@ -4,8 +4,11 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 25
-targetCompatibility = 25
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
 
 task buildZip(type: Zip) {
     archiveBaseName = 'code'
