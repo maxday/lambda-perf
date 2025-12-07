@@ -1187,28 +1187,12 @@
   dependencies:
     tslib "^2.6.2"
 
-"@smithy/util-middleware@^4.0.2":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@smithy/util-middleware/-/util-middleware-4.0.3.tgz#bb4176241ce0df21623a3c402ce55f94903f8161"
-  integrity sha512-iIsC6qZXxkD7V3BzTw3b1uK8RVC1M8WvwNxK1PKrH9FnxntCd30CSunXjL/8iJBE8Z0J14r2P69njwIpRG4FBQ==
+"@smithy/util-middleware@^4.0.2", "@smithy/util-middleware@^4.0.4", "@smithy/util-middleware@^4.2.0":
+  version "4.2.5"
+  resolved "https://registry.yarnpkg.com/@smithy/util-middleware/-/util-middleware-4.2.5.tgz#1ace865afe678fd4b0f9217197e2fe30178d4835"
+  integrity sha512-6Y3+rvBF7+PZOc40ybeZMcGln6xJGVeY60E7jy9Mv5iKpMJpHgRE6dKy9ScsVxvfAYuEX4Q9a65DQX90KaQ3bA==
   dependencies:
-    "@smithy/types" "^4.3.0"
-    tslib "^2.6.2"
-
-"@smithy/util-middleware@^4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@smithy/util-middleware/-/util-middleware-4.0.4.tgz#8f639de049082c687841ea5e69c6c36e12e31a3c"
-  integrity sha512-9MLKmkBmf4PRb0ONJikCbCwORACcil6gUWojwARCClT7RmLzF04hUR4WdRprIXal7XVyrddadYNfp2eF3nrvtQ==
-  dependencies:
-    "@smithy/types" "^4.3.1"
-    tslib "^2.6.2"
-
-"@smithy/util-middleware@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@smithy/util-middleware/-/util-middleware-4.2.0.tgz#85973ae0db65af4ab4bedf12f31487a4105d1158"
-  integrity sha512-u9OOfDa43MjagtJZ8AapJcmimP+K2Z7szXn8xbty4aza+7P1wjFmy2ewjSbhEiYQoW1unTlOAIV165weYAaowA==
-  dependencies:
-    "@smithy/types" "^4.6.0"
+    "@smithy/types" "^4.9.0"
     tslib "^2.6.2"
 
 "@smithy/util-middleware@^4.2.5":
