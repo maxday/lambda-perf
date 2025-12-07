@@ -104,16 +104,14 @@ jobs:
           AWS_REGION: ${{ inputs.environment == 'DEV' && secrets.devRegion || inputs.environment == 'PROD' && secrets.prodRegion }}
         run: |
           echo "Fetching untagged images..."
-
-          IMAGES=$(aws ecr list-images \
+          IMAGES_JSON=$(aws ecr list-images \
             --region "${AWS_REGION}" \
             --repository-name lambda-perf \
             --filter "tagStatus=UNTAGGED" \
             --query 'imageIds' \
             --output json)
 
-          COUNT=$(echo "$IMAGES" | jq length)
-
+          COUNT=$(echo "$IMAGES_JSON" | jq length)
           if (( COUNT == 0 )); then
             echo "No untagged images found. Skipping deletion."
             exit 0
@@ -121,28 +119,28 @@ jobs:
 
           echo "Found $COUNT untagged images. Deleting in batches of 100..."
 
-          # Process each imageId as a separate JSON object
-          echo "$IMAGES" | jq -c '.[]' | while read -r IMG; do
-            BATCH="$BATCH$IMG"$'\n'
-            ((N++))
+          # read all images into an array
+          mapfile -t IMAGES_ARRAY < <(echo "$IMAGES_JSON" | jq -c '.[]')
 
-            # if we reached 100, delete
-            if (( N == 100 )); then
-              BATCH_JSON=$(echo "$BATCH" | jq -s '.')
-              echo "Deleting a batch of 100 images..."
+          BATCH=()
+          for IMG in "${IMAGES_ARRAY[@]}"; do
+            BATCH+=("$IMG")
+
+            if (( ${#BATCH[@]} == 100 )); then
+              BATCH_JSON=$(printf '%s\n' "${BATCH[@]}" | jq -s '.')
+              echo "Deleting batch of 100 images..."
               aws ecr batch-delete-image \
                 --region "${AWS_REGION}" \
                 --repository-name lambda-perf \
                 --image-ids "$BATCH_JSON"
-              BATCH=""
-              N=0
+              BATCH=()
             fi
           done
 
-          # delete leftover images (less than 100)
-          if [[ -n "$BATCH" ]]; then
-            BATCH_JSON=$(echo "$BATCH" | jq -s '.')
-            LEFT_COUNT=$(echo "$BATCH_JSON" | jq length)
+          # delete leftover images
+          if (( ${#BATCH[@]} > 0 )); then
+            BATCH_JSON=$(printf '%s\n' "${BATCH[@]}" | jq -s '.')
+            LEFT_COUNT=${#BATCH[@]}
             echo "Deleting final batch of $LEFT_COUNT images..."
             aws ecr batch-delete-image \
               --region "${AWS_REGION}" \
