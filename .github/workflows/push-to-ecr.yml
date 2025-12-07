@@ -114,21 +114,38 @@ jobs:
 
           COUNT=$(echo "$IMAGES" | jq length)
 
-          if [ "$COUNT" -eq 0 ]; then
+          if (( COUNT == 0 )); then
             echo "No untagged images found. Skipping deletion."
             exit 0
           fi
 
           echo "Found $COUNT untagged images. Deleting in batches of 100..."
 
-          # Split into chunks of 100
-          echo "$IMAGES" | jq -c '.[]' | split -l 100 -d batch_
+          # Process each imageId as a separate JSON object
+          echo "$IMAGES" | jq -c '.[]' | while read -r IMG; do
+            BATCH="$BATCH$IMG"$'\n'
+            ((N++))
 
-          for batch in batch_*; do
-            IDS=$(jq -s '.' "$batch")
-            echo "Deleting batch: $batch"
+            # if we reached 100, delete
+            if (( N == 100 )); then
+              BATCH_JSON=$(echo "$BATCH" | jq -s '.')
+              echo "Deleting a batch of 100 images..."
+              aws ecr batch-delete-image \
+                --region "${AWS_REGION}" \
+                --repository-name lambda-perf \
+                --image-ids "$BATCH_JSON"
+              BATCH=""
+              N=0
+            fi
+          done
+
+          # delete leftover images (less than 100)
+          if [[ -n "$BATCH" ]]; then
+            BATCH_JSON=$(echo "$BATCH" | jq -s '.')
+            LEFT_COUNT=$(echo "$BATCH_JSON" | jq length)
+            echo "Deleting final batch of $LEFT_COUNT images..."
             aws ecr batch-delete-image \
               --region "${AWS_REGION}" \
               --repository-name lambda-perf \
-              --image-ids "$IDS"
-          done
+              --image-ids "$BATCH_JSON"
+          fi
