@@ -99,14 +99,38 @@ jobs:
           role-to-assume: ${{ secrets.role }}
           role-session-name: GitHub_Action_LambdaPerf_Session
           aws-region: ${{ inputs.environment == 'DEV' && secrets.devRegion || inputs.environment == 'PROD' && secrets.prodRegion }}
-      - name: clean untagged images
-        env:
-          AWS_REGION: ${{ inputs.environment == 'DEV' && secrets.devRegion || inputs.environment == 'PROD' && secrets.prodRegion }}
-        run: |
-          UNTAGGED_IMAGES=$(aws ecr list-images --region "${AWS_REGION}" --repository-name lambda-perf --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json)
-          if [[ "$UNTAGGED_IMAGES" == "[]" ]]; then
-            echo "No untagged images found. Skipping deletion."
-          else
-            aws ecr batch-delete-image --region "${AWS_REGION}" --repository-name lambda-perf --image-ids "$UNTAGGED_IMAGES"
-          fi
+- name: clean untagged images
+  env:
+    AWS_REGION: ${{ inputs.environment == 'DEV' && secrets.devRegion || inputs.environment == 'PROD' && secrets.prodRegion }}
+  run: |
+    echo "Fetching untagged images..."
+
+    IMAGES=$(aws ecr list-images \
+      --region "${AWS_REGION}" \
+      --repository-name lambda-perf \
+      --filter "tagStatus=UNTAGGED" \
+      --query 'imageIds' \
+      --output json)
+
+    COUNT=$(echo "$IMAGES" | jq length)
+
+    if [ "$COUNT" -eq 0 ]; then
+      echo "No untagged images found. Skipping deletion."
+      exit 0
+    fi
+
+    echo "Found $COUNT untagged images. Deleting in batches of 100..."
+
+    # Split into chunks of 100
+    echo "$IMAGES" | jq -c '.[]' | split -l 100 -d batch_
+
+    for batch in batch_*; do
+      IDS=$(jq -s '.' "$batch")
+      echo "Deleting batch: $batch"
+      aws ecr batch-delete-image \
+        --region "${AWS_REGION}" \
+        --repository-name lambda-perf \
+        --image-ids "$IDS"
+    done
+
 
