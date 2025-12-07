@@ -632,18 +632,7 @@
     "@smithy/url-parser" "^4.0.3"
     tslib "^2.6.2"
 
-"@smithy/fetch-http-handler@^5.0.2", "@smithy/fetch-http-handler@^5.0.4":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@smithy/fetch-http-handler/-/fetch-http-handler-5.1.0.tgz#387abd9ec6c8ff0af33b268c0f6ccb289c1b1563"
-  integrity sha512-mADw7MS0bYe2OGKkHYMaqarOXuDwRbO6ArD91XhHcl2ynjGCFF+hvqf0LyQcYxkA1zaWjefSkU7Ne9mqgApSgQ==
-  dependencies:
-    "@smithy/protocol-http" "^5.1.2"
-    "@smithy/querystring-builder" "^4.0.4"
-    "@smithy/types" "^4.3.1"
-    "@smithy/util-base64" "^4.0.0"
-    tslib "^2.6.2"
-
-"@smithy/fetch-http-handler@^5.3.6":
+"@smithy/fetch-http-handler@^5.0.2", "@smithy/fetch-http-handler@^5.0.4", "@smithy/fetch-http-handler@^5.3.6":
   version "5.3.6"
   resolved "https://registry.yarnpkg.com/@smithy/fetch-http-handler/-/fetch-http-handler-5.3.6.tgz#d9dcb8d8ca152918224492f4d1cc1b50df93ae13"
   integrity sha512-3+RG3EA6BBJ/ofZUeTFJA7mHfSYrZtQIrDP9dI8Lf7X6Jbos2jptuLrAAteDiFVrmbEmLSuRG/bUKzfAXk7dhg==
@@ -801,17 +790,7 @@
     "@smithy/types" "^4.9.0"
     tslib "^2.6.2"
 
-"@smithy/node-config-provider@^4.0.2", "@smithy/node-config-provider@^4.1.2", "@smithy/node-config-provider@^4.3.3":
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/@smithy/node-config-provider/-/node-config-provider-4.3.5.tgz#c09137a79c2930dcc30e6c8bb4f2608d72c1e2c9"
-  integrity sha512-UTurh1C4qkVCtqggI36DGbLB2Kv8UlcFdMXDcWMbqVY2uRg0XmT9Pb4Vj6oSQ34eizO1fvR0RnFV4Axw4IrrAg==
-  dependencies:
-    "@smithy/property-provider" "^4.2.5"
-    "@smithy/shared-ini-file-loader" "^4.4.0"
-    "@smithy/types" "^4.9.0"
-    tslib "^2.6.2"
-
-"@smithy/node-config-provider@^4.3.5":
+"@smithy/node-config-provider@^4.0.2", "@smithy/node-config-provider@^4.1.2", "@smithy/node-config-provider@^4.3.3", "@smithy/node-config-provider@^4.3.5":
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/@smithy/node-config-provider/-/node-config-provider-4.3.5.tgz#c09137a79c2930dcc30e6c8bb4f2608d72c1e2c9"
   integrity sha512-UTurh1C4qkVCtqggI36DGbLB2Kv8UlcFdMXDcWMbqVY2uRg0XmT9Pb4Vj6oSQ34eizO1fvR0RnFV4Axw4IrrAg==
@@ -857,14 +836,6 @@
   integrity sha512-Wcn17QNdawJZcZZPBuMuzyBENVi1AXl4TdE0jvzo4vWX2x5df/oMlmr/9M5XAAC6+yae4kWZlOYIsNsgDrMU9A==
   dependencies:
     "@smithy/types" "^4.3.0"
-    tslib "^2.6.2"
-
-"@smithy/property-provider@^4.2.5":
-  version "4.2.5"
-  resolved "https://registry.yarnpkg.com/@smithy/property-provider/-/property-provider-4.2.5.tgz#f75dc5735d29ca684abbc77504be9246340a43f0"
-  integrity sha512-8iLN1XSE1rl4MuxvQ+5OSk/Zb5El7NJZ1td6Tn+8dQQHIjp59Lwl6bd0+nzw6SKm2wSSriH2v/I9LPzUic7EOg==
-  dependencies:
-    "@smithy/types" "^4.9.0"
     tslib "^2.6.2"
 
 "@smithy/property-provider@^4.2.5":
@@ -963,23 +934,7 @@
   dependencies:
     "@smithy/types" "^4.9.0"
 
-"@smithy/shared-ini-file-loader@^4.0.2", "@smithy/shared-ini-file-loader@^4.0.3", "@smithy/shared-ini-file-loader@^4.3.3":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.4.0.tgz#a2f8282f49982f00bafb1fa8cb7fc188a202a594"
-  integrity sha512-5WmZ5+kJgJDjwXXIzr1vDTG+RhF9wzSODQBfkrQ2VVkYALKGvZX1lgVSxEkgicSAFnFhPj5rudJV0zoinqS0bA==
-  dependencies:
-    "@smithy/types" "^4.9.0"
-    tslib "^2.6.2"
-
-"@smithy/shared-ini-file-loader@^4.4.0":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.4.0.tgz#a2f8282f49982f00bafb1fa8cb7fc188a202a594"
-  integrity sha512-5WmZ5+kJgJDjwXXIzr1vDTG+RhF9wzSODQBfkrQ2VVkYALKGvZX1lgVSxEkgicSAFnFhPj5rudJV0zoinqS0bA==
-  dependencies:
-    "@smithy/types" "^4.9.0"
-    tslib "^2.6.2"
-
-"@smithy/shared-ini-file-loader@^4.4.0":
+"@smithy/shared-ini-file-loader@^4.0.2", "@smithy/shared-ini-file-loader@^4.0.3", "@smithy/shared-ini-file-loader@^4.4.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-4.4.0.tgz#a2f8282f49982f00bafb1fa8cb7fc188a202a594"
   integrity sha512-5WmZ5+kJgJDjwXXIzr1vDTG+RhF9wzSODQBfkrQ2VVkYALKGvZX1lgVSxEkgicSAFnFhPj5rudJV0zoinqS0bA==
