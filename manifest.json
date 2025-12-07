@@ -22,26 +22,6 @@
       }
     },
     {
-      "displayName": "nodejs16.x",
-      "runtime": "nodejs16.x",
-      "handler": "index.handler",
-      "path": "nodejs16x",
-      "architectures": ["x86_64", "arm64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/nodejs:16"
-      }
-    },
-    {
-      "displayName": "nodejs18.x",
-      "runtime": "nodejs18.x",
-      "handler": "index.handler",
-      "path": "nodejs18x",
-      "architectures": ["x86_64", "arm64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/nodejs:18"
-      }
-    },
-    {
       "displayName": "nodejs20.x",
       "runtime": "nodejs20.x",
       "handler": "index.handler",
@@ -69,16 +49,6 @@
       "architectures": ["x86_64", "arm64"],
       "image": {
         "baseImage": "public.ecr.aws/lambda/nodejs:24"
-      }
-    },
-    {
-      "displayName": "python3.8",
-      "runtime": "python3.8",
-      "handler": "index.handler",
-      "path": "python38",
-      "architectures": ["x86_64", "arm64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/python:3.8"
       }
     },
     {
@@ -139,16 +109,6 @@
       "architectures": ["x86_64", "arm64"],
       "image": {
         "baseImage": "public.ecr.aws/lambda/python:3.14"
-      }
-    },
-    {
-      "displayName": "dotnet6",
-      "runtime": "dotnet6",
-      "handler": "LambdaPerf::LambdaPerf.Function::Handler",
-      "path": "dotnet6",
-      "architectures": ["x86_64", "arm64"],
-      "image": {
-        "baseImage": "public.ecr.aws/lambda/dotnet:6"
       }
     },
     {
