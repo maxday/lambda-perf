@@ -39,6 +39,7 @@ const buildDockerImage = async (
   const platform = architecture === "x86_64" ? "linux/amd64" : "linux/arm64";
   const tag = `${accountId}.dkr.ecr.${region}.amazonaws.com/lambda-perf:${runtime.path}-${architecture}`;
   const cmdLine = `docker build . -f Dockerfile.sample --platform ${platform} -t ${tag} --build-arg baseImage='${runtime.image.baseImage}' --build-arg handlerCode='${runtime.path}' --build-arg handlerCmd='${runtime.handler}'`;
+  console.log(cmdLine);
   childProcess.execSync(cmdLine);
   const cmdLogin = `aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${accountId}.dkr.ecr.${region}.amazonaws.com`;
   console.log("docker logging in!");
