@@ -39,10 +39,9 @@ const buildDockerImage = async (
   const platform = architecture === "x86_64" ? "linux/amd64" : "linux/arm64";
   const tag = `${accountId}.dkr.ecr.${region}.amazonaws.com/lambda-perf:${runtime.path}-${architecture}`;
   const cmdLine = `
-    docker buildx build . \
+    DOCKER_BUILDKIT=0 docker build . \
     -f Dockerfile.sample \
     --platform ${platform} \
-    --load \
     -t ${tag} \
     --build-arg baseImage='${runtime.image.baseImage}' \
     --build-arg handlerCode='${runtime.path}' \
