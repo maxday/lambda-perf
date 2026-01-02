@@ -36,15 +36,18 @@ const buildDockerImage = async (
   childProcess.execSync(
     `unzip ${runtime.path}_${architecture}.zip -d ${runtime.path}`
   );
-  console.log("runtime = ");
-  console.log(runtime);
-  console.log("runtime image");
-  console.log(runtime.image);
-  console.log("runtime image base");
-  console.log(runtime.image.baseImage);
   const platform = architecture === "x86_64" ? "linux/amd64" : "linux/arm64";
   const tag = `${accountId}.dkr.ecr.${region}.amazonaws.com/lambda-perf:${runtime.path}-${architecture}`;
-  const cmdLine = `docker build . -f Dockerfile.sample --platform ${platform} -t ${tag} --build-arg baseImage='${runtime.image.baseImage}' --build-arg handlerCode='${runtime.path}' --build-arg handlerCmd='${runtime.handler}'`;
+  const cmdLine = `
+    docker buildx build . \
+    -f Dockerfile.sample \
+    --platform ${platform} \
+    --load \
+    -t ${tag} \
+    --build-arg baseImage='${runtime.image.baseImage}' \
+    --build-arg handlerCode='${runtime.path}' \
+    --build-arg handlerCmd='${runtime.handler}'
+  `;
   console.log(cmdLine);
   childProcess.execSync(cmdLine);
   const cmdLogin = `aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${accountId}.dkr.ecr.${region}.amazonaws.com`;
@@ -127,7 +130,7 @@ const runtimeFromRuntimeId = (manifest, runtimeId) => {
   const runtime = manifest.find(r => {
     return r.path === runtimeId;
   });
-  if(!runtime) {
+  if (!runtime) {
     throw "cound not find the runtime"
   }
   console.log(runtime);
