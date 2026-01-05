@@ -34,6 +34,7 @@ An ultra simple hello-world function has been written in each AWS supported runt
 - `python3.14`
 - `dotnet6`
 - `dotnet8`
+- `dotnet10`
 - `java11`
 - `java17`
 - `java21`
@@ -53,6 +54,7 @@ in addition to the following custom runtimes:
 - `dotnet8 aot` on `provided.al2`
 - `dotnet8 aot` on `provided.al2023`
 - `dotnet9 aot` on `provided.al2023`
+- `dotnet10 aot` on `provided.al2023`
 - `quarkus native` on `provided.al2`
 - `graalvm java17` on `provided.al2`
 - `graalvm java21` on `provided.al2023`
