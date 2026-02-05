@@ -152,6 +152,26 @@
       }
     },
     {
+      "displayName": "dotnet10",
+      "runtime": "dotnet10",
+      "handler": "LambdaPerf::LambdaPerf.Function::Handler",
+      "path": "dotnet10",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/dotnet:10"
+      }
+    },
+    {
+      "displayName": "dotnet10 aot (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "bootstrap",
+      "path": "dotnet10_aot_on_provided_al2023",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
+    },
+    {
       "displayName": "java11",
       "runtime": "java11",
       "handler": "io.github.maxday.Handler::handleRequest",
