@@ -1146,28 +1146,7 @@
     "@smithy/util-stream" "^4.4.0"
     tslib "^2.6.2"
 
-"@smithy/types@^4.2.0", "@smithy/types@^4.3.0", "@smithy/types@^4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.3.1.tgz#c11276ea16235d798f47a68aef9f44d3dbb70dd4"
-  integrity sha512-UqKOQBL2x6+HWl3P+3QqFD4ncKq0I8Nuz9QItGv5WuKuMHuuwlhvqcZCoXGfc+P1QmfJE7VieykoYYmrOoFJxA==
-  dependencies:
-    tslib "^2.6.2"
-
-"@smithy/types@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.6.0.tgz#8ea8b15fedee3cdc555e8f947ce35fb1e973bb7a"
-  integrity sha512-4lI9C8NzRPOv66FaY1LL1O/0v0aLVrq/mXP/keUa9mJOApEeae43LsLd2kZRUJw91gxOQfLIrV3OvqPgWz1YsA==
-  dependencies:
-    tslib "^2.6.2"
-
-"@smithy/types@^4.8.0":
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.8.0.tgz#e6f65e712478910b74747081e6046e68159f767d"
-  integrity sha512-QpELEHLO8SsQVtqP+MkEgCYTFW0pleGozfs3cZ183ZBj9z3VC1CX1/wtFMK64p+5bhtZo41SeLK1rBRtd25nHQ==
-  dependencies:
-    tslib "^2.6.2"
-
-"@smithy/types@^4.9.0":
+"@smithy/types@^4.2.0", "@smithy/types@^4.3.0", "@smithy/types@^4.3.1", "@smithy/types@^4.6.0", "@smithy/types@^4.8.0", "@smithy/types@^4.9.0":
   version "4.9.0"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.9.0.tgz#c6636ddfa142e1ddcb6e4cf5f3e1a628d420486f"
   integrity sha512-MvUbdnXDTwykR8cB1WZvNNwqoWVaTRA0RLlLmf/cIFNMM2cKWz01X4Ly6SMC4Kks30r8tT3Cty0jmeWfiuyHTA==
