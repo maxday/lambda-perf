@@ -748,16 +748,7 @@
     "@smithy/uuid" "^1.1.0"
     tslib "^2.6.2"
 
-"@smithy/middleware-serde@^4.0.3", "@smithy/middleware-serde@^4.0.6":
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/@smithy/middleware-serde/-/middleware-serde-4.0.6.tgz#76e8523b48f2402ccef97b6764d9cfe35e7df669"
-  integrity sha512-YECyl7uNII+jCr/9qEmCu8xYL79cU0fqjo0qxpcVIU18dAPHam/iYwcknAu4Jiyw1uN+sAx7/SMf/Kmef/Jjsg==
-  dependencies:
-    "@smithy/protocol-http" "^5.1.1"
-    "@smithy/types" "^4.3.0"
-    tslib "^2.6.2"
-
-"@smithy/middleware-serde@^4.2.6":
+"@smithy/middleware-serde@^4.0.3", "@smithy/middleware-serde@^4.0.6", "@smithy/middleware-serde@^4.2.6":
   version "4.2.6"
   resolved "https://registry.yarnpkg.com/@smithy/middleware-serde/-/middleware-serde-4.2.6.tgz#7e710f43206e13a8c081a372b276e7b2c51bff5b"
   integrity sha512-VkLoE/z7e2g8pirwisLz8XJWedUSY8my/qrp81VmAdyrhi94T+riBfwP+AOEEFR9rFTSonC/5D2eWNmFabHyGQ==
