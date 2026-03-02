@@ -18,9 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.14.1" />
     <PackageReference Include="Amazon.Lambda.Core" Version="2.8.0" />
-    <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
-  <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="10.0.1" />
-  <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.1" />
+    <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />  
   </ItemGroup>
 
 </Project>
