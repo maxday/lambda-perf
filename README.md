@@ -82,9 +82,13 @@ After all these invocations, all information stored in DynamoDB is aggregated an
 
 ### Step 4
 
-A static website, hosted on GitHub pages here: https://maxday.github.io/lambda-perf/ fetches this JSON file and displays the result in a (nice?) UI.
+Using the data from the last 2 years, SVG charts are generated to show how the performance of each runtime has evolved over time. These files are stored in the /graphs folder.
 
 ### Step 5
+
+A static website, hosted on GitHub pages here: https://maxday.github.io/lambda-perf/ fetches this JSON file and displays the result in a (nice?) UI.
+
+### Step 6
 
 Hack/Fork/Send PR and create your own benchmarks!
 
