@@ -20,19 +20,15 @@ That's why I decided to create this project: data is always up to date as the be
 
 ### Step 1
 An ultra simple hello-world function has been written in each AWS supported runtime:
-- `nodejs16.x`
-- `nodejs18.x`
 - `nodejs20.x`
 - `nodejs22.x`
 - `nodejs24.x`
-- `python3.8`
 - `python3.9`
 - `python3.10`
 - `python3.11`
 - `python3.12`
 - `python3.13`
 - `python3.14`
-- `dotnet6`
 - `dotnet8`
 - `dotnet10`
 - `java11`
@@ -51,7 +47,6 @@ in addition to the following custom runtimes:
 - `c++` on `provided.al2`
 - `c++` on `provided.al2023`
 - `dotnet7 aot` on `provided.al2`
-- `dotnet8 aot` on `provided.al2`
 - `dotnet8 aot` on `provided.al2023`
 - `dotnet9 aot` on `provided.al2023`
 - `dotnet10 aot` on `provided.al2023`
