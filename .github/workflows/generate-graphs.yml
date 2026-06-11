@@ -1,0 +1,46 @@
+name: Generate Graphs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "data/last.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas matplotlib
+
+      - name: Generate graphs
+        run: python graph-generator/app.py
+
+      - name: Commit and push graphs
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add graphs/*.svg
+          if git diff --staged --quiet; then
+            echo "No changes to graphs"
+          else
+            git commit -m "docs: update performance graphs"
+            git push
+          fi
