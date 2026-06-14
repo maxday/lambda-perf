@@ -2,6 +2,7 @@
 
 import concurrent.futures
 import glob
+import io
 import json
 import os
 from datetime import datetime, timedelta
@@ -9,6 +10,7 @@ from datetime import datetime, timedelta
 import matplotlib
 
 matplotlib.use("Agg")  # Non-interactive backend for process safety
+matplotlib.rcParams["svg.fonttype"] = "none"  # Use system fonts for styling support
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -146,15 +148,24 @@ def save_plot(
     width, height = dimensions
     dpi = 100
 
-    # Background color for the web page
-    bg_color = "#212529"
+    # Colors
+    LIGHT_FG = "#212529"
+    LIGHT_GRID = "#dee2e6"
+
+    # Use markers for theme support on small graphs, actual colors for large ones
+    FG = "#000001" if is_small else LIGHT_FG
+    GRID = "#000002" if is_small else LIGHT_GRID
 
     fig, ax1 = plt.subplots(figsize=(width / dpi, height / dpi), dpi=dpi)
 
     if is_small:
-        fig.patch.set_facecolor(bg_color)
-        ax1.set_facecolor(bg_color)
+        fig.patch.set_alpha(0)
+        ax1.patch.set_alpha(0)
+    else:
+        fig.patch.set_facecolor("white")
+        ax1.patch.set_facecolor("white")
 
+    if is_small:
         # Line colors (keep blue/red but ensure they are vibrant)
         ax1.plot(
             data["generatedAt"],
@@ -171,21 +182,20 @@ def save_plot(
             linewidth=1.2,
         )
 
-        # Axis and label styling for dark background
+        # Axis and label styling
         ax1.xaxis.set_major_formatter(mdates.DateFormatter("%m/%Y"))
         ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
 
-        ax1.tick_params(axis="both", which="major", labelsize=7, colors="#dee2e6")
-        ax1.spines["bottom"].set_color("#495057")
+        ax1.tick_params(axis="both", which="major", labelsize=7, colors=FG)
+        ax1.spines["bottom"].set_color(FG)
         ax1.spines["top"].set_visible(False)
         ax1.spines["right"].set_visible(False)
-        ax1.spines["left"].set_color("#495057")
+        ax1.spines["left"].set_color(FG)
 
-        ax1.set_ylabel("ms", fontsize=7, color="#dee2e6")
-        ax1.grid(True, linestyle="--", alpha=0.1, color="#f8f9fa")
+        ax1.set_ylabel("ms", fontsize=7, color=FG)
+        ax1.grid(True, linestyle="--", color=GRID)
         plt.tight_layout(pad=0.5)
     else:
-        # Large graph keeps default white background for "click-in" view unless requested otherwise
         # Plot Cold Start (Blue) and Warm Start (Red) on ax1
         ax1.plot(
             data["generatedAt"],
@@ -220,30 +230,75 @@ def save_plot(
         ax1.xaxis.set_major_formatter(mdates.DateFormatter("%m/%Y"))
         ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
 
-        ax1.set_xlabel("Time")
-        ax1.set_ylabel("Duration [ms]")
+        ax1.set_xlabel("Time", color=FG)
+        ax1.set_ylabel("Duration [ms]", color=FG)
         ax2.set_ylabel("Memory Usage [MB]", color="#ff7f0e")
-        ax1.tick_params(axis="y", labelcolor="#333")
-        ax2.tick_params(axis="y", labelcolor="#ff7f0e")
+        ax1.tick_params(axis="both", colors=FG)
+        ax2.tick_params(axis="y", labelcolor="#ff7f0e", colors=FG)
 
-        plt.title(f"{runtime} ({arch}, {pkg}, {mem_limit}MB, {region})")
-        ax1.grid(True, linestyle="--", alpha=0.6)
+        # Color spines
+        ax1.spines["left"].set_color(FG)
+        ax1.spines["bottom"].set_color(FG)
+        ax1.spines["top"].set_color(FG)
+        ax1.spines["right"].set_visible(False)
+        ax2.spines["right"].set_color("#ff7f0e")
+        ax2.spines["left"].set_visible(False)
+        ax2.spines["top"].set_visible(False)
+        ax2.spines["bottom"].set_visible(False)
+
+        plt.title(f"{runtime} ({arch}, {pkg}, {mem_limit}MB, {region})", color=FG)
+        ax1.grid(True, linestyle="--", color=GRID)
 
         # Legend: Combine legends from both axes
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
-        ax1.legend(
+        leg = ax1.legend(
             lines1 + lines2, labels1 + labels2, loc="upper left", fontsize="small"
         )
+        if leg:
+            leg.get_frame().set_edgecolor(FG)
+            leg.get_frame().set_facecolor("none")
+            for text in leg.get_texts():
+                text.set_color(FG)
 
-        plt.xticks(rotation=45)
+        plt.xticks(rotation=45, color=FG)
         plt.tight_layout()
+
+    # Save to buffer
+    buf = io.StringIO()
+    plt.savefig(buf, format="svg", transparent=is_small)
+    svg_data = buf.getvalue()
+
+    if is_small:
+        # Use markers to inject CSS variables only for small graphs
+        svg_data = svg_data.replace("#000001", "var(--fg-color)")
+        svg_data = svg_data.replace("#000002", "var(--grid-color)")
+
+        style = f"""
+  <style>
+    :root {{
+      --fg-color: {LIGHT_FG};
+      --grid-color: rgba(33, 37, 41, 0.1);
+    }}
+    @media (prefers-color-scheme: dark) {{
+      :root {{
+        --fg-color: #dee2e6;
+        --grid-color: rgba(248, 249, 250, 0.15);
+      }}
+    }}
+  </style>
+"""
+        # Insert style inside <svg> tag
+        svg_tag_end = svg_data.find(">", svg_data.find("<svg"))
+        if svg_tag_end != -1:
+            svg_data = svg_data[: svg_tag_end + 1] + style + svg_data[svg_tag_end + 1 :]
 
     # Format memory as integer for the filename
     mem_int = int(float(mem_limit))
     filename = f"last-{runtime}-{arch}-{pkg}-{mem_int}-{region}-{suffix}.svg"
     filepath = os.path.join(GRAPHS_DIR, filename)
-    plt.savefig(filepath)
+    with open(filepath, "w") as f:
+        f.write(svg_data)
     plt.close(fig)
 
 
