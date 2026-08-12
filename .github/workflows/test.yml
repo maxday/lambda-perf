@@ -13,15 +13,17 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # stable
+        with:
+          toolchain: stable
       - name: Install Zig toolchain
-        uses: korandoru/setup-zig@v1
+        uses: korandoru/setup-zig@3d137e800ac114393177819328e565c3adc75210 # v1.7.1
         with:
           zig-version: 0.10.0
       - name: Install Cargo Lambda
-        uses: jaxxstorm/action-install-gh-release@v1.9.0
+        uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: cargo-lambda/cargo-lambda
           platform: linux
