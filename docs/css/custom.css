@@ -3,7 +3,7 @@ html {
     min-height: 100%;
 }
 body {
-    margin-bottom: 120px; 
+    margin-bottom: 120px;
 }
 hr {
     margin-bottom: 2px;
@@ -13,7 +13,7 @@ hr {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 100px; 
+    height: 100px;
     line-height: 60px;
     background-color: #f5f5f5;
     text-align: center;
@@ -65,6 +65,16 @@ hr {
 .legend {
     text-align: right;
     font-size: 9px;
+}
+.graph-container {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.graph-container:hover {
+    transform: scale(1.02);
+}
+.smallGraph {
+    border-radius: 4px;
 }
 .badge:empty {
     display: inline-block;
