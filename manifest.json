@@ -383,6 +383,16 @@
       }
     },
     {
+      "displayName": "graalvm java25 (prov.al2023)",
+      "runtime": "provided.al2023",
+      "handler": "io.github.maxday.Handler",
+      "path": "graalvm_java25_on_provided_al2023",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/provided:al2023"
+      }
+    },
+    {
       "displayName": "shell (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
