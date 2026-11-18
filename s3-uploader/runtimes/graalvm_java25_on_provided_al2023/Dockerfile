@@ -1,0 +1,26 @@
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:25.0.5.0-Final-java25 AS builder
+RUN curl https://dlcdn.apache.org/maven/maven-3/3.9.16/binaries/apache-maven-3.9.16-bin.tar.gz --output apache-maven-3.9.16-bin.tar.gz
+RUN tar xzf apache-maven-3.9.16-bin.tar.gz
+COPY src ./src
+COPY pom.xml .
+RUN ./apache-maven-3.9.16/bin/mvn package -Pnative
+
+# strip the binary
+FROM ubuntu AS stripper
+RUN apt-get update -y
+RUN apt-get install -y binutils
+COPY --from=builder /project/target/graalvm-java25 /tmp
+RUN strip /tmp/graalvm-java25
+
+# zip the extension
+FROM ubuntu:latest AS compresser
+RUN apt-get update
+RUN apt-get install -y zip
+RUN mkdir /package
+WORKDIR /package
+COPY --from=stripper /tmp/graalvm-java25 /package/bootstrap
+RUN zip -j code.zip /package/bootstrap
+
+FROM scratch
+COPY --from=compresser /package/code.zip /
+ENTRYPOINT ["/code.zip"]
