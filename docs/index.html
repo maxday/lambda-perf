@@ -71,6 +71,8 @@
         ❄ Avg Cold Start duration · 💾 Avg Memory Used · ⚡ Avg duration
       </span>
     </p>
+    <input type="search" id="runtimeSearch" class="form-control form-control-sm mb-2"
+      placeholder="Filter runtimes (e.g. python, nodejs24)" aria-label="Filter runtimes" autocomplete="off" />
     <hr />
     <div id="sampleRuntimeElement" class="runtime">
       <span class="badge bg-success"><span class="runtimeName">runtime name</span></span>
@@ -81,6 +83,7 @@
       <hr />
     </div>
     <div id="runtimes"></div>
+    <p id="noRuntimeMatch" class="text-muted" hidden>No runtime matches</p>
   </main>
   <footer class="footer">
     <div class="container">
