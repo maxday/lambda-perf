@@ -30,6 +30,7 @@ const animate = async (dataManager) => {
       promiseArray.push(drawLang(i, runtime));
       ++i;
     }
+    applySearchFilter();
     await Promise.all(promiseArray);
   } catch (e) {
     console.error(e);
@@ -74,6 +75,31 @@ const getCurrentPackageType = () => {
   return "zip";
 };
 
+const getSearchTerms = () =>
+  document
+    .getElementById("runtimeSearch")
+    .value.split(",")
+    .map((term) => term.trim().toLowerCase())
+    .filter((term) => term.length > 0);
+
+const matchesSearch = (name, terms) =>
+  terms.length === 0 || terms.some((term) => name.toLowerCase().includes(term));
+
+const applySearchFilter = () => {
+  const terms = getSearchTerms();
+  const cards = document.querySelectorAll("#runtimes > .runtime");
+  let visibleCount = 0;
+  cards.forEach((card) => {
+    const visible = matchesSearch(card.dataset.runtimeName, terms);
+    card.style.display = visible ? "" : "none";
+    if (visible) {
+      ++visibleCount;
+    }
+  });
+  document.getElementById("noRuntimeMatch").hidden =
+    cards.length === 0 || visibleCount > 0;
+};
+
 const replayAnimation = async (dataManager) => {
   document.getElementById("runtimes").innerHTML = "";
   await animate(dataManager);
@@ -89,6 +115,9 @@ const loaded = async (dataManager) => {
   setupFilterEvent(".memorySizeBtn", dataManager);
   setupFilterEvent(".architectureBtn", dataManager);
   setupFilterEvent(".packageTypeBtn", dataManager);
+  document
+    .getElementById("runtimeSearch")
+    .addEventListener("input", applySearchFilter);
   document
     .getElementById("replayAnimationBtn")
     .addEventListener("click", (dataManager) => replayAnimation(dataManager));
@@ -118,6 +147,7 @@ const drawLang = async (idx, data) => {
 
   const runtimeName = newElement.getElementsByClassName("runtimeName")[0];
   runtimeName.innerHTML = `${data.d}`;
+  newElement.dataset.runtimeName = data.d;
 
   for (let i = 0; i < data.i.length; ++i) {
     await sleep(data.i[i]);

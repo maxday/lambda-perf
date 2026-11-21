@@ -80,4 +80,13 @@ hr {
     .text-muted {
         color: var(--bs-gray-500) !important; /* needs important since BS .text-muted also uses important */
     }
+    .form-control,
+    .form-control:focus {
+        background-color: var(--bs-gray-800);
+        border-color: var(--bs-gray-700);
+        color: var(--bs-gray-200);
+    }
+    .form-control::placeholder {
+        color: var(--bs-gray-500);
+    }
 }
