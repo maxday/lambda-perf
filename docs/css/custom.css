@@ -83,8 +83,10 @@ hr {
     .form-control,
     .form-control:focus {
         background-color: var(--bs-gray-800);
-        border-color: var(--bs-gray-700);
         color: var(--bs-gray-200);
+    }
+    .form-control {
+        border-color: var(--bs-gray-700);
     }
     .form-control::placeholder {
         color: var(--bs-gray-500);
