@@ -112,6 +112,16 @@
       }
     },
     {
+      "displayName": "python3.15",
+      "runtime": "python3.15",
+      "handler": "index.handler",
+      "path": "python315",
+      "architectures": ["x86_64", "arm64"],
+      "image": {
+        "baseImage": "public.ecr.aws/lambda/python:3.15"
+      }
+    },
+    {
       "displayName": "dotnet7 aot (prov.al2)",
       "runtime": "provided.al2",
       "handler": "bootstrap",
