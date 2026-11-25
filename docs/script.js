@@ -119,6 +119,27 @@ const drawLang = async (idx, data) => {
   const runtimeName = newElement.getElementsByClassName("runtimeName")[0];
   runtimeName.innerHTML = `${data.d}`;
 
+  // Set graph images and links
+  const runtimePath = data.r.replace("lambda-perf-", "").split("-")[0];
+  const arch = data.a;
+  const pkg = data.p;
+  const mem = data.m;
+  const region = "us-east-1";
+
+  const smallGraphImg = newElement.getElementsByClassName("smallGraph")[0];
+  const graphLink = newElement.getElementsByClassName("graphLink")[0];
+
+  const isGitHubPages = window.location.hostname === "maxday.github.io";
+  const basePath = isGitHubPages
+    ? "https://raw.githubusercontent.com/maxday/lambda-perf/main/graphs/"
+    : "../graphs/";
+
+  const smallGraphUrl = `${basePath}last-${runtimePath}-${arch}-${pkg}-${mem}-${region}-180d.svg`;
+  const largeGraphUrl = `${basePath}last-${runtimePath}-${arch}-${pkg}-${mem}-${region}-2y.svg`;
+
+  smallGraphImg.src = smallGraphUrl;
+  graphLink.href = largeGraphUrl;
+
   for (let i = 0; i < data.i.length; ++i) {
     await sleep(data.i[i]);
     addSquare(coldStartElement);
