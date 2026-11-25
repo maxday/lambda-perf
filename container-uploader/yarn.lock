@@ -558,14 +558,6 @@
     "@smithy/types" "^4.2.0"
     tslib "^2.6.2"
 
-"@smithy/abort-controller@^4.0.2":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@smithy/abort-controller/-/abort-controller-4.0.3.tgz#53a53dabc5a46fec70857acb07653d658c79b916"
-  integrity sha512-AqXFf6DXnuRBXy4SoK/n1mfgHaKaq36bmkphmD1KO0nHq6xK/g9KHSW4HEsPQUBCGdIEfuJifGHwxFXPIFay9Q==
-  dependencies:
-    "@smithy/types" "^4.3.0"
-    tslib "^2.6.2"
-
 "@smithy/abort-controller@^4.0.4":
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/@smithy/abort-controller/-/abort-controller-4.0.4.tgz#ab991d521fc78b5c7f24907fcd6803c0f2da51d9"
@@ -623,6 +615,14 @@
     "@smithy/util-stream" "^4.4.0"
     "@smithy/util-utf8" "^4.2.0"
     "@smithy/uuid" "^1.1.0"
+    tslib "^2.6.2"
+
+"@smithy/core@^3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@smithy/core/-/core-3.28.0.tgz#52d8ab71429b8b9e0f41c6c8f42143439b2191fa"
+  integrity sha512-N/LoLG8pZ1zv5cIWpdF6vmSjtZtXKK9G0OqT5yYCOZU+CzPq1+nYA95VoKJBGWRScs7YbMugZ7lZx8Fj1vdHoA==
+  dependencies:
+    "@smithy/types" "^4.15.0"
     tslib "^2.6.2"
 
 "@smithy/core@^3.3.0":
@@ -1116,6 +1116,13 @@
   dependencies:
     tslib "^2.6.2"
 
+"@smithy/types@^4.15.0":
+  version "4.15.0"
+  resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.15.0.tgz#0346065c3e810755428df89c9a84427969931357"
+  integrity sha512-Z5TAOxygoFvybJV3igo5SloFflSokHx2hu1eFA+DxDTcn+FtKxUSui+rbTRG1pAafMA888Z3MVvCWUuvCrTXjg==
+  dependencies:
+    tslib "^2.6.2"
+
 "@smithy/types@^4.2.0", "@smithy/types@^4.3.0", "@smithy/types@^4.3.1", "@smithy/types@^4.6.0", "@smithy/types@^4.8.0", "@smithy/types@^4.9.0":
   version "4.9.0"
   resolved "https://registry.yarnpkg.com/@smithy/types/-/types-4.9.0.tgz#c6636ddfa142e1ddcb6e4cf5f3e1a628d420486f"
@@ -1269,16 +1276,7 @@
     "@smithy/types" "^4.6.0"
     tslib "^2.6.2"
 
-"@smithy/util-endpoints@^3.0.2":
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/@smithy/util-endpoints/-/util-endpoints-3.3.3.tgz#0119f15bcac30b3b9af1d3cc0a8477e7199d0185"
-  integrity sha512-VACQVe50j0HZPjpwWcjyT51KUQ4AnsvEaQ2lKHOSL4mNLD0G9BjEniQ+yCt1qqfKfiAHRAts26ud7hBjamrwig==
-  dependencies:
-    "@smithy/node-config-provider" "^4.3.12"
-    "@smithy/types" "^4.13.1"
-    tslib "^2.6.2"
-
-"@smithy/util-endpoints@^3.3.3":
+"@smithy/util-endpoints@^3.0.2", "@smithy/util-endpoints@^3.3.3":
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/@smithy/util-endpoints/-/util-endpoints-3.3.3.tgz#0119f15bcac30b3b9af1d3cc0a8477e7199d0185"
   integrity sha512-VACQVe50j0HZPjpwWcjyT51KUQ4AnsvEaQ2lKHOSL4mNLD0G9BjEniQ+yCt1qqfKfiAHRAts26ud7hBjamrwig==
@@ -1416,12 +1414,11 @@
     tslib "^2.6.2"
 
 "@smithy/util-waiter@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@smithy/util-waiter/-/util-waiter-4.0.3.tgz#ec5605ec123493259ccbf1c0b5c1951b3360f43b"
-  integrity sha512-JtaY3FxmD+te+KSI2FJuEcfNC9T/DGGVf551babM7fAaXhjJUt7oSYurH1Devxd2+BOSUACCgt3buinx4UnmEA==
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/@smithy/util-waiter/-/util-waiter-4.5.4.tgz#adbeac6a1cb8b8fffd21dadef1076eec9425ee1f"
+  integrity sha512-xwCE0pkKsqvnowJ/j8+k8fgOVZp5E17EIQ27Sh1NsKci1FrSTSncQo+eQWIrUasoidRwz+w+dR0VX6nkMjN0wQ==
   dependencies:
-    "@smithy/abort-controller" "^4.0.2"
-    "@smithy/types" "^4.2.0"
+    "@smithy/core" "^3.28.0"
     tslib "^2.6.2"
 
 "@smithy/uuid@^1.1.0":
